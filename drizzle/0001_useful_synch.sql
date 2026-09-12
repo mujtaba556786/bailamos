@@ -1,0 +1,1 @@
+CREATE INDEX `idx_reservations_date_table_status` ON `reservations` (`date`,`table_id`,`status`);

@@ -8,6 +8,13 @@
       "when": 1789210666428,
       "tag": "0000_whole_doctor_faustus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1789210765472,
+      "tag": "0001_useful_synch",
+      "breakpoints": true
     }
   ]
 }
