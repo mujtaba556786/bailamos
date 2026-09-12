@@ -1,0 +1,10 @@
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Flame, Leaf } from "lucide-react";
+import menu from "../../../data/menu.json";
+import { SiteHeader } from "../../../components/site-header";
+
+export default async function DishPage({params}:{params:Promise<{id:string}>}){
+  const {id}=await params,dish=menu.dishes.find(d=>d.id===id)??menu.dishes[0];
+  return <main className="min-h-screen bg-[#0b1712] text-[#f5e8d3]"><SiteHeader active="Speisekarte"/><div className="grid min-h-[calc(100vh-6rem)] lg:grid-cols-2"><div className="relative min-h-[48vh]"><Image src={dish.image} alt={dish.name.de} fill className="object-cover" priority/><div className="absolute inset-0 bg-gradient-to-t from-[#0b1712] via-transparent to-black/20"/></div><section className="flex items-center px-7 py-14 sm:px-14 lg:px-20"><div className="max-w-xl"><p className="eyebrow">Bailamos Speisekarte</p><h1 className="font-display mt-4 text-6xl">{dish.name.de}</h1><p className="mt-5 text-2xl text-[#d6a45f]">€ {dish.price.toFixed(2).replace(".",",")}</p><p className="mt-8 text-lg leading-8 text-white/68">{dish.description.de}</p><div className="mt-8 flex flex-wrap gap-3">{"vegetarian" in dish&&dish.vegetarian?<span className="rounded-full border border-[#c68a3b]/35 px-4 py-2 text-sm"><Leaf className="mr-2 inline" size={16}/>Vegetarisch</span>:null}{dish.spicy?<span className="rounded-full border border-[#c68a3b]/35 px-4 py-2 text-sm"><Flame className="mr-2 inline" size={16}/>Leicht pikant</span>:null}{dish.allergens.map(a=><span key={a} className="rounded-full border border-white/15 px-4 py-2 text-sm">Enthält {a}</span>)}</div><div className="mt-12 border-t border-[#c68a3b]/30 pt-9"><h2 className="font-display text-3xl">Dieses Gericht probieren?</h2><p className="mt-2 text-white/55">Das Gericht wird nicht vorbestellt. Wir reservieren ausschließlich Ihren Tisch.</p><div className="mt-6 flex gap-4"><Link href="/menu" className="button-secondary">Zur Speisekarte</Link><Link href="/reservieren" className="button-primary">Tisch reservieren <ArrowRight size={17}/></Link></div></div></div></section></div></main>
+}

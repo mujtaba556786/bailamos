@@ -1,0 +1,24 @@
+{
+  "announcement":{"enabled":true,"de":"Noche de Mezcal · Jeden Freitag ab 20 Uhr","en":"Noche de Mezcal · Every Friday from 8 pm","link":"/events/noche-de-mezcal"},
+  "hero":{"type":"image","image":"/table-terrace.png","video":null,"poster":"/table-terrace.png"},
+  "demoMedia": {
+    "notice": "Temporäre, lizenzierte Beispielmedien – vor dem Launch durch eigene Bailamos-Fotos und -Videos ersetzen.",
+    "videos": [
+      {"title":"Bar bei Nacht","source":"Mixkit","url":"https://mixkit.co/free-stock-video/a-busy-elegant-bar-4043/","poster":"https://images.pexels.com/videos/7505585/alcohol-alcoholic-beverage-alcoholic-drink-bar-cafe-7505585.jpeg?auto=compress&dpr=1&h=750&w=1260"},
+      {"title":"Aus der Küche","source":"Mixkit","url":"https://mixkit.co/free-stock-video/chef-cooking-on-a-large-grill-4678/","poster":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"},
+      {"title":"Tacos im Fokus","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","poster":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"}
+    ],
+    "gallery": [
+      {"label":"Cocktails","source":"Pexels","url":"https://www.pexels.com/video/close-up-shot-of-cocktails-on-the-table-in-the-restaurant-7505585/","image":"https://images.pexels.com/videos/7505585/alcohol-alcoholic-beverage-alcoholic-drink-bar-cafe-7505585.jpeg?auto=compress&dpr=1&h=750&w=1260"},
+      {"label":"Tacos","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","image":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"},
+      {"label":"Küche","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","image":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"},
+      {"label":"Drinks","source":"Pexels","url":"https://www.pexels.com/video/close-up-shot-of-cocktails-on-the-table-in-the-restaurant-7505585/","image":"https://images.pexels.com/videos/7505585/alcohol-alcoholic-beverage-alcoholic-drink-bar-cafe-7505585.jpeg?auto=compress&dpr=1&h=750&w=1260"},
+      {"label":"Abend","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","image":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"}
+    ]
+  },
+  "social":{"instagram":{"url":"#","handle":"@bailamos.berlin"},"facebook":{"url":"#","handle":"Bailamos Berlin"},"tiktok":{"url":"#","handle":"@bailamos.berlin"}},
+  "events":[
+    {"id":"noche-de-mezcal","title":{"de":"Noche de Mezcal","en":"Mezcal Night"},"summary":{"de":"Eine geführte Reise durch drei ausgewählte Mezcals, begleitet von kleinen Gerichten aus unserer Küche.","en":"A guided tasting of three selected mezcals with small plates from our kitchen."},"date":"2026-09-18","time":"20:00","image":"/table-corner.png","featured":true,"published":true},
+    {"id":"domingo-familiar","title":{"de":"Domingo Familiar","en":"Family Sunday"},"summary":{"de":"Ein entspannter Sonntagabend für die ganze Familie mit einer besonderen Sharing-Karte.","en":"A relaxed family Sunday with a special sharing menu."},"date":"2026-09-27","time":"17:00","image":"/table-window.png","featured":true,"published":true}
+  ]
+}

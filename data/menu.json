@@ -1,0 +1,16 @@
+{
+  "categories": [
+    {"id":"tacos","name":{"de":"Tacos","en":"Tacos"}},
+    {"id":"principales","name":{"de":"Hauptgerichte","en":"Main courses"}},
+    {"id":"postres","name":{"de":"Desserts","en":"Desserts"}},
+    {"id":"cocktails","name":{"de":"Cocktails","en":"Cocktails"}}
+  ],
+  "dishes": [
+    {"id":"tacos-al-pastor","categoryId":"tacos","name":{"de":"Tacos al Pastor","en":"Tacos al Pastor"},"description":{"de":"Mariniertes Schweinefleisch, Ananas, Zwiebel und Koriander.","en":"Marinated pork, pineapple, onion and coriander."},"price":14.9,"image":"/table-terrace.png","featured":true,"available":true,"spicy":1,"allergens":[]},
+    {"id":"tacos-birria","categoryId":"tacos","name":{"de":"Tacos de Birria","en":"Birria Tacos"},"description":{"de":"Langsam geschmortes Rind, Oaxaca-Käse und kräftige Consomé.","en":"Slow-braised beef, Oaxaca cheese and rich consommé."},"price":16.9,"image":"/table-corner.png","featured":true,"available":true,"spicy":2,"allergens":["Milch"]},
+    {"id":"mole-poblano","categoryId":"principales","name":{"de":"Mole Poblano","en":"Mole Poblano"},"description":{"de":"Hähnchen, geröstete Gewürze, Chili-Schokoladen-Sauce und Reis.","en":"Chicken, toasted spices, chilli-chocolate sauce and rice."},"price":23.9,"image":"/table-window.png","featured":true,"available":true,"spicy":1,"allergens":["Nüsse"]},
+    {"id":"calabaza","categoryId":"principales","name":{"de":"Geröstete Calabaza","en":"Roasted Calabaza"},"description":{"de":"Kürbis, schwarze Bohnen, Pepita-Salsa und Limettencreme.","en":"Pumpkin, black beans, pepita salsa and lime crema."},"price":19.5,"image":"/table-terrace.png","featured":false,"available":true,"vegetarian":true,"spicy":0,"allergens":[]},
+    {"id":"tres-leches","categoryId":"postres","name":{"de":"Tres Leches","en":"Tres Leches"},"description":{"de":"Saftiger Milchkuchen, Zimt und karamellisierte Ananas.","en":"Milk cake, cinnamon and caramelised pineapple."},"price":9.5,"image":"/table-corner.png","featured":false,"available":true,"spicy":0,"allergens":["Milch","Gluten"]},
+    {"id":"margarita","categoryId":"cocktails","name":{"de":"Bailamos Margarita","en":"Bailamos Margarita"},"description":{"de":"Tequila Blanco, Limette, Agave und Meersalz.","en":"Blanco tequila, lime, agave and sea salt."},"price":12.5,"image":"/bailamos-logo.jpg","featured":true,"available":true,"spicy":0,"allergens":[]}
+  ]
+}

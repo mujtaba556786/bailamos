@@ -1,0 +1,1 @@
+{"whatsapp":{"enabled":false,"events":{"newReservation":true,"confirmation":true,"changes":true,"cancellation":true,"reminder":false}},"admin":{"enabled":true,"largeGroupThreshold":8,"upcomingMinutes":30}}

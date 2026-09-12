@@ -1,0 +1,5 @@
+[
+  {"id":"table-08","name":"Tisch 08","capacity":4,"area":{"de":"Fensterplatz","en":"Window"},"setting":{"de":"Innenbereich","en":"Indoor"},"feature":{"de":"Schöner Ausblick am Fenster","en":"Beautiful window view"},"image":"/table-window.png","enabled":true},
+  {"id":"table-12","name":"Tisch 12","capacity":4,"area":{"de":"Ruhige Ecke","en":"Quiet corner"},"setting":{"de":"Innenbereich","en":"Indoor"},"feature":{"de":"Ruhige Lage, besonders gemütlich","en":"Quiet and especially cosy"},"image":"/table-corner.png","enabled":true},
+  {"id":"table-16","name":"Tisch 16","capacity":4,"area":{"de":"Terrasse","en":"Terrace"},"setting":{"de":"Außenbereich","en":"Outdoor"},"feature":{"de":"Angenehme Atmosphäre im Freien","en":"Relaxed outdoor atmosphere"},"image":"/table-terrace.png","enabled":true}
+]
