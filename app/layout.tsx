@@ -1,22 +1,29 @@
 import type { Metadata } from "next";
+import { getSiteUrl } from "../lib/site-url";
+import { env } from "cloudflare:workers";
+import { getSeoContent } from "../lib/seo-content.ts";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Bailamos | Mexikanisches Restaurant & Cocktail Bar",
-  description: "Authentische mexikanische Küche, Cocktails und besondere Abende bei Bailamos.",
-  keywords: ["Mexikanisches Restaurant Berlin", "Cocktail Bar Berlin", "Tisch reservieren", "Mexikanische Küche"],
+export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB);return {
+  metadataBase: getSiteUrl(),
+  title: { default: content.pages.home.title, template: "%s | Bailamos" },
+  description: content.pages.home.description,
+  keywords: content.keywords,
   openGraph: {
-    title: "Bailamos | Mexikanisches Restaurant & Cocktail Bar",
-    description: "Authentische Aromen, Cocktails und besondere Abende in Berlin.",
+    title: content.pages.home.title,
+    description: content.pages.home.description,
     type: "website",
     locale: "de_DE",
+    url: "/",
+    siteName: "Bailamos",
   },
+  twitter: { card: "summary", title: content.pages.home.title, description: content.pages.home.description },
   alternates: { canonical: "/" },
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
-};
+}}
 
 export default function RootLayout({
   children,
@@ -25,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <body className="antialiased">{children}<script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({"@context":"https://schema.org","@type":"Restaurant",name:"Bailamos",servesCuisine:"Mexican",priceRange:"€€",telephone:"+49 30 123 45 678",email:"hola@bailamos.berlin",address:{"@type":"PostalAddress",streetAddress:"Musterstraße 18",postalCode:"10117",addressLocality:"Berlin",addressCountry:"DE"},acceptsReservations:true,menu:"/menu"})}} /></body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

@@ -2,6 +2,10 @@
 @import "tw-animate-css";
 @import "../vendor/shadcn-tailwind-4.13.0.css";
 
+/* WCAG AA: strengthen secondary copy that previously rendered at 45% opacity. */
+.text-\[\#10261e\]\/45{color:#46574f!important}
+a[href="#"]{display:none!important}
+
 :root { --background:#0b1712; --foreground:#f5e8d3; --card:#fff8ec; --card-foreground:#171712; --primary:#a52520; --primary-foreground:#fff; --secondary:#10261e; --secondary-foreground:#f5e8d3; --muted:#1a2c24; --muted-foreground:#98a096; --accent:#c68a3b; --accent-foreground:#10261e; --border:#c68a3b55; --input:#f5e8d32e; --ring:#d6a45f; --radius:.875rem; }
 @theme inline { --color-background:var(--background); --color-foreground:var(--foreground); --color-card:var(--card); --color-card-foreground:var(--card-foreground); --color-primary:var(--primary); --color-primary-foreground:var(--primary-foreground); --color-secondary:var(--secondary); --color-secondary-foreground:var(--secondary-foreground); --color-muted:var(--muted); --color-muted-foreground:var(--muted-foreground); --color-accent:var(--accent); --color-accent-foreground:var(--accent-foreground); --color-border:var(--border); --color-input:var(--input); --color-ring:var(--ring); --font-sans:"Avenir Next",Avenir,"Segoe UI",sans-serif; }
 *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--background);color:var(--foreground);font-family:"Avenir Next",Avenir,"Segoe UI",sans-serif}.font-display{font-family:Didot,"Bodoni 72","Times New Roman",serif}

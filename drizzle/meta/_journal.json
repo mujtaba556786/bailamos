@@ -15,6 +15,48 @@
       "when": 1789210765472,
       "tag": "0001_useful_synch",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1789214713575,
+      "tag": "0002_third_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1789215972198,
+      "tag": "0003_young_vindicator",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1789252279525,
+      "tag": "0004_tearful_wonder_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1789295296934,
+      "tag": "0005_hard_lady_vermin",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1789296405472,
+      "tag": "0006_reflective_agent_zero",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1789297083094,
+      "tag": "0007_silent_echo",
+      "breakpoints": true
     }
   ]
 }
