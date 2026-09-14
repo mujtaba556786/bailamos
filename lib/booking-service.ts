@@ -23,7 +23,18 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
   for (const table of bookableTablesFor(config).filter(t => t.capacity >= b.guestCount && (b.tableId === 'restaurant-choice' || t.id === b.tableId))) {
     const id = `R-${crypto.randomUUID()}`, stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
     try {
-      await db.prepare(`INSERT INTO reservations (id,status,date,time,guest_count,duration_minutes,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,cancel_token,booking_key_hash,booking_payload_hash,duplicate_fingerprint,starts_at,ends_at,updated_by,newsletter_opt_in,newsletter_consent_at,created_at,updated_at) VALUES (?,'pending',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'customer',?,?,?,?)`).bind(id,b.date,b.time,b.guestCount,duration,table.id,b.customer.name,b.customer.phone,b.customer.email,b.occasion,b.dietary,b.notes,`sha256:${await digest(token)}`,keyHash,payloadHash,fingerprint,interval.startsAt,interval.endsAt,b.marketingConsent?1:0,b.marketingConsent?stamp:null,stamp,stamp).run();
+      const inserted = await db.prepare(`INSERT INTO reservations (id,status,date,time,guest_count,duration_minutes,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,cancel_token,booking_key_hash,booking_payload_hash,duplicate_fingerprint,starts_at,ends_at,updated_by,newsletter_opt_in,newsletter_consent_at,created_at,updated_at)
+        SELECT ?,'pending',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'customer',?,?,?,?
+        WHERE NOT EXISTS (SELECT 1 FROM reservations WHERE table_id = ? AND status IN ('pending','confirmed','arrived','seated') AND (
+          (starts_at IS NOT NULL AND starts_at < ? AND ? < ends_at)
+          OR (starts_at IS NULL AND julianday(date || ' ' || time) < julianday(? || ' ' || ?) + ? / 1440.0 AND julianday(? || ' ' || ?) < julianday(date || ' ' || time) + duration_minutes / 1440.0)
+        ))`).bind(id,b.date,b.time,b.guestCount,duration,table.id,b.customer.name,b.customer.phone,b.customer.email,b.occasion,b.dietary,b.notes,`sha256:${await digest(token)}`,keyHash,payloadHash,fingerprint,interval.startsAt,interval.endsAt,b.marketingConsent?1:0,b.marketingConsent?stamp:null,stamp,stamp,table.id,interval.endsAt,interval.startsAt,b.date,b.time,duration,b.date,b.time).run();
+      if (!inserted.meta.changes) {
+        const repeated = await replay();
+        if (repeated) return repeated;
+        continue;
+      }
+      await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,NULL,'pending','customer','',0,?)`).bind(`${id}:0`,id,stamp).run();
     } catch (error) {
       const repeated = await replay();
       if (repeated) return repeated;
@@ -57,6 +68,7 @@ export async function changeStatus(db: D1Database,id: string,status: string,vers
     throw error;
   }
   if (!result.meta.changes) throw new BookingError(409,'STALE_VERSION','Die Reservierung wurde inzwischen geändert. Bitte aktualisieren.');
+  await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,?,?,?,?,?,?)`).bind(`${id}:${version+1}`,id,String(row.status),status,actor,reason,version+1,new Date().toISOString()).run();
   return {ok:true,status,version:version+1};
 }
 export async function cancelBooking(db: D1Database,id: string,token: string) {

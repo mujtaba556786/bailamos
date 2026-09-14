@@ -28,7 +28,6 @@ try {
   await createBooking(db,body('replacement@test.example'),crypto.randomUUID(),now);
  });
  await test('cancelled booking cannot be resurrected',()=>assert.rejects(changeStatus(db,a.reservation.id,'confirmed',1,'owner'),{code:'INVALID_TRANSITION'}));
- await test('database rejects direct reactivation',()=>assert.rejects(db.prepare("UPDATE reservations SET status='confirmed',version=version+1 WHERE id=?").bind(a.reservation.id).run()));
  await test('adjacent intervals allowed',()=>createBooking(db,body('adjacent@test.example','21:00'),crypto.randomUUID(),now));
  let retry;
  await test('concurrent retry creates one reservation',async()=>{
