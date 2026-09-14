@@ -40,7 +40,7 @@ export async function HomeContent({locale}:{locale:Locale}) {
         </aside>
       </div>
     </section>
-    <section className="relative bg-[#f4ead8] px-5 py-24 text-[#10261e] sm:px-10 lg:py-32">
+    <section id="story" className="relative scroll-mt-24 bg-[#f4ead8] px-5 py-24 text-[#10261e] sm:px-10 lg:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
         <div><p className="eyebrow">{L("Die Bailamos Art","The Bailamos way")}</p><h2 className="font-display mt-4 max-w-xl text-5xl leading-[.92] sm:text-7xl">{L("Kein gewöhnlicher Abendessen-Termin.","Not your ordinary dinner date.")}</h2></div>
         <p className="max-w-2xl text-lg leading-8 text-[#10261e]/65">{L("Unsere Küche verbindet das Vertraute mit dem Unerwarteten. Die Musik ist warm, die Drinks sind klar, die Tische laden zum Bleiben ein.","Our kitchen brings the familiar together with the unexpected. Warm music, confident drinks and tables made for staying.")}</p>
