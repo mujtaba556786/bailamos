@@ -8,13 +8,14 @@ export function SiteHeader({ active, locale = "de" }: { active?: string; locale?
     ? { home: "Home", menu: "Menu", gallery: "Gallery", about: "About", events: "Events", contact: "Contact", reserve: "Reserve", nav: "Open navigation", menuButton: "Menu" }
     : { home: "Start", menu: "Speisekarte", gallery: "Galerie", about: "Über uns", events: "Events", contact: "Kontakt", reserve: "Reservieren", nav: "Navigation öffnen", menuButton: "Menü" };
   const p = (path: string) => en ? (path === "/" ? "/en" : `/en${path}`) : path;
+  const homeSection = (id: string) => `${p("/")}?v=8#${id}`;
   const links = [
     { href: p("/"), label: labels.home, key: "Start" },
     { href: p("/menu"), label: labels.menu, key: "Speisekarte" },
-    { href: `${p("/")}#atmosphere`, label: labels.gallery, key: "Galerie" },
-    { href: `${p("/")}#story`, label: labels.about, key: "Über uns" },
+    { href: homeSection("atmosphere"), label: labels.gallery, key: "Galerie" },
+    { href: homeSection("story"), label: labels.about, key: "Über uns" },
     { href: p("/events"), label: labels.events, key: "Events" },
-    { href: `${p("/")}#contact`, label: labels.contact, key: "Kontakt" },
+    { href: homeSection("contact"), label: labels.contact, key: "Kontakt" },
   ];
 
   return <header className="relative z-50 border-b border-[#c68a3b]/25 bg-[#07110d] text-[#f5e8d3]">
