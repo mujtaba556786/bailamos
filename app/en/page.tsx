@@ -1,0 +1,3 @@
+import type {Metadata} from "next";import {env} from "cloudflare:workers";import {HomeContent} from "../page";import {getSeoContent} from "../../lib/seo-content.ts";
+export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB),page=content.pages.home;return{title:page.title.en,description:page.description.en,keywords:content.keywords.en.split(",").map(x=>x.trim()),alternates:{canonical:"/en",languages:{de:"/",en:"/en"}},openGraph:{title:page.title.en,description:page.description.en,url:"/en",locale:"en_GB"}}}
+export default function EnglishHome(){return <HomeContent locale="en"/>}

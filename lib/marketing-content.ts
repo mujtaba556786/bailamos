@@ -1,7 +1,9 @@
 import defaults from "../data/marketing.json" with { type: "json" };
 import { BookingError } from "./booking-policy.ts";
 
-export type MarketingContent = typeof defaults;
+type Pair={de:string;en:string};
+export type MarketingContent={announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;date:string;time:string;image:string;featured:boolean;published:boolean}>};
+const pair=(value:any,label:string,max:number,fallback="")=>typeof value==="string"?{de:text(value,label,max),en:text(fallback||value,`Englisch: ${label}`,max)}:{de:text(value?.de,label,max),en:text(value?.en||value?.de||fallback,`Englisch: ${label}`,max)};
 const text = (value: unknown, label: string, max: number) => {
   if (typeof value !== "string") throw new BookingError(400,"INVALID_CONTENT",`${label} fehlt.`);
   const clean = value.trim().normalize("NFC");
@@ -34,14 +36,14 @@ export function validateMarketingContent(value: unknown): MarketingContent {
   return {
     announcement:{enabled:v.announcement?.enabled===true,de:text(v.announcement?.de||"Keine Ankündigung","Ankündigung",180),en:text(v.announcement?.en||v.announcement?.de||"No announcement","Englische Ankündigung",180),link:text(v.announcement?.link||"/events","Ankündigungslink",300)},
     hero:{type:"image",image:text(v.hero?.image||"/table-terrace.webp","Hero-Bild",1000),video:null,poster:text(v.hero?.poster||v.hero?.image||"/table-terrace.webp","Hero-Poster",1000)},
-    demoMedia:{notice:text(media.notice||"Eigene Medien von Bailamos.","Medienhinweis",300),videos:media.videos.map((item:Record<string,any>)=>({title:text(item.title,"Videotitel",120),source:text(item.source||"Bailamos","Videoquelle",80),url:url(item.url,"Video-Link"),poster:url(item.poster,"Video-Poster")})),gallery:media.gallery.map((item:Record<string,any>)=>({label:text(item.label,"Bildtitel",100),source:text(item.source||"Bailamos","Bildquelle",80),url:url(item.url||item.image,"Bild-Link"),image:url(item.image,"Bildadresse")}))},
+    demoMedia:{notice:pair(media.notice||"Eigene Medien von Bailamos.","Medienhinweis",300,"Bailamos media."),videos:media.videos.map((item:Record<string,any>)=>({title:pair(item.title,"Videotitel",120),source:text(item.source||"Bailamos","Videoquelle",80),url:url(item.url,"Video-Link"),poster:url(item.poster,"Video-Poster")})),gallery:media.gallery.map((item:Record<string,any>)=>({label:pair(item.label,"Bildtitel",100),source:text(item.source||"Bailamos","Bildquelle",80),url:url(item.url||item.image,"Bild-Link"),image:url(item.image,"Bildadresse")}))},
     social:{instagram:{url:url(social.instagram?.url||"#","Instagram-Link",true),handle:text(social.instagram?.handle||"@bailamos.berlin","Instagram-Name",80)},facebook:{url:url(social.facebook?.url||"#","Facebook-Link",true),handle:text(social.facebook?.handle||"Bailamos Berlin","Facebook-Name",80)},tiktok:{url:url(social.tiktok?.url||"#","TikTok-Link",true),handle:text(social.tiktok?.handle||"@bailamos.berlin","TikTok-Name",80)}},events,
   } as MarketingContent;
 }
 export async function getMarketingContent(db?:D1Database):Promise<{content:MarketingContent;version:number;source:"saved"|"default"}> {
-  if(!db)return {content:defaults,version:0,source:"default"};
-  try{const row=await db.prepare("SELECT content_json,version FROM marketing_content WHERE id = 'primary'").first<{content_json:string;version:number}>();if(!row)return {content:defaults,version:0,source:"default"};return {content:validateMarketingContent(JSON.parse(row.content_json)),version:row.version,source:"saved"};}
-  catch(error){console.error("Marketing content unavailable",error);return {content:defaults,version:0,source:"default"};}
+  if(!db)return {content:validateMarketingContent(defaults),version:0,source:"default"};
+  try{const row=await db.prepare("SELECT content_json,version FROM marketing_content WHERE id = 'primary'").first<{content_json:string;version:number}>();if(!row)return {content:validateMarketingContent(defaults),version:0,source:"default"};return {content:validateMarketingContent(JSON.parse(row.content_json)),version:row.version,source:"saved"};}
+  catch(error){console.error("Marketing content unavailable",error);return {content:validateMarketingContent(defaults),version:0,source:"default"};}
 }
 export async function saveMarketingContent(db:D1Database,value:unknown,expectedVersion:number){
   const content=validateMarketingContent(value),stamp=new Date().toISOString();
