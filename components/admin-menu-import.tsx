@@ -40,7 +40,9 @@ export function AdminMenuImport({adminKey,menu,onApply}:{adminKey:string;menu:Me
     const data=menu.dishes.map(dish=>{const category=menu.categories.find(item=>item.id===dish.categoryId)!;return{dish_id:dish.id,category_id:dish.categoryId,category_de:category.name.de,category_en:category.name.en,dish_de:dish.name.de,dish_en:dish.name.en,description_de:dish.description.de,description_en:dish.description.en,price_eur:dish.price,available:dish.available?1:0,vegetarian:dish.vegetarian?1:0,spicy:dish.spicy,allergens:dish.allergens.join(", "),image_file:`${dish.id}.jpg`}});
     const workbook=XLSX.utils.book_new(),worksheet=XLSX.utils.json_to_sheet(data,{header:columns});
     worksheet["!cols"]=[{wch:24},{wch:22},{wch:22},{wch:22},{wch:28},{wch:28},{wch:54},{wch:54},{wch:12},{wch:12},{wch:12},{wch:9},{wch:28},{wch:30}];
-    XLSX.utils.book_append_sheet(workbook,worksheet,"Speisekarte");XLSX.writeFile(workbook,"bailamos-speisekarte.xlsx");
+    XLSX.utils.book_append_sheet(workbook,worksheet,"Speisekarte");
+    const bytes=XLSX.write(workbook,{bookType:"xlsx",type:"array"}),url=URL.createObjectURL(new Blob([bytes],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})),anchor=document.createElement("a");
+    anchor.href=url;anchor.download="bailamos-speisekarte.xlsx";document.body.appendChild(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
 
   async function prepare(){
