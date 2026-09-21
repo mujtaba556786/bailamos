@@ -57,6 +57,13 @@
       "when": 1789297083094,
       "tag": "0007_silent_echo",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1789999127717,
+      "tag": "0009_marketing_campaigns",
+      "breakpoints": true
     }
   ]
 }

@@ -88,3 +88,10 @@ export const seoContent = sqliteTable("seo_content", {
   version: integer("version").notNull().default(1),
   updatedAt: text("updated_at").notNull(),
 });
+
+export const marketingCampaigns = sqliteTable("marketing_campaigns", {
+  id: text("id").primaryKey(),
+  contentJson: text("content_json").notNull(),
+  version: integer("version").notNull().default(1),
+  updatedAt: text("updated_at").notNull(),
+});

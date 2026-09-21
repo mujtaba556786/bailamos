@@ -10,6 +10,7 @@ import { AdminContent } from "../../components/admin-content";
 import { AdminMenu } from "../../components/admin-menu";
 import { AdminOperations } from "../../components/admin-operations";
 import { AdminSeo } from "../../components/admin-seo";
+import { AdminMarketingStudio } from "../../components/admin-marketing-studio";
 
 type Status = "pending"|"confirmed"|"declined"|"cancelled"|"arrived"|"seated"|"completed"|"no_show";
 type Reservation = {
@@ -39,7 +40,7 @@ export default function Admin(){
   const [reason,setReason]=useState("");
   const [pendingStatus,setPendingStatus]=useState<Status|null>(null);
   const [saving,setSaving]=useState(false);
-  const [view,setView]=useState<"reservations"|"content"|"menu"|"operations"|"seo">("reservations");
+  const [view,setView]=useState<"reservations"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
 
   useEffect(()=>{const saved=sessionStorage.getItem("bailamos-admin-key");if(saved){setKey(saved)}},[]);
 
@@ -106,7 +107,7 @@ export default function Admin(){
     <header className="border-b border-[#10261e]/10 bg-[#0b1712] px-4 py-4 text-[#f5e8d3] sm:px-8">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-5"><Link href="/" className="flex items-center gap-3"><Image src="/bailamos-logo.jpg" width={48} height={48} alt="Bailamos" className="h-11 w-11 rounded-full object-cover"/><div><p className="font-display text-xl">BAILAMOS</p><p className="text-xs text-white/45">Reservierungen</p></div></Link><button onClick={()=>{sessionStorage.removeItem("bailamos-admin-key");setKey("");setReservations([])}} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-4 text-sm text-white/70 hover:bg-white/10"><LogOut size={17}/> <span className="hidden sm:inline">Abmelden</span></button></div>
     </header>
-    <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">{[["reservations","Reservierungen"],["content","Content & Marketing"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].map(([id,label])=><button key={id} onClick={()=>setView(id as typeof view)} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
+    <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">{[["reservations","Reservierungen"],["content","Website-Inhalte"],["studio","Marketing Studio"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].map(([id,label])=><button key={id} onClick={()=>setView(id as typeof view)} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
     {view==="reservations"?<div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="eyebrow">Restaurantbetrieb</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Reservierungen</h1><p className="mt-2 text-base text-[#10261e]/55">{localDate(date)}</p></div><div className="flex gap-2"><label className="grid text-sm"><span className="sr-only">Datum</span><input type="date" value={date} onChange={e=>{setDate(e.target.value);setSelected(null)}} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base"/></label><button onClick={()=>load()} aria-label="Aktualisieren" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><RefreshCw size={18} className={loading?"animate-spin":""}/></button></div></section>
 
@@ -133,6 +134,6 @@ export default function Admin(){
           </article>}
         </div>
       </section>
-    </div>:view==="content"?<AdminContent adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
+    </div>:view==="content"?<AdminContent adminKey={key}/>:view==="studio"?<AdminMarketingStudio adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
   </main>;
 }
