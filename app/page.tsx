@@ -16,7 +16,9 @@ const schemaDays:Record<string,string>={monday:"Monday",tuesday:"Tuesday",wednes
 
 export async function HomeContent({locale}:{locale:Locale}) {
   const L=(de:string,en:string)=>locale==="en"?en:de;
-  const [{content:marketing},{config:operations}]=await Promise.all([getMarketingContent(env.DB),getOperations(env.DB)]),restaurant=operations.restaurant;
+  const [{content:savedMarketing},{config:operations}]=await Promise.all([getMarketingContent(env.DB),getOperations(env.DB)]),restaurant=operations.restaurant;
+  // Draft events can have no date; only published events belong on public pages.
+  const marketing={...savedMarketing,events:savedMarketing.events.filter(event=>event.published)};
   return <main className="overflow-hidden bg-[#09130f] text-[#f5e8d3]">
     <StructuredData data={{"@context":"https://schema.org","@type":"Restaurant","@id":`${getSiteUrl()}#restaurant`,name:restaurant.name,legalName:restaurant.legalName,url:getSiteUrl().toString(),telephone:restaurant.contact.phone,email:restaurant.contact.email,address:{"@type":"PostalAddress",streetAddress:restaurant.contact.address,addressCountry:"DE"},servesCuisine:"Mexican",acceptsReservations:true,menu:getSiteUrl("/menu").toString(),sameAs:Object.values(marketing.social).map(item=>item.url).filter(url=>url!=="#"),openingHoursSpecification:Object.entries(restaurant.openingHours).filter(([,hours])=>hours!=="closed").map(([day,hours])=>{const [opens,closes]=(hours as string).split("-");return{"@type":"OpeningHoursSpecification",dayOfWeek:`https://schema.org/${schemaDays[day]}`,opens,closes}}),potentialAction:{"@type":"ReserveAction",target:getSiteUrl("/reservieren").toString()}}}/>
     <SiteHeader active="Start" locale={locale}/>
