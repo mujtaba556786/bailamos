@@ -3,6 +3,9 @@ import { createBooking } from '../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../lib/booking-http.ts';
 import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests } from '../../../lib/booking-policy.ts';
 import { getOperations } from '../../../lib/operations-config.ts';
+import {getMarketingContent} from '../../../lib/marketing-content.ts';
+import {openingActive} from '../../../lib/opening.ts';
+import {BookingError} from '../../../lib/booking-policy.ts';
 export async function GET(request: Request) {
   return bookingResponse(async () => {
     if (!env.DB) throw new Error('Missing DB');
@@ -20,6 +23,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   return bookingResponse(async () => {
     if (!env.DB) throw new Error('Missing DB');
+    if(openingActive((await getMarketingContent(env.DB)).content.opening))throw new BookingError(403,'OPENING_SOON','Online-Reservierungen sind noch nicht freigegeben. / Online reservations are not open yet.');
     const {config}=await getOperations(env.DB);
     return createBooking(env.DB,await readBody(request),request.headers.get('Idempotency-Key') || '',new Date(),config);
   });

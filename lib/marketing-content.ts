@@ -1,8 +1,9 @@
 import defaults from "../data/marketing.json" with { type: "json" };
 import { BookingError } from "./booking-policy.ts";
+import { validateOpening, openingDraft, validDate, type Opening } from './opening.ts';
 
 type Pair={de:string;en:string};
-export type MarketingContent={announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;date:string;time:string;image:string;featured:boolean;published:boolean}>};
+export type MarketingContent={opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;date:string;time:string;image:string;featured:boolean;published:boolean}>};
 const pair=(value:any,label:string,max:number,fallback="")=>typeof value==="string"?{de:text(value,label,max),en:text(fallback||value,`Englisch: ${label}`,max)}:{de:text(value?.de,label,max),en:text(value?.en||value?.de||fallback,`Englisch: ${label}`,max)};
 const text = (value: unknown, label: string, max: number) => {
   if (typeof value !== "string") throw new BookingError(400,"INVALID_CONTENT",`${label} fehlt.`);
@@ -29,11 +30,13 @@ export function validateMarketingContent(value: unknown): MarketingContent {
   const ids=new Set<string>();
   const events=v.events.map((event:Record<string,any>)=>{
     const id=slug(event.id);if(ids.has(id))throw new BookingError(400,"DUPLICATE_EVENT","Event-IDs müssen eindeutig sein.");ids.add(id);
-    const date=text(event.date,"Event-Datum",10),time=text(event.time,"Event-Uhrzeit",5);
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(time))throw new BookingError(400,"INVALID_CONTENT","Bitte Datum und Uhrzeit des Events prüfen.");
+    const date=event.date===''&&!event.published?'':text(event.date,"Event-Datum",10),time=event.time===''&&!event.published?'':text(event.time,"Event-Uhrzeit",5);
+    if((date&&!validDate(date))||(time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)))throw new BookingError(400,"INVALID_CONTENT","Bitte Datum und Uhrzeit des Events prüfen.");
     return {id,title:{de:text(event.title?.de,"Event-Titel",120),en:text(event.title?.en||event.title?.de,"Englischer Event-Titel",120)},summary:{de:text(event.summary?.de,"Event-Beschreibung",1200),en:text(event.summary?.en||event.summary?.de,"Englische Event-Beschreibung",1200)},date,time,image:url(event.image,"Event-Bild"),featured:event.featured===true,published:event.published===true};
   });
+  if(v.opening===undefined&&!ids.has('bailamos-opening')&&events.length<50)events.unshift(openingDraft());
   return {
+    opening:validateOpening(v.opening),
     announcement:{enabled:v.announcement?.enabled===true,de:text(v.announcement?.de||"Keine Ankündigung","Ankündigung",180),en:text(v.announcement?.en||v.announcement?.de||"No announcement","Englische Ankündigung",180),link:text(v.announcement?.link||"/events","Ankündigungslink",300)},
     hero:{type:"image",image:text(v.hero?.image||"/table-terrace.webp","Hero-Bild",1000),video:null,poster:text(v.hero?.poster||v.hero?.image||"/table-terrace.webp","Hero-Poster",1000)},
     demoMedia:{notice:pair(media.notice||"Eigene Medien von Bailamos.","Medienhinweis",300,"Bailamos media."),videos:media.videos.map((item:Record<string,any>)=>({title:pair(item.title,"Videotitel",120),source:text(item.source||"Bailamos","Videoquelle",80),url:url(item.url,"Video-Link"),poster:url(item.poster,"Video-Poster")})),gallery:media.gallery.map((item:Record<string,any>)=>({label:pair(item.label,"Bildtitel",100),source:text(item.source||"Bailamos","Bildquelle",80),url:url(item.url||item.image,"Bild-Link"),image:url(item.image,"Bildadresse")}))},
