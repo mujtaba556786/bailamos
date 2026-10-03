@@ -22,14 +22,14 @@ export function SiteHeader({ active, locale = "de" }: { active?: string; locale?
     <div className="mx-auto flex h-24 max-w-[1440px] items-center justify-between px-5 sm:px-10 lg:px-16">
       <a href={p("/")} className="flex items-center gap-3" aria-label={en ? "Bailamos home" : "Bailamos Startseite"}>
         <Image src="/bailamos-logo.jpg" width={62} height={62} alt="Bailamos Logo" className="h-14 w-14 rounded-full object-cover ring-1 ring-[#c68a3b]/45" priority />
-        <span className="font-display text-xl tracking-[.08em]">BAILAMOS</span>
+        <span className="font-display hidden text-xl tracking-[.08em] sm:inline">BAILAMOS</span>
       </a>
       <nav className="hidden items-center gap-7 text-sm lg:flex" aria-label={en ? "Main navigation" : "Hauptnavigation"}>
         {links.map(link => <a key={link.key} href={link.href} className={`nav-link ${active === link.key ? "is-active" : ""}`}>{link.label}</a>)}
       </nav>
       <div className="flex items-center gap-3">
         <a href={en ? "/" : "/en"} className="rounded-full border border-white/20 px-3 py-2 text-sm font-semibold" aria-label={en ? "Auf Deutsch wechseln" : "Switch to English"}>{en ? "EN | DE" : "DE | EN"}</a>
-        <a href={p("/reservieren")} className="button-primary hidden sm:inline-flex">{labels.reserve}</a>
+        <span className="hidden sm:inline-flex"><a href={p("/reservieren")} className="button-primary">{labels.reserve}</a></span>
         <details className="group relative lg:hidden">
           <summary className="flex h-11 cursor-pointer list-none items-center gap-2 rounded-full border border-[#c68a3b]/45 px-4 text-sm font-semibold [&::-webkit-details-marker]:hidden" aria-label={labels.nav}>
             <Menu size={19} /><span>{labels.menuButton}</span>

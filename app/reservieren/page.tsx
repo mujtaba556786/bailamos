@@ -33,6 +33,8 @@ export function ReservationExperience({locale}:{locale:Locale}) {
   const selectedTime = times.includes(time) ? time : times[0] || "";
   const chosen = tables.find(table => table.id === selected);
   const bookable = tables;
+  // The home page booking teaser links here with ?date=YYYY-MM-DD&guests=N.
+  useEffect(()=>{const params=new URLSearchParams(window.location.search),wantedDate=params.get("date")||"",wantedGuests=Number(params.get("guests"));if(/^\d{4}-\d{2}-\d{2}$/.test(wantedDate)&&wantedDate>=today)setDate(wantedDate);if(Number.isInteger(wantedGuests)&&wantedGuests>=1&&wantedGuests<=8)setGuests(wantedGuests)},[today]);
 
   useEffect(()=>{let active=true;setSlotsLoading(true);setError("");fetch(`/api/reservations?date=${date}&guests=${guests}`).then(async response=>{const result=await response.json() as Result;if(!response.ok)throw new Error(result.error);if(active){setTimes(result.times||[]);setMaxGuests(result.maxGuests||4);setHorizonDays(result.horizonDays||180);setTime(current=>(result.times||[]).includes(current)?current:result.times?.[0]||"")}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:"Termine konnten nicht geladen werden.")}).finally(()=>{if(active)setSlotsLoading(false)});return()=>{active=false}},[date,guests]);
 
