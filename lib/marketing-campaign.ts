@@ -1,6 +1,6 @@
 import { BookingError } from './booking-policy.ts';
 
-export const channels = ['instagram', 'tiktok', 'facebook'] as const;
+export const channels = ['youtube', 'tiktok'] as const;
 export type Channel = typeof channels[number];
 export type Campaign = {
   id: string; title: string; headline: string; detail: string; cta: string;
@@ -11,7 +11,7 @@ export type Campaign = {
 export type SavedCampaign = {content: Campaign; version: number; updatedAt: string};
 export async function listCampaigns(db:D1Database):Promise<SavedCampaign[]>{
  const rows=await db.prepare('SELECT content_json,version,updated_at FROM marketing_campaigns ORDER BY updated_at DESC LIMIT 100').all<{content_json:string;version:number;updated_at:string}>();
- return rows.results.map(row=>({content:JSON.parse(row.content_json),version:row.version,updatedAt:row.updated_at}));
+ return rows.results.map(row=>{const saved=JSON.parse(row.content_json);saved.destinations={youtube:saved.destinations?.youtube??'later',tiktok:saved.destinations?.tiktok??'later'};return{content:validateCampaign(saved),version:row.version,updatedAt:row.updated_at}});
 }
 export async function saveCampaign(db:D1Database,input:unknown,version:number):Promise<SavedCampaign>{
  const content=validateCampaign(input),stamp=new Date().toISOString();
