@@ -1,4 +1,5 @@
 import { BookingError } from "./booking-policy.ts";
+import { decrypt,digest,encrypt } from "./social-crypto.ts";
 
 const provider = "youtube";
 const scope = "https://www.googleapis.com/auth/youtube.upload";
@@ -19,13 +20,6 @@ function requireConfig(env:YoutubeEnv){
   if(!env.DB||!env.YOUTUBE_CLIENT_ID||!env.YOUTUBE_CLIENT_SECRET||!env.SOCIAL_TOKEN_ENCRYPTION_KEY)throw new BookingError(503,"YOUTUBE_NOT_CONFIGURED","YouTube ist noch nicht vollständig eingerichtet.");
   return {db:env.DB,clientId:env.YOUTUBE_CLIENT_ID,clientSecret:env.YOUTUBE_CLIENT_SECRET,encryptionKey:env.SOCIAL_TOKEN_ENCRYPTION_KEY};
 }
-
-function bytesToBase64(bytes:Uint8Array){let value="";for(const byte of bytes)value+=String.fromCharCode(byte);return btoa(value)}
-function base64ToBytes(value:string){const raw=atob(value);return Uint8Array.from(raw,character=>character.charCodeAt(0))}
-async function digest(value:string){return bytesToBase64(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value))))}
-async function encryptionKey(secret:string){return crypto.subtle.importKey("raw",await crypto.subtle.digest("SHA-256",new TextEncoder().encode(secret)),"AES-GCM",false,["encrypt","decrypt"])}
-async function encrypt(value:string,secret:string){const iv=crypto.getRandomValues(new Uint8Array(12)),cipher=await crypto.subtle.encrypt({name:"AES-GCM",iv},await encryptionKey(secret),new TextEncoder().encode(value));return `${bytesToBase64(iv)}.${bytesToBase64(new Uint8Array(cipher))}`}
-async function decrypt(value:string,secret:string){const [iv,cipher]=value.split(".");if(!iv||!cipher)throw new Error("Invalid encrypted value");const plain=await crypto.subtle.decrypt({name:"AES-GCM",iv:base64ToBytes(iv)},await encryptionKey(secret),base64ToBytes(cipher));return new TextDecoder().decode(plain)}
 
 export async function createYoutubeAuthorization(env:YoutubeEnv){
   const {db,clientId}=requireConfig(env),state=crypto.randomUUID()+crypto.randomUUID(),now=Date.now();
