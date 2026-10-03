@@ -91,3 +91,11 @@ export async function sendTiktokDraft(env:TiktokEnv,campaign:{mediaUrl:string;me
   if(!uploaded.ok)throw new BookingError(502,"TIKTOK_UPLOAD_FAILED",`Das Video konnte nicht zu TikTok übertragen werden (${uploaded.status}).`);
   return{publishId:started.data.publish_id};
 }
+
+// Where a draft upload stands (PROCESSING_UPLOAD, SEND_TO_USER_INBOX, FAILED + reason).
+export async function tiktokPublishStatus(env:TiktokEnv,publishId:string){
+  const token=await accessToken(env);
+  const response=await fetch(`${api}/post/publish/status/fetch/`,{method:"POST",headers:{authorization:`Bearer ${token}`,"content-type":"application/json; charset=UTF-8"},body:JSON.stringify({publish_id:publishId})});
+  const result=await response.json() as {data?:{status?:string;fail_reason?:string};error?:{code?:string;message?:string}};
+  return{status:result.data?.status||null,failReason:result.data?.fail_reason||null,error:result.error?.code&&result.error.code!=="ok"?`${result.error.code}: ${result.error.message||""}`:null};
+}
