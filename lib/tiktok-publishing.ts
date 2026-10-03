@@ -19,7 +19,8 @@ type TokenResponse = {access_token?:string;expires_in?:number;refresh_token?:str
 
 function requireConfig(env:TiktokEnv){
   if(!env.DB||!env.TIKTOK_CLIENT_KEY||!env.TIKTOK_CLIENT_SECRET||!env.SOCIAL_TOKEN_ENCRYPTION_KEY)throw new BookingError(503,"TIKTOK_NOT_CONFIGURED","TikTok ist noch nicht vollständig eingerichtet.");
-  return {db:env.DB,clientKey:env.TIKTOK_CLIENT_KEY,clientSecret:env.TIKTOK_CLIENT_SECRET,encryptionKey:env.SOCIAL_TOKEN_ENCRYPTION_KEY};
+  // Values pasted into `wrangler secret put` can carry stray whitespace; TikTok rejects them untrimmed.
+  return {db:env.DB,clientKey:env.TIKTOK_CLIENT_KEY.trim(),clientSecret:env.TIKTOK_CLIENT_SECRET.trim(),encryptionKey:env.SOCIAL_TOKEN_ENCRYPTION_KEY};
 }
 
 async function requestToken(params:Record<string,string>){
@@ -52,6 +53,14 @@ export async function tiktokConnectionStatus(env:TiktokEnv){
   if(!env.DB||!env.TIKTOK_CLIENT_KEY||!env.TIKTOK_CLIENT_SECRET||!env.SOCIAL_TOKEN_ENCRYPTION_KEY)return{configured:false,connected:false};
   const row=await env.DB.prepare("SELECT account_label,updated_at FROM social_connections WHERE provider=?").bind(provider).first<{account_label:string;updated_at:string}>();
   return{configured:true,connected:Boolean(row),accountLabel:row?.account_label||"",updatedAt:row?.updated_at||null};
+}
+
+// Admin diagnostic: TikTok's client_credentials grant succeeds only for a valid key/secret pair.
+export async function checkTiktokCredentials(env:TiktokEnv){
+  const {clientKey,clientSecret}=requireConfig(env);
+  const response=await fetch(`${api}/oauth/token/`,{method:"POST",headers:{"content-type":"application/x-www-form-urlencoded","cache-control":"no-cache"},body:new URLSearchParams({client_key:clientKey,client_secret:clientSecret,grant_type:"client_credentials"})});
+  const result=await response.json() as TokenResponse;
+  return{valid:response.ok&&Boolean(result.access_token),keyLength:clientKey.length,secretLength:clientSecret.length,error:result.error_description||result.error||null};
 }
 
 async function accessToken(env:TiktokEnv){

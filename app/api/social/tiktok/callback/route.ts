@@ -6,5 +6,5 @@ export async function GET(request:Request){
   if(error)return Response.redirect(new URL(`/admin?view=studio&tiktok=${encodeURIComponent(error)}`,url.origin),302);
   if(!code||!state)return Response.redirect(new URL("/admin?view=studio&tiktok=invalid",url.origin),302);
   try{await finishTiktokAuthorization(env,code,state);return Response.redirect(new URL("/admin?view=studio&tiktok=connected",url.origin),302)}
-  catch{return Response.redirect(new URL("/admin?view=studio&tiktok=failed",url.origin),302)}
+  catch(cause){console.error("TikTok OAuth callback failed",cause instanceof Error?cause.message:cause);return Response.redirect(new URL("/admin?view=studio&tiktok=failed",url.origin),302)}
 }
