@@ -42,7 +42,7 @@ export default function Admin(){
   const [saving,setSaving]=useState(false);
   const [view,setView]=useState<"reservations"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
 
-  useEffect(()=>{const saved=sessionStorage.getItem("bailamos-admin-key");if(saved){setKey(saved)}},[]);
+  useEffect(()=>{const saved=sessionStorage.getItem("bailamos-admin-key");if(saved){setKey(saved)}const requested=new URLSearchParams(window.location.search).get("view");if(requested==="studio")setView("studio")},[]);
 
   const api=useCallback(async(url:string,options:RequestInit={})=>{
     const response=await fetch(url,{...options,headers:{...options.headers,"x-admin-key":key||draftKey}});

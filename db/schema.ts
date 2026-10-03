@@ -95,3 +95,21 @@ export const marketingCampaigns = sqliteTable("marketing_campaigns", {
   version: integer("version").notNull().default(1),
   updatedAt: text("updated_at").notNull(),
 });
+
+export const socialConnections = sqliteTable("social_connections", {
+  provider: text("provider").primaryKey(),
+  accessTokenEncrypted: text("access_token_encrypted").notNull(),
+  refreshTokenEncrypted: text("refresh_token_encrypted"),
+  expiresAt: integer("expires_at").notNull(),
+  scope: text("scope").notNull().default(""),
+  accountLabel: text("account_label").notNull().default(""),
+  createdAt: text("created_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});
+
+export const socialOauthStates = sqliteTable("social_oauth_states", {
+  stateHash: text("state_hash").primaryKey(),
+  provider: text("provider").notNull(),
+  expiresAt: integer("expires_at").notNull(),
+  createdAt: text("created_at").notNull(),
+}, (table) => [index("idx_social_oauth_states_expiry").on(table.expiresAt)]);

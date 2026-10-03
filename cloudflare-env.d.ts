@@ -5,5 +5,8 @@ declare namespace Cloudflare {
     ADMIN_API_KEY?: string;
     OPENAI_API_KEY?: string;
     OPENAI_MODEL?: string;
+    YOUTUBE_CLIENT_ID?: string;
+    YOUTUBE_CLIENT_SECRET?: string;
+    SOCIAL_TOKEN_ENCRYPTION_KEY?: string;
   }
 }
