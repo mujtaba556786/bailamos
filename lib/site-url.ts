@@ -1,4 +1,5 @@
-const fallbackUrl = "http://localhost:5173";
+// Production domain; set NEXT_PUBLIC_SITE_URL to override (e.g. for a staging copy).
+const fallbackUrl = "https://bailamos-waldcafe.de";
 
 export function getSiteUrl(path = "/") {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim() || fallbackUrl;
