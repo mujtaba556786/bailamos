@@ -46,3 +46,4 @@ next-env.d.ts
 /work/
 tsconfig.tsbuildinfo
 marketing/*.mp4
+marketing/*.png
