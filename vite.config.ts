@@ -13,15 +13,26 @@ const { d1, r2 } = hostingConfig;
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const managedLinux = readExecutionProfile() === "managed-linux";
 
+// Self-hosted deploys (restaurant-owned Cloudflare account) set these; Sites
+// builds leave them unset and keep the placeholder resources.
+const selfHosted = {
+  workerName: process.env.CF_WORKER_NAME,
+  d1Name: process.env.CF_D1_NAME,
+  d1Id: process.env.CF_D1_ID,
+  r2Bucket: process.env.CF_R2_BUCKET,
+};
+
 const localBindingConfig = {
+  ...(selfHosted.workerName ? { name: selfHosted.workerName } : {}),
   main: "vinext/server/fetch-handler",
   compatibility_flags: ["nodejs_compat"],
   d1_databases: d1
     ? [
         {
           binding: d1,
-          database_name: "site-creator-d1",
-          database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          database_name: selfHosted.d1Name ?? "site-creator-d1",
+          database_id: selfHosted.d1Id ?? SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          migrations_dir: "drizzle",
         },
       ]
     : [],
@@ -29,7 +40,7 @@ const localBindingConfig = {
     ? [
         {
           binding: r2,
-          bucket_name: "site-creator-r2",
+          bucket_name: selfHosted.r2Bucket ?? "site-creator-r2",
         },
       ]
     : [],
