@@ -1,4 +1,4 @@
-import { Footer } from '../components/footer';
+import { Footer } from '../../components/footer';
 
 export const metadata = {
   title: 'Datenschutz – Bailamos Waldcafé',

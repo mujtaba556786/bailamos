@@ -9,6 +9,7 @@ import { berlinDate } from "../lib/booking-policy";
 import { SiteHeader } from "../components/site-header";
 import { StructuredData } from "../components/structured-data";
 import { HomeCarousel, type HighlightSlide } from "../components/home-carousel";
+import { Footer } from "../components/footer";
 import { getSiteUrl } from "../lib/site-url";
 import { localized,withLocale,type Locale } from "../lib/i18n";
 import type {Metadata} from "next";
@@ -37,7 +38,7 @@ export async function HomeContent({locale}:{locale:Locale}) {
     ...signature.slice(0,3).map(dish=>({id:`dish-${dish.id}`,kind:"dish" as const,label:L("Neu auf der Karte","New on the menu"),meta:price(dish.price),title:localized(dish.name,locale),text:localized(dish.description,locale),image:dish.image,href:withLocale("/menu",locale),cta:L("Zur Speisekarte","See the menu")})),
   ];
 
-  return <main className="overflow-hidden bg-[#09130f] text-[#f5e8d3]">
+  return <><main className="overflow-hidden bg-[#09130f] text-[#f5e8d3]">
     <StructuredData data={{"@context":"https://schema.org","@type":"Restaurant","@id":`${getSiteUrl()}#restaurant`,name:restaurant.name,legalName:restaurant.legalName,url:getSiteUrl().toString(),telephone:restaurant.contact.phone,email:restaurant.contact.email,address:{"@type":"PostalAddress",streetAddress:restaurant.contact.address,addressCountry:"DE"},servesCuisine:"Mexican",acceptsReservations:true,menu:getSiteUrl("/menu").toString(),sameAs:[marketing.social.youtube.url,marketing.social.tiktok.url].filter(url=>url!=="#"),openingHoursSpecification:Object.entries(restaurant.openingHours).filter(([,hours])=>hours!=="closed").map(([day,hours])=>{const [opens,closes]=(hours as string).split("-");return{"@type":"OpeningHoursSpecification",dayOfWeek:`https://schema.org/${schemaDays[day]}`,opens,closes}}),potentialAction:{"@type":"ReserveAction",target:getSiteUrl("/reservieren").toString()}}}/>
     <SiteHeader active="Start" locale={locale}/>
 
@@ -83,5 +84,7 @@ export async function HomeContent({locale}:{locale:Locale}) {
 
     <section id="contact" className="bg-[#09130f] px-5 py-16 sm:px-10"><div className="mx-auto grid max-w-7xl gap-8 border-y border-[#c68a3b]/25 py-12 md:grid-cols-3"><div><p className="eyebrow">{restaurant.name}</p><p className="font-display mt-3 flex gap-2 text-3xl"><MapPin size={22} className="mt-1 shrink-0 text-[#efc67e]"/>{restaurant.contact.address}</p></div><div><p className="eyebrow">{L("Öffnungszeiten","Opening hours")}</p><div className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 text-sm leading-7 text-white/65">{weekdays.map(([key,de,en])=>{const hours=restaurant.openingHours[key];return <Fragment key={key}><span>{L(de,en)}</span><span>{hours==="closed"?L("geschlossen","closed"):hours.replace("-","–")+L(" Uhr","")}</span></Fragment>})}</div></div><div><p className="eyebrow">{L("Reservierungen","Reservations")}</p><p className="mt-3 leading-7 text-white/65">{restaurant.contact.phone}<br/>{restaurant.contact.email}</p></div></div><footer className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 pt-8 text-sm text-white/40"><span>© 2026 {restaurant.name}</span><span>{L("Authentisch · Leidenschaftlich · Mexikanisch","Authentic · Passionate · Mexican")}</span></footer></section>
   </main>
+  <Footer lang={locale} />
+  </>
 }
 export default function Home(){return <HomeContent locale="de"/>}
