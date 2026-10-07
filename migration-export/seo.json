@@ -1,0 +1,55 @@
+{
+  "pages": {
+    "home": {
+      "title": {
+        "de": "Bailamos | Mexikanisches Restaurant & Cocktail Bar",
+        "en": "Bailamos | Mexican Restaurant & Cocktail Bar"
+      },
+      "description": {
+        "de": "Authentische mexikanische Küche, Cocktails und besondere Abende bei Bailamos.",
+        "en": "Authentic Mexican food, cocktails and memorable evenings at Bailamos."
+      }
+    },
+    "menu": {
+      "title": {
+        "de": "Speisekarte",
+        "en": "Menu"
+      },
+      "description": {
+        "de": "Entdecken Sie die aktuelle Bailamos Speisekarte mit mexikanischen Gerichten, Preisen und Allergenhinweisen.",
+        "en": "Explore the current Bailamos menu with Mexican dishes, prices and allergen information."
+      }
+    },
+    "events": {
+      "title": {
+        "de": "Events",
+        "en": "Events"
+      },
+      "description": {
+        "de": "Aktuelle Events und besondere Abende im Bailamos.",
+        "en": "Current events and special evenings at Bailamos."
+      }
+    },
+    "reservation": {
+      "title": {
+        "de": "Tisch reservieren",
+        "en": "Reserve a table"
+      },
+      "description": {
+        "de": "Verfügbarkeit prüfen, Tisch mit Bild auswählen und direkt bei Bailamos reservieren.",
+        "en": "Check availability, choose a table with photos and request a reservation at Bailamos."
+      }
+    }
+  },
+  "keywords": {
+    "de": "Mexikanisches Restaurant, Cocktail Bar, Tisch reservieren, Mexikanische Küche",
+    "en": "Mexican restaurant, cocktail bar, table reservation, Mexican food"
+  },
+  "serviceAreas": [
+    "Berlin"
+  ],
+  "brandSummary": {
+    "de": "Mexikanisches Restaurant und Cocktailbar mit authentischer Küche, charaktervollen Drinks und besonderen Abenden.",
+    "en": "Mexican restaurant and cocktail bar with authentic food, characterful drinks and memorable evenings."
+  }
+}

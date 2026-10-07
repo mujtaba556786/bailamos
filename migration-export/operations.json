@@ -1,0 +1,97 @@
+{
+  "restaurant": {
+    "name": "Bailamos",
+    "legalName": "Bailamos Mexikanisches Restaurant & Cocktail Bar",
+    "languages": [
+      "de",
+      "en"
+    ],
+    "contact": {
+      "address": "Musterstraße 18, 10117 Berlin",
+      "phone": "+49 30 123 45 678",
+      "email": "hola@bailamos.berlin",
+      "whatsapp": "+49 30 123 45 678"
+    },
+    "openingHours": {
+      "tuesday": "17:00-23:00",
+      "wednesday": "17:00-23:00",
+      "thursday": "17:00-23:00",
+      "friday": "17:00-01:00",
+      "saturday": "17:00-01:00",
+      "sunday": "17:00-22:00",
+      "monday": "closed"
+    },
+    "reservation": {
+      "durationMinutes": 120,
+      "intervalMinutes": 30,
+      "maximumGuests": 10
+    },
+    "features": {
+      "panorama": false,
+      "whatsapp": false
+    }
+  },
+  "tables": [
+    {
+      "id": "table-08",
+      "name": "Tisch 08",
+      "capacity": 4,
+      "area": {
+        "de": "Fensterplatz",
+        "en": "Window"
+      },
+      "setting": {
+        "de": "Innenbereich",
+        "en": "Indoor"
+      },
+      "feature": {
+        "de": "Schöner Ausblick am Fenster",
+        "en": "Beautiful window view"
+      },
+      "image": "/table-window.webp",
+      "enabled": true
+    },
+    {
+      "id": "table-12",
+      "name": "Tisch 12",
+      "capacity": 4,
+      "area": {
+        "de": "Ruhige Ecke",
+        "en": "Quiet corner"
+      },
+      "setting": {
+        "de": "Innenbereich",
+        "en": "Indoor"
+      },
+      "feature": {
+        "de": "Ruhige Lage, besonders gemütlich",
+        "en": "Quiet and especially cosy"
+      },
+      "image": "/table-corner.webp",
+      "enabled": true
+    },
+    {
+      "id": "table-16",
+      "name": "Tisch 16",
+      "capacity": 4,
+      "area": {
+        "de": "Terrasse",
+        "en": "Terrace"
+      },
+      "setting": {
+        "de": "Außenbereich",
+        "en": "Outdoor"
+      },
+      "feature": {
+        "de": "Angenehme Atmosphäre im Freien",
+        "en": "Relaxed outdoor atmosphere"
+      },
+      "image": "/table-terrace.webp",
+      "enabled": true
+    }
+  ],
+  "booking": {
+    "leadMinutes": 30,
+    "horizonDays": 180
+  }
+}

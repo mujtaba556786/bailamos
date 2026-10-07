@@ -1,0 +1,47 @@
+{
+  "exportedAt": "2026-09-29T09:30:50.764Z",
+  "source": "https://bailamos-berlin.ahmed556.chatgpt.site",
+  "complete": false,
+  "contentSources": {
+    "menu": {
+      "source": "default",
+      "version": 0
+    },
+    "content": {
+      "source": "saved",
+      "version": 3
+    },
+    "seo": {
+      "source": "default",
+      "version": 0
+    },
+    "operations": {
+      "source": "default",
+      "version": 0
+    },
+    "campaigns": {
+      "source": "saved",
+      "version": null
+    }
+  },
+  "counts": {
+    "categories": 4,
+    "dishes": 6,
+    "mediaFiles": 0
+  },
+  "mediaInventoryComplete": false,
+  "mediaInventoryScope": "Only keys referenced in the five exported content payloads. No bucket-list API is available; unreferenced uploads cannot be enumerated.",
+  "excluded": [
+    "reservations",
+    "reservation_events",
+    "newsletter_subscribers"
+  ],
+  "hashes": {
+    "menu.json": "24906736e85522a74289f2f2a55ca3b0e4016cf5a843fc61032283ff68d4dbb5",
+    "content.json": "79104ef6372b31c3d3f346cdce34497f9ca3f08e7004e8ea41a3aaf0a4b42c4a",
+    "seo.json": "9449aed847f65e08a8ff1cfe68747852d18375372630deea4782a99e824bdd32",
+    "operations.json": "3b03a9681c49a8075dbea86449d0c3bc056779445245496bb388bded4d4b6ece",
+    "campaigns.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "media-list.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  }
+}
