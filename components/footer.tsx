@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export function Footer({ lang = "de" }: { lang?: "de" | "en" }) {
   const isDe = lang === "de";
   const tagline = isDe ? "Authentisch · Leidenschaftlich · Mexikanisch" : "Authentic · Passionate · Mexican";
@@ -17,17 +15,17 @@ export function Footer({ lang = "de" }: { lang?: "de" | "en" }) {
 
           {/* Legal Links */}
           <nav className="flex flex-wrap items-center justify-center gap-3">
-            <Link href={isDe ? "/impressum" : "/en/impressum"} className="underline hover:opacity-100">
+            <a href={isDe ? "/impressum" : "/en/impressum"} className="underline hover:opacity-100">
               {isDe ? "Impressum" : "Legal Notice"}
-            </Link>
+            </a>
             <span>·</span>
-            <Link href={isDe ? "/datenschutz" : "/en/datenschutz"} className="underline hover:opacity-100">
+            <a href={isDe ? "/datenschutz" : "/en/datenschutz"} className="underline hover:opacity-100">
               {isDe ? "Datenschutz" : "Privacy Policy"}
-            </Link>
+            </a>
             <span>·</span>
-            <Link href={isDe ? "/agb" : "/en/agb"} className="underline hover:opacity-100">
+            <a href={isDe ? "/agb" : "/en/agb"} className="underline hover:opacity-100">
               {isDe ? "AGB" : "Terms & Conditions"}
-            </Link>
+            </a>
           </nav>
         </div>
       </div>
