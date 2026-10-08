@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { getMarketingContent } from '../../lib/marketing-content.ts';
 import { getSiteUrl } from '../../lib/site-url.ts';
 import { SocialLink } from '../../components/social-link';
-const address={street:'Anton-Saefkow-Allee 2A',postalCode:'14772',city:'Brandenburg an der Havel'},email='info@bailamos-waldcafe.de',mapsUrl='https://www.google.com/maps/place/Waldcafe+Nela+--+Steinofen-Pizza/@52.4283563,12.496978,17z/data=!4m15!1m8!3m7!1s0x47a8c6d5e8238545:0x2a6b8269d6a738bf!2sAnton-Saefkow-Allee+2A,+14772+Brandenburg+an+der+Havel-G%C3%B6rden!3b1!8m2!3d52.4283563!4d12.496978!16s%2Fg%2F11c4xxbzhj!3m5!1s0x47a8c6d5c14f0cb7:0x6b94e1e3aacf6dfc!8m2!3d52.4283409!4d12.4970253!16s%2Fg%2F1tfd5_q2?entry=ttu&g_ep=EgoyMDI2MTAwNS4wIKXMDSoASAFQAw%3D%3D';
+const address={street:'Anton-Saefkow-Allee 2A',postalCode:'14772',city:'Brandenburg an der Havel'},email='info@bailamos-waldcafe.de',mapsUrl='https://www.google.com/maps/search/?api=1&query=Anton-Saefkow-Allee+2A,+14772+Brandenburg+an+der+Havel';
 const profiles=[['Instagram','https://www.instagram.com/bailamos_waldcafe/'],['TikTok','https://www.tiktok.com/@bailamos.waldcafe'],['YouTube','https://www.youtube.com/channel/UCOix77VvOuExvfUWhey8sWw'],['Facebook','https://www.facebook.com/people/Bailamos-Mexikanisches-Restaurant-Wald-Caf%C3%A9/61595073784535/']];
 export const dynamic='force-dynamic';
 const seoTitle='Mexikanisches Restaurant & Cocktailbar in Brandenburg an der Havel – Eröffnung bald',seoDescription='Bailamos – mexikanisches Restaurant & Cocktailbar im Wald Café, Anton-Saefkow-Allee 2A, 14772 Brandenburg an der Havel. Tacos, Margaritas, Mezcal & Musik. Eröffnung demnächst.';
