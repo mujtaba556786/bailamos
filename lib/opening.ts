@@ -1,7 +1,7 @@
 import { BookingError } from './booking-policy.ts';
 
 export type Opening = {enabled:boolean;autoReveal:boolean;openingDate:string;image:string;video:string;headline:{de:string;en:string};message:{de:string;en:string}};
-export const defaultOpening:Opening={enabled:true,autoReveal:false,openingDate:'',image:'/bailamos-logo.jpg',video:'',headline:{de:'Ein neues Kapitel im Wald Café',en:'A new chapter at Wald Café'},message:{de:'Bailamos · Mexikanisches Restaurant & Cocktail Bar. Demnächst in Brandenburg an der Havel. Den genauen Eröffnungstermin geben wir hier bekannt.',en:'Bailamos · Mexican Restaurant & Cocktail Bar. Opening soon in Brandenburg an der Havel. Our confirmed opening date will be announced here.'}};
+export const defaultOpening:Opening={enabled:true,autoReveal:false,openingDate:'',image:'/bailamos-logo.jpg',video:'',headline:{de:'Bailamos Waldcafé – Mexikanisches Restaurant in Brandenburg an der Havel',en:'Bailamos Waldcafé – Mexican restaurant in Brandenburg an der Havel'},message:{de:'Bailamos · Mexikanisches Restaurant & Cocktail Bar. Demnächst in Brandenburg an der Havel. Den genauen Eröffnungstermin geben wir hier bekannt.',en:'Bailamos · Mexican Restaurant & Cocktail Bar. Opening soon in Brandenburg an der Havel. Our confirmed opening date will be announced here.'}};
 export function validDate(value:string){return /^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value))&&new Date(value).toISOString().slice(0,10)===value}
 export function revealDate(date:string){if(!validDate(date))return '';const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()-2);return d.toISOString().slice(0,10)}
 export function openingActive(config:Opening,now=new Date()){
