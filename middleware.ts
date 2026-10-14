@@ -3,7 +3,21 @@ import { env } from 'cloudflare:workers';
 import { getMarketingContent } from './lib/marketing-content.ts';
 import { openingActive } from './lib/opening.ts';
 
+const securityHeaders={
+  'X-Content-Type-Options':'nosniff',
+  'X-Frame-Options':'SAMEORIGIN',
+  'Referrer-Policy':'strict-origin-when-cross-origin',
+  'Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=()',
+  'Strict-Transport-Security':'max-age=15552000; includeSubDomains',
+};
+
 export async function middleware(request:NextRequest){
+  const response=await routeRequest(request);
+  for(const [name,value] of Object.entries(securityHeaders))response.headers.set(name,value);
+  return response;
+}
+
+async function routeRequest(request:NextRequest){
   const path=request.nextUrl.pathname.replace(/\/$/,'')||'/';
   // Keep administration, original assets and existing cancellation links accessible.
   if(path==='/admin'||path.startsWith('/admin/')||path.startsWith('/api/')||path.startsWith('/_')||/\.[a-z0-9]+$/i.test(path)||/^\/(en\/)?reservierungen\/[^/]+\/stornieren$/.test(path))return NextResponse.next();
