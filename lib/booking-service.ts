@@ -68,7 +68,7 @@ export async function changeStatus(db: D1Database,id: string,status: string,vers
     throw error;
   }
   if (!result.meta.changes) throw new BookingError(409,'STALE_VERSION','Die Reservierung wurde inzwischen geändert. Bitte aktualisieren.');
-  await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,?,?,?,?,?,?)`).bind(`${id}:${version+1}`,id,String(row.status),status,actor,reason,version+1,new Date().toISOString()).run();
+  await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING`).bind(`${id}:${version+1}`,id,String(row.status),status,actor,reason,version+1,new Date().toISOString()).run();
   return {ok:true,status,version:version+1};
 }
 export async function cancelBooking(db: D1Database,id: string,token: string) {
