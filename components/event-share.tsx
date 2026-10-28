@@ -33,7 +33,7 @@ export function EventShare({ title, text, url, label, copiedLabel, copyLabel, wh
         // The user cancelled, or sharing is blocked: fall back to the options.
       }
     }
-    setOpen(current => !current);
+    setOpen(true);
   }
 
   async function copyLink() {
@@ -49,7 +49,7 @@ export function EventShare({ title, text, url, label, copiedLabel, copyLabel, wh
   const option = "flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-4 text-sm font-semibold text-[#10261e] hover:bg-[#fff8ec]";
 
   return (
-    <div ref={wrapper} className="relative">
+    <div ref={wrapper} className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
       <button type="button" onClick={handleShare} aria-label={label} aria-expanded={open} className="grid h-12 w-12 cursor-pointer place-items-center rounded-full border border-[#10261e]/15">
         <Share2 size={18} />
       </button>
