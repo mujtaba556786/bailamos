@@ -54,14 +54,14 @@ export function EventShare({ title, text, url, label, copiedLabel, copyLabel, wh
         <Share2 size={18} />
       </button>
       {open && (
-        <div role="menu" className="absolute bottom-14 right-0 z-20 grid w-56 gap-1 rounded-2xl border border-[#10261e]/10 bg-white p-2 shadow-xl">
+        <div className="absolute bottom-full right-0 z-20 pb-2"><div role="menu" className="grid w-56 gap-1 rounded-2xl border border-[#10261e]/10 bg-white p-2 shadow-xl">
           <a role="menuitem" href={`https://wa.me/?text=${message}`} target="_blank" rel="noopener noreferrer" className={option}><SocialLogo name="WhatsApp" />{whatsappLabel}</a>
           <a role="menuitem" href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noopener noreferrer" className={option}><SocialLogo name="Facebook" />{facebookLabel}</a>
           <button role="menuitem" type="button" onClick={copyLink} className={option}>
             {copied ? <Check size={17} /> : <Copy size={17} />}
             {copied ? copiedLabel : copyLabel}
           </button>
-        </div>
+        </div></div>
       )}
     </div>
   );
