@@ -33,6 +33,12 @@ const logos: Record<string, ReactNode> = {
       <path fill="#fff" d="M9.8 8.8v6.4l5.6-3.2z" />
     </svg>
   ),
+  WhatsApp: (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-7 w-7">
+      <circle cx="12" cy="12" r="11" fill="#25D366" />
+      <path fill="#fff" d="M12 4.8a7.2 7.2 0 0 0-6.2 10.9L4.8 19.2l3.6-.9A7.2 7.2 0 1 0 12 4.8zm0 1.7a5.5 5.5 0 1 1-2.9 10.2l-.2-.1-2.1.6.6-2-.1-.2A5.5 5.5 0 0 1 12 6.5zm-2.3 2.6c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.8 2.2.9 2.6.7 3.1.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.5-.3l-1.8-.9c-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1-.3-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.3 0-.4.1-.5l.4-.5c.1-.1.2-.3.2-.5l-.8-2c-.2-.5-.4-.5-.6-.5z" />
+    </svg>
+  ),
   Facebook: (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="h-7 w-7">
       <circle cx="12" cy="12" r="11" fill="#1877F2" />
@@ -40,6 +46,13 @@ const logos: Record<string, ReactNode> = {
     </svg>
   ),
 };
+
+// Brand logo on its own, for places like the share menu.
+export function SocialLogo({ name, size = 22 }: { name: string; size?: number }) {
+  const logo = logos[name];
+  if (!logo) return null;
+  return <span aria-hidden="true" style={{ width: size, height: size }} className="inline-flex shrink-0 [&>svg]:h-full [&>svg]:w-full">{logo}</span>;
+}
 
 export function SocialLink({ name, href, className = "" }: { name: string; href: string; className?: string }) {
   return (

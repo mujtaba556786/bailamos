@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy, Share2 } from "lucide-react";
+import { SocialLogo } from "./social-link";
 
 type Props = { title: string; text: string; url: string; label: string; copiedLabel: string; copyLabel: string; whatsappLabel: string; facebookLabel: string };
 
@@ -54,8 +55,8 @@ export function EventShare({ title, text, url, label, copiedLabel, copyLabel, wh
       </button>
       {open && (
         <div role="menu" className="absolute bottom-14 right-0 z-20 grid w-56 gap-1 rounded-2xl border border-[#10261e]/10 bg-white p-2 shadow-xl">
-          <a role="menuitem" href={`https://wa.me/?text=${message}`} target="_blank" rel="noopener noreferrer" className={option}>{whatsappLabel}</a>
-          <a role="menuitem" href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noopener noreferrer" className={option}>{facebookLabel}</a>
+          <a role="menuitem" href={`https://wa.me/?text=${message}`} target="_blank" rel="noopener noreferrer" className={option}><SocialLogo name="WhatsApp" />{whatsappLabel}</a>
+          <a role="menuitem" href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noopener noreferrer" className={option}><SocialLogo name="Facebook" />{facebookLabel}</a>
           <button role="menuitem" type="button" onClick={copyLink} className={option}>
             {copied ? <Check size={17} /> : <Copy size={17} />}
             {copied ? copiedLabel : copyLabel}
