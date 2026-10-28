@@ -9,6 +9,11 @@ import { addDays, berlinDate } from "../../lib/booking-policy";
 import type { TableConfig } from "../../lib/operations-config";
 import { withLocale,type Locale } from "../../lib/i18n";
 
+// Show 2026-10-30 as 30.10.2026 (de) or 10/30/2026 (en) for guests.
+function displayDate(value: string, locale: Locale) {
+  return new Intl.DateTimeFormat(locale === "de" ? "de-DE" : "en-US", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date(`${value}T12:00:00`));
+}
+
 type Result = { error?: string; tables?: TableConfig[]; times?:string[]; maxGuests?:number; horizonDays?:number; reservation?: { id: string }; cancellationToken?: string };
 const emptyDetails = { name: "", phone: "", email: "", occasion: "", dietary: "", notes: "" };
 
@@ -104,13 +109,13 @@ export function ReservationExperience({locale}:{locale:Locale}) {
         </div>
       </section>}
 
-      {step === 2 && <form onSubmit={submit} className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.15fr_.85fr]">
-        <section>
+      {step === 2 && <form onSubmit={submit} className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,.85fr)]">
+        <section className="min-w-0">
           <button type="button" onClick={() => { setStep(1); setError(""); }} className="mb-5 inline-flex items-center gap-2 text-sm text-white/65 hover:text-white"><ArrowLeft size={17} /> {L("Termin ändern","Change date or time")}</button>
           <div className="rounded-[2rem] bg-[#fff8ec] p-6 text-[#10261e] sm:p-9">
             <h2 className="font-display text-4xl">{L("Tisch & Kontaktdaten","Table & contact details")}</h2>
-            <p className="mt-2 text-base text-[#10261e]/60">{date} · {selectedTime}{locale==="de"?" Uhr":""} · {guests} {guests === 1 ? L("Person","person") : L("Personen","people")}</p>
-            <fieldset className="mt-7"><legend className="text-base font-semibold">{L("Wo möchten Sie sitzen?","Where would you like to sit?")}</legend>
+            <p className="mt-2 text-base text-[#10261e]/60">{displayDate(date, locale)} · {selectedTime}{locale==="de"?" Uhr":""} · {guests} {guests === 1 ? L("Person","person") : L("Personen","people")}</p>
+            <fieldset className="mt-7 min-w-0"><legend className="text-base font-semibold">{L("Wo möchten Sie sitzen?","Where would you like to sit?")}</legend>
               <div className="mt-4 flex snap-x gap-4 overflow-x-auto pb-3">
                 <button type="button" onClick={() => setSelected("restaurant-choice")} aria-pressed={selected === "restaurant-choice"} className={`min-w-[220px] snap-start rounded-2xl border p-5 text-left transition ${selected === "restaurant-choice" ? "border-[#a52520] bg-[#fff0de] ring-2 ring-[#a52520]/15" : "border-[#10261e]/15 bg-white"}`}><CheckCircle2 size={22} className={selected === "restaurant-choice" ? "text-[#a52520]" : "text-[#10261e]/30"} /><strong className="mt-5 block text-lg">{L("Beste Auswahl","Best available")}</strong><span className="mt-1 block text-sm text-[#10261e]/60">{L("Wir wählen den passendsten freien Tisch.","We choose the most suitable available table.")}</span></button>
                 {bookable.map(table => <button type="button" key={table.id} onClick={() => setSelected(table.id)} aria-pressed={selected === table.id} className={`min-w-[235px] snap-start overflow-hidden rounded-2xl border bg-white text-left transition ${selected === table.id ? "border-[#a52520] ring-2 ring-[#a52520]/15" : "border-[#10261e]/15"}`}><div className="relative aspect-[16/9]"><Image src={table.image} fill alt={table.area[locale]} className="object-cover" sizes="235px" /></div><div className="p-4"><strong className="text-lg">{table.area[locale]}</strong><span className="mt-1 block text-sm text-[#10261e]/60">{table.feature[locale]}</span></div></button>)}
@@ -131,8 +136,8 @@ export function ReservationExperience({locale}:{locale:Locale}) {
         </section>
         <aside className="h-fit rounded-[2rem] border border-[#c68a3b]/30 bg-[#10261e] p-6 sm:p-8 lg:sticky lg:top-28">
           <p className="eyebrow">{L("Ihre Auswahl","Your selection")}</p><h3 className="font-display mt-3 text-3xl">{chosen ? chosen.area[locale] : L("Tischwahl durch uns","Table selected by us")}</h3>
-          <dl className="mt-7 space-y-4 border-y border-white/10 py-6 text-base"><div className="flex justify-between gap-5"><dt className="text-white/55">{L("Datum","Date")}</dt><dd>{date}</dd></div><div className="flex justify-between gap-5"><dt className="text-white/55">{L("Uhrzeit","Time")}</dt><dd>{selectedTime}{locale==="de"?" Uhr":""}</dd></div><div className="flex justify-between gap-5"><dt className="text-white/55">{L("Gäste","Guests")}</dt><dd>{guests}</dd></div></dl>
-          <button disabled={saving} className="mt-7 flex min-h-14 w-full items-center justify-between rounded-full bg-[#a52520] px-6 font-semibold text-white hover:bg-[#bf3029] disabled:opacity-50">{saving ? L("Anfrage wird gesendet…","Sending request…") : L("Reservierung anfragen","Request reservation")}<ArrowRight size={19} /></button>
+          <dl className="mt-7 space-y-4 border-y border-white/10 py-6 text-base"><div className="flex justify-between gap-5"><dt className="text-white/55">{L("Datum","Date")}</dt><dd>{displayDate(date, locale)}</dd></div><div className="flex justify-between gap-5"><dt className="text-white/55">{L("Uhrzeit","Time")}</dt><dd>{selectedTime}{locale==="de"?" Uhr":""}</dd></div><div className="flex justify-between gap-5"><dt className="text-white/55">{L("Gäste","Guests")}</dt><dd>{guests}</dd></div></dl>
+          <button disabled={saving} className="mt-7 flex min-h-14 w-full items-center justify-between gap-3 whitespace-nowrap rounded-full bg-[#a52520] px-6 font-semibold text-white hover:bg-[#bf3029] disabled:opacity-50">{saving ? L("Anfrage wird gesendet…","Sending request…") : L("Reservierung anfragen","Request reservation")}<ArrowRight size={19} /></button>
           <p className="mt-4 text-sm leading-6 text-white/50">{L("Sie erhalten zunächst eine Anfragebestätigung. Das Restaurant bestätigt Ihren Tisch anschließend verbindlich.","You will first receive a request confirmation. The restaurant will then confirm your table.")}</p>
         </aside>
       </form>}
