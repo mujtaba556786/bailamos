@@ -25,6 +25,7 @@ export function ReservationExperience({locale}:{locale:Locale}) {
   const [guests, setGuests] = useState(2);
   const [selected, setSelected] = useState("restaurant-choice");
   const [tables, setTables] = useState<TableConfig[]>([]);
+  const [nextFreeDate,setNextFreeDate]=useState("");
   const [times,setTimes]=useState<string[]>([]),[maxGuests,setMaxGuests]=useState(4),[horizonDays,setHorizonDays]=useState(180),[slotsLoading,setSlotsLoading]=useState(true);
   const [details, setDetails] = useState(emptyDetails);
   const [newsletter, setNewsletter] = useState(false);
@@ -40,7 +41,19 @@ export function ReservationExperience({locale}:{locale:Locale}) {
   // The home page booking teaser links here with ?date=YYYY-MM-DD&guests=N.
   useEffect(()=>{const params=new URLSearchParams(window.location.search),wantedDate=params.get("date")||"",wantedGuests=Number(params.get("guests"));if(/^\d{4}-\d{2}-\d{2}$/.test(wantedDate)&&wantedDate>=today)setDate(wantedDate);if(Number.isInteger(wantedGuests)&&wantedGuests>=1&&wantedGuests<=8)setGuests(wantedGuests)},[today]);
 
-  useEffect(()=>{let active=true;setSlotsLoading(true);setError("");fetch(`/api/reservations?date=${date}&guests=${guests}`).then(async response=>{const result=await response.json() as Result;if(!response.ok)throw new Error(result.error);if(active){setTimes(result.times||[]);setMaxGuests(result.maxGuests||4);setHorizonDays(result.horizonDays||180);setTime(current=>(result.times||[]).includes(current)?current:result.times?.[0]||"")}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:"Termine konnten nicht geladen werden.")}).finally(()=>{if(active)setSlotsLoading(false)});return()=>{active=false}},[date,guests]);
+  useEffect(()=>{let active=true;setSlotsLoading(true);setError("");fetch(`/api/reservations?date=${date}&guests=${guests}`).then(async response=>{const result=await response.json() as Result;if(!response.ok)throw new Error(result.error);if(active){setTimes(result.times||[]);if(!(result.times||[]).length){void findNextFreeDate(date,guests).then(next=>{if(active)setNextFreeDate(next)})}else setNextFreeDate("");setMaxGuests(result.maxGuests||4);setHorizonDays(result.horizonDays||180);setTime(current=>(result.times||[]).includes(current)?current:result.times?.[0]||"")}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:"Termine konnten nicht geladen werden.")}).finally(()=>{if(active)setSlotsLoading(false)});return()=>{active=false}},[date,guests]);
+
+  // Looks ahead up to two weeks for the first day that still has free times.
+  async function findNextFreeDate(from: string, partySize: number) {
+    for (let offset = 1; offset <= 14; offset++) {
+      const candidate = addDays(from, offset);
+      if (candidate > addDays(today, horizonDays)) break;
+      const response = await fetch(`/api/reservations?date=${candidate}&guests=${partySize}`);
+      const result = await response.json() as Result;
+      if (response.ok && result.times?.length) return candidate;
+    }
+    return "";
+  }
 
   async function findTables() {
     setSaving(true); setError("");
@@ -103,6 +116,7 @@ export function ReservationExperience({locale}:{locale:Locale}) {
           </div>
           {guests > maxGuests && <p role="status" className="mt-5 rounded-xl bg-[#fff0d6] p-4 text-base">{L(`Online sind aktuell bis zu ${maxGuests} Personen möglich. Größere Gruppen stimmen Sie bitte direkt mit dem Restaurant ab.`,`Online booking currently supports up to ${maxGuests} guests. Please contact the restaurant directly for larger groups.`)}</p>}
           {error && <p role="alert" className="mt-5 rounded-xl bg-red-50 p-4 text-base text-red-700">{error}</p>}
+          {!slotsLoading && !error && !times.length && <div role="status" className="mt-5 rounded-2xl border border-[#c68a3b]/40 bg-[#fff3df] p-5 text-base"><p className="font-semibold">{L("Für diesen Tag sind leider keine Plätze verfügbar.","Sorry, there are no tables available on this day.")}</p>{nextFreeDate && <button type="button" onClick={() => { setDate(nextFreeDate); setTime(""); setError(""); }} className="mt-4 min-h-12 rounded-full bg-[#10261e] px-5 text-sm font-semibold text-white">{L("Nächsten freien Tag ansehen: ","See the next free day: ")}{displayDate(nextFreeDate, locale)}</button>}<p className="mt-4 text-sm text-[#10261e]/65">{L("Oder schreiben Sie uns an","Or write to us at")} <a href="mailto:info@bailamos-waldcafe.de" className="underline">info@bailamos-waldcafe.de</a>.</p></div>}
           <button disabled={saving || slotsLoading || !selectedTime || guests > maxGuests} onClick={findTables} className="mt-7 flex min-h-14 w-full items-center justify-between rounded-full bg-[#a52520] px-6 font-semibold text-white transition hover:bg-[#bf3029] disabled:cursor-not-allowed disabled:opacity-45">{saving ? L("Verfügbarkeit wird geprüft…","Checking availability…") : L("Verfügbare Tische ansehen","View available tables")}<ArrowRight size={19} /></button>
           <p className="mt-4 text-center text-sm text-[#10261e]/55">{L("Unverbindliche Anfrage · Bestätigung folgt durch das Restaurant","Reservation request · The restaurant will confirm it")}</p>
         </div>
