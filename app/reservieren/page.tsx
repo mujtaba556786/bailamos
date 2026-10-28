@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, CalendarDays, Check, CheckCircle2, Clock3, Copy, Users } from "lucide-react";
 import { SiteHeader } from "../../components/site-header";
@@ -146,8 +145,8 @@ export function ReservationExperience({locale}:{locale:Locale}) {
         <span className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#d6a45f] text-[#10261e]"><Check size={36} /></span>
         <p className="eyebrow mt-8">{L("Anfrage","Request")} {id}</p><h1 className="font-display mt-3 text-5xl sm:text-6xl">{L("Ihre Anfrage ist eingegangen.","Your request has been received.")}</h1>
         <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-white/65">{L("Wir haben Ihre Reservierungsanfrage gespeichert. Der Tisch ist erst nach Bestätigung durch das Restaurant verbindlich reserviert.","We saved your reservation request. Your table is confirmed only after the restaurant accepts it.")}</p>
-        <div className="mt-9 rounded-2xl border border-[#c68a3b]/30 bg-white/5 p-6 text-left"><strong className="text-lg">{L("Diesen Link sicher aufbewahren","Keep this link safe")}</strong><p className="mt-2 text-sm leading-6 text-white/55">{L("Damit können Sie Ihre Anfrage später verwalten oder stornieren. Der Link ist persönlich und sollte nicht weitergegeben werden.","Use it to manage or cancel your request later. This link is personal and should not be shared.")}</p><button onClick={copyLink} className="button-secondary mt-5 w-full"><Copy size={17} />{copied ? L("Link kopiert","Link copied") : L("Verwaltungslink kopieren","Copy management link")}</button><Link href={manageUrl} className="mt-4 block text-center text-sm text-[#d6a45f] underline underline-offset-4">{L("Reservierung jetzt verwalten","Manage reservation now")}</Link></div>
-        <Link href={withLocale("/",locale)} className="button-primary mt-8">{L("Zur Startseite","Back to home")}</Link>
+        <div className="mt-9 rounded-2xl border border-[#c68a3b]/30 bg-white/5 p-6 text-left"><strong className="text-lg">{L("Diesen Link sicher aufbewahren","Keep this link safe")}</strong><p className="mt-2 text-sm leading-6 text-white/55">{L("Damit können Sie Ihre Anfrage später verwalten oder stornieren. Der Link ist persönlich und sollte nicht weitergegeben werden.","Use it to manage or cancel your request later. This link is personal and should not be shared.")}</p><button onClick={copyLink} className="button-secondary mt-5 w-full"><Copy size={17} />{copied ? L("Link kopiert","Link copied") : L("Verwaltungslink kopieren","Copy management link")}</button><a href={manageUrl} className="mt-4 block text-center text-sm text-[#d6a45f] underline underline-offset-4">{L("Reservierung jetzt verwalten","Manage reservation now")}</a></div>
+        <a href={withLocale("/",locale)} className="button-primary mt-8">{L("Zur Startseite","Back to home")}</a>
       </section>}
     </div>
   </main>;
