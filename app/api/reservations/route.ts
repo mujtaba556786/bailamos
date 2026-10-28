@@ -34,7 +34,9 @@ export async function POST(request: Request) {
     if (!seen) {
       const b = parseBooking(body,config);
       const id = String(result.reservation.id);
-      await sendReservationMail(env,'request',{id,name:b.customer.name,email:b.customer.email,date:b.date,time:b.time,guests:b.guestCount,cancelUrl:getSiteUrl(`/reservierungen/${id}/stornieren?token=${result.cancellationToken}`).toString()});
+      const guest = {id,name:b.customer.name,email:b.customer.email,date:b.date,time:b.time,guests:b.guestCount};
+      await sendReservationMail(env,'request',{...guest,cancelUrl:getSiteUrl(`/reservierungen/${id}/stornieren?token=${result.cancellationToken}`).toString()});
+      await sendReservationMail(env,'owner',{...guest,phone:b.customer.phone});
     }
     return result;
   });

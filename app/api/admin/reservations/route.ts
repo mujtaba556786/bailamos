@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { changeStatus } from '../../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../../lib/booking-http.ts';
-import { BookingError, validDate } from '../../../../lib/booking-policy.ts';
+import { BookingError, berlinDate, validDate } from '../../../../lib/booking-policy.ts';
 import { getOperations } from '../../../../lib/operations-config.ts';
 import { sendReservationMail } from '../../../../lib/reservation-mail.ts';
 function database(request: Request) {
@@ -19,6 +19,11 @@ export async function GET(request: Request) {
       const events = await db.prepare('SELECT previous_status,status,actor,reason,version,created_at FROM reservation_events WHERE reservation_id = ? ORDER BY version DESC').bind(id).all();
       const {config}=await getOperations(db),table=config.tables.find(item=>item.id===String(reservation.table_id));
       return {reservation:{...reservation,table_name:table?.name||reservation.table_id},events:events.results};
+    }
+    if (params.get('pending') === '1') {
+      const rows = await db.prepare("SELECT id,status,version,date,time,guest_count,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,created_at,updated_at,change_reason FROM reservations WHERE status = 'pending' AND date >= ? ORDER BY date, time LIMIT 100").bind(berlinDate(new Date())).all();
+      const {config}=await getOperations(db),names=new Map(config.tables.map(table=>[table.id,table.name]));
+      return {reservations:rows.results.map(row=>({...row,table_name:names.get(String(row.table_id))||row.table_id}))};
     }
     const date = params.get('date');
     if (!validDate(date)) throw new BookingError(400,'INVALID_DATE','Datum fehlt oder ist ungültig.');

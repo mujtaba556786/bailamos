@@ -1,5 +1,5 @@
 import { sendMail, type MailEnv, type MailMessage } from './mail.ts';
-export type ReservationMailDetails = { id: string; name: string; email: string; date: string; time: string; guests: number; cancelUrl?: string };
+export type ReservationMailDetails = { id: string; name: string; email: string; phone?: string; date: string; time: string; guests: number; cancelUrl?: string };
 const COLORS = { night: '#0b1712', deep: '#10261e', cream: '#fff8ec', ink: '#171712', gold: '#c68a3b', goldLight: '#d6a45f', red: '#a52520', sand: '#f5e8d3', muted: '#6b6f66' };
 const LOGO_URL = 'https://bailamos-waldcafe.de/email-logo.jpg';
 const SITE_URL = 'https://bailamos-waldcafe.de';
@@ -125,8 +125,23 @@ export function cancelledMessage(r: ReservationMailDetails): MailMessage {
   ].join('\n');
   return { to: r.email, subject: 'Ihre Reservierung wurde storniert / Your reservation has been cancelled', text, html };
 }
-export async function sendReservationMail(env: MailEnv, kind: 'request' | 'confirmed' | 'cancelled', r: ReservationMailDetails) {
-  const message = kind === 'request' ? requestMessage(r) : kind === 'confirmed' ? confirmedMessage(r) : cancelledMessage(r);
+export function ownerRequestMessage(r: ReservationMailDetails): MailMessage {
+  const adminUrl = `${SITE_URL}/admin`;
+  const summary = `${germanDate(r.date)} · ${r.time} Uhr · ${r.guests} Gäste`;
+  const contact = [r.phone, r.email].filter(Boolean).join(' · ');
+  const html = layout([
+    heading('Neue Reservierungsanfrage'),
+    `<p style="margin:0 0 6px;font-size:16px"><strong>${esc(summary)}</strong></p>`,
+    `<p style="margin:0 0 6px">${esc(r.name)}</p>`,
+    `<p style="margin:0 0 6px;color:${COLORS.muted}">${esc(contact)}</p>`,
+    `<p style="margin:14px 0 0">Bitte im Admin bestätigen oder ablehnen.</p>`,
+    button('Im Admin öffnen', adminUrl),
+  ].join(''));
+  const text = [`Neue Reservierungsanfrage`, '', summary, r.name, contact, '', `Im Admin öffnen: ${adminUrl}`].join('\n');
+  return { to: CONTACT, subject: `Neue Anfrage: ${summary} · ${r.name}`, text, html };
+}
+export async function sendReservationMail(env: MailEnv, kind: 'request' | 'confirmed' | 'cancelled' | 'owner', r: ReservationMailDetails) {
+  const message = kind === 'request' ? requestMessage(r) : kind === 'confirmed' ? confirmedMessage(r) : kind === 'owner' ? ownerRequestMessage(r) : cancelledMessage(r);
   try {
     await sendMail(env, message);
     return true;

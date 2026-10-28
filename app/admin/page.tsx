@@ -38,6 +38,7 @@ export default function Admin(){
   const [authorizing,setAuthorizing]=useState(false);
   const [error,setError]=useState("");
   const [reason,setReason]=useState("");
+  const [pending,setPending]=useState<Reservation[]>([]);
   const [pendingStatus,setPendingStatus]=useState<Status|null>(null);
   const [saving,setSaving]=useState(false);
   const [view,setView]=useState<"reservations"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
@@ -65,7 +66,12 @@ export default function Admin(){
     }finally{setLoading(false);setAuthorizing(false)}
   },[date,key]);
 
-  useEffect(()=>{if(!key)return;void load(date,key);const timer=window.setInterval(()=>void load(date,key),30000);return()=>window.clearInterval(timer)},[key,date,load]);
+  const loadPending=useCallback(async(accessKey=key)=>{
+    if(!accessKey)return;
+    try{const response=await fetch("/api/admin/reservations?pending=1",{headers:{"x-admin-key":accessKey}});const result=await response.json() as {reservations?:Reservation[]};if(response.ok)setPending(result.reservations||[])}catch{}
+  },[key]);
+
+  useEffect(()=>{if(!key)return;void load(date,key);void loadPending(key);const timer=window.setInterval(()=>{void load(date,key);void loadPending(key)},30000);return()=>window.clearInterval(timer)},[key,date,load,loadPending]);
 
   async function signIn(event:React.FormEvent){
     event.preventDefault();setAuthorizing(true);setError("");
@@ -110,6 +116,11 @@ export default function Admin(){
     <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">{[["reservations","Reservierungen"],["content","Website-Inhalte"],["studio","Marketing Studio"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].map(([id,label])=><button key={id} onClick={()=>setView(id as typeof view)} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
     {view==="reservations"?<div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="eyebrow">Restaurantbetrieb</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Reservierungen</h1><p className="mt-2 text-base text-[#10261e]/55">{localDate(date)}</p></div><div className="flex gap-2"><label className="grid text-sm"><span className="sr-only">Datum</span><input type="date" value={date} onChange={e=>{setDate(e.target.value);setSelected(null)}} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base"/></label><button onClick={()=>load()} aria-label="Aktualisieren" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><RefreshCw size={18} className={loading?"animate-spin":""}/></button></div></section>
+
+      <section className="mt-7 rounded-[2rem] border border-[#c68a3b]/35 bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-display text-2xl">Offene Anfragen {pending.length>0&&<span className="ml-2 rounded-full bg-[#a52520] px-3 py-1 align-middle text-sm font-semibold text-white">{pending.length}</span>}</h2><p className="text-sm text-[#10261e]/50">Alle kommenden Tage, nach Datum sortiert</p></div>
+        {pending.length?<div className="mt-4 divide-y divide-[#10261e]/10">{pending.map(item=><button key={item.id} onClick={()=>{setDate(item.date);void open(item)}} className="grid w-full grid-cols-[1fr_auto] items-center gap-3 py-3 text-left hover:bg-[#fff8ec]"><span><strong>{item.date.split("-").reverse().join(".")} · {item.time} Uhr</strong> <span className="text-[#10261e]/65">{item.customer_name}</span></span><span className="text-sm text-[#10261e]/55">{item.guest_count} Gäste · {tableName(item.table_id,item.table_name)}</span></button>)}</div>:<p className="mt-4 text-sm text-[#10261e]/50">Keine offenen Anfragen.</p>}
+      </section>
 
       <section className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[[CalendarDays,String(reservations.length),"Reservierungen"],[AlertCircle,String(counts.pending),"Offen"],[Check,String(counts.confirmed),"Bestätigt"],[Users,String(counts.guests),"Erwartete Gäste"]].map(([Icon,value,label])=><div key={label as string} className="rounded-2xl bg-white p-5 shadow-sm"><Icon size={20} className="text-[#b8782e]"/><p className="mt-4 text-3xl font-semibold">{value as string}</p><p className="mt-1 text-sm text-[#10261e]/50">{label as string}</p></div>)}
