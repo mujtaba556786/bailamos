@@ -1,7 +1,9 @@
 import { env } from 'cloudflare:workers';
-import { createBooking } from '../../../lib/booking-service.ts';
+import { createBooking, digest } from '../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../lib/booking-http.ts';
-import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests } from '../../../lib/booking-policy.ts';
+import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests, parseBooking } from '../../../lib/booking-policy.ts';
+import { sendReservationMail } from '../../../lib/reservation-mail.ts';
+import { getSiteUrl } from '../../../lib/site-url.ts';
 import { getOperations } from '../../../lib/operations-config.ts';
 import {getMarketingContent} from '../../../lib/marketing-content.ts';
 import {openingActive} from '../../../lib/opening.ts';
@@ -25,6 +27,15 @@ export async function POST(request: Request) {
     if (!env.DB) throw new Error('Missing DB');
     if(openingActive((await getMarketingContent(env.DB)).content.opening))throw new BookingError(403,'OPENING_SOON','Online-Reservierungen sind noch nicht freigegeben. / Online reservations are not open yet.');
     const {config}=await getOperations(env.DB);
-    return createBooking(env.DB,await readBody(request),request.headers.get('Idempotency-Key') || '',new Date(),config);
+    const body = await readBody(request);
+    const key = request.headers.get('Idempotency-Key') || '';
+    const seen = await env.DB.prepare('SELECT 1 FROM reservations WHERE booking_key_hash = ?').bind(`${await digest(key)}`).first();
+    const result = await createBooking(env.DB,body,key,new Date(),config);
+    if (!seen) {
+      const b = parseBooking(body,config);
+      const id = String(result.reservation.id);
+      await sendReservationMail(env,'request',{id,name:b.customer.name,email:b.customer.email,date:b.date,time:b.time,guests:b.guestCount,cancelUrl:getSiteUrl(`/reservierungen/${id}/stornieren?token=${result.cancellationToken}`).toString()});
+    }
+    return result;
   });
 }

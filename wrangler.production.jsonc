@@ -22,6 +22,11 @@
       "bucket_name": "bailamos-media"
     }
   ],
+  "vars": {
+    "SMTP_HOST": "smtp.ionos.de",
+    "SMTP_PORT": "587",
+    "SMTP_USER": "info@bailamos-waldcafe.de"
+  },
   "observability": {
     "enabled": true
   },
