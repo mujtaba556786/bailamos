@@ -34,9 +34,11 @@ class SmtpSession {
     this.reader = socket.readable.getReader();
     this.writer = socket.writable.getWriter();
   }
-  upgrade(socket: ReturnType<typeof connect>) {
+  detach() {
     this.reader.releaseLock();
     this.writer.releaseLock();
+  }
+  upgrade(socket: ReturnType<typeof connect>) {
     this.socket = socket;
     this.reader = socket.readable.getReader();
     this.writer = socket.writable.getWriter();
@@ -79,6 +81,7 @@ export async function sendMail(env: MailEnv, message: MailMessage) {
       await session.reply([220]);
       await session.send('EHLO bailamos-waldcafe.de\r\n', [250]);
       await session.send('STARTTLS\r\n', [220]);
+      session.detach();
       session.upgrade(socket.startTls());
       await session.send('EHLO bailamos-waldcafe.de\r\n', [250]);
       await session.send('AUTH LOGIN\r\n', [334]);
