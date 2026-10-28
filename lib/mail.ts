@@ -68,9 +68,10 @@ class SmtpSession {
   close() { this.socket.close().catch(() => {}); }
 }
 export async function sendMail(env: MailEnv, message: MailMessage) {
-  const host = env.SMTP_HOST, user = env.SMTP_USER, password = env.SMTP_PASSWORD;
+  // Host and mailbox are not secret; only the password is set as a Cloudflare secret.
+  const host = env.SMTP_HOST || 'smtp.ionos.de', user = env.SMTP_USER || 'info@bailamos-waldcafe.de', password = env.SMTP_PASSWORD;
   const port = Number(env.SMTP_PORT || 587);
-  if (!host || !user || !password) throw new Error('SMTP is not configured');
+  if (!password) throw new Error('SMTP is not configured');
   const work = async () => {
     const socket = connect({ hostname: host, port }, { secureTransport: 'starttls', allowHalfOpen: false });
     const session = new SmtpSession(socket);
