@@ -46,11 +46,11 @@ export function EventShare({ title, text, url, label, copiedLabel, copyLabel, wh
     }
   }
 
-  const option = "flex min-h-11 items-center gap-3 rounded-xl px-4 text-sm font-semibold text-[#10261e] hover:bg-[#fff8ec]";
+  const option = "flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-4 text-sm font-semibold text-[#10261e] hover:bg-[#fff8ec]";
 
   return (
     <div ref={wrapper} className="relative">
-      <button type="button" onClick={handleShare} aria-label={label} aria-expanded={open} className="grid h-12 w-12 place-items-center rounded-full border border-[#10261e]/15">
+      <button type="button" onClick={handleShare} aria-label={label} aria-expanded={open} className="grid h-12 w-12 cursor-pointer place-items-center rounded-full border border-[#10261e]/15">
         <Share2 size={18} />
       </button>
       {open && (
