@@ -3,6 +3,7 @@ import { changeStatus } from '../../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../../lib/booking-http.ts';
 import { BookingError, validDate } from '../../../../lib/booking-policy.ts';
 import { getOperations } from '../../../../lib/operations-config.ts';
+import { sendReservationMail } from '../../../../lib/reservation-mail.ts';
 function database(request: Request) {
   if (!env.ADMIN_API_KEY || request.headers.get('x-admin-key') !== env.ADMIN_API_KEY) throw new BookingError(401,'UNAUTHORIZED','Nicht autorisiert.');
   if (!env.DB) throw new Error('Missing DB');
@@ -32,6 +33,11 @@ export async function PATCH(request: Request) {
     if (!b || typeof b.id !== 'string' || typeof b.status !== 'string' || !Number.isInteger(b.version) || b.version < 0 || (b.reason !== undefined && typeof b.reason !== 'string')) throw new BookingError(400,'INVALID_REQUEST','Bitte Status und aktuelle Version angeben.');
     const reason = (b.reason || '').trim();
     if (reason.length > 500 || (['declined','cancelled'].includes(b.status) && !reason)) throw new BookingError(400,'INVALID_REASON','Bitte einen kurzen Grund angeben.');
-    return changeStatus(db,b.id,b.status,b.version,'owner',reason);
+    const result = await changeStatus(db,b.id,b.status,b.version,'owner',reason);
+    if (('version' in result) && (b.status === 'confirmed' || b.status === 'cancelled')) {
+      const row = await db.prepare('SELECT customer_name,customer_email,date,time,guest_count FROM reservations WHERE id = ?').bind(b.id).first<Record<string,string|number>>();
+      if (row) await sendReservationMail(env,b.status === 'confirmed' ? 'confirmed' : 'cancelled',{id:b.id,name:String(row.customer_name),email:String(row.customer_email),date:String(row.date),time:String(row.time),guests:Number(row.guest_count)});
+    }
+    return result;
   });
 }

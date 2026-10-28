@@ -1,6 +1,6 @@
 import { connect } from 'cloudflare:sockets';
 export type MailEnv = { SMTP_HOST?: string; SMTP_PORT?: string; SMTP_USER?: string; SMTP_PASSWORD?: string };
-export type MailMessage = { to: string; subject: string; text: string };
+export type MailMessage = { to: string; subject: string; text: string; html?: string };
 const TIMEOUT_MS = 15000;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -13,6 +13,7 @@ function encodedWord(value: string) {
   return /^[\x20-\x7e]*$/.test(value) ? value : `=?UTF-8?B?${base64(value)}?=`;
 }
 export function buildMessage(from: { name: string; address: string }, message: MailMessage, now = new Date(), messageId = crypto.randomUUID()) {
+  const boundary = `bailamos-${crypto.randomUUID()}`;
   const headers = [
     `From: ${encodedWord(from.name)} <${from.address}>`,
     `To: <${message.to}>`,
@@ -20,11 +21,10 @@ export function buildMessage(from: { name: string; address: string }, message: M
     `Date: ${now.toUTCString()}`,
     `Message-ID: <${messageId}@${from.address.split('@')[1]}>`,
     'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: base64',
   ];
-  const body = base64(message.text).replace(/.{1,76}/g, line => `${line}\r\n`);
-  return `${headers.join('\r\n')}\r\n\r\n${body}`;
+  const part = (type: string, content: string) => `Content-Type: ${type}; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n${base64(content).replace(/.{1,76}/g, line => `${line}\r\n`)}`;
+  if (!message.html) return `${[...headers, 'Content-Type: text/plain; charset=UTF-8', 'Content-Transfer-Encoding: base64'].join('\r\n')}\r\n\r\n${base64(message.text).replace(/.{1,76}/g, line => `${line}\r\n`)}`;
+  return `${[...headers, `Content-Type: multipart/alternative; boundary="${boundary}"`].join('\r\n')}\r\n\r\n--${boundary}\r\n${part('text/plain', message.text)}\r\n--${boundary}\r\n${part('text/html', message.html)}\r\n--${boundary}--\r\n`;
 }
 class SmtpSession {
   private reader: ReadableStreamDefaultReader<Uint8Array>;
