@@ -1,5 +1,5 @@
 import { sendMail, type MailEnv, type MailMessage } from './mail.ts';
-export type ReservationMailDetails = { id: string; name: string; email: string; phone?: string; date: string; time: string; guests: number; cancelUrl?: string };
+export type ReservationMailDetails = { id: string; reference?: string; name: string; email: string; phone?: string; date: string; time: string; guests: number; cancelUrl?: string };
 const COLORS = { night: '#0b1712', deep: '#10261e', cream: '#fff8ec', ink: '#171712', gold: '#c68a3b', goldLight: '#d6a45f', red: '#a52520', sand: '#f5e8d3', muted: '#6b6f66' };
 const LOGO_URL = 'https://bailamos-waldcafe.de/email-logo.jpg';
 const SITE_URL = 'https://bailamos-waldcafe.de';
@@ -17,7 +17,7 @@ function rows(r: ReservationMailDetails, de: boolean) {
     [de ? 'Datum' : 'Date', germanDate(r.date)],
     [de ? 'Uhrzeit' : 'Time', `${r.time} Uhr`],
     [de ? 'Gäste' : 'Guests', String(r.guests)],
-    [de ? 'Reservierungsnummer' : 'Reservation number', r.id],
+    [de ? 'Reservierungsnummer' : 'Reservation number', r.reference || r.id],
   ];
 }
 function detailsText(r: ReservationMailDetails, de: boolean) {

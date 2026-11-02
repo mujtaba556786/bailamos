@@ -1,5 +1,10 @@
 import { BookingError, parseBooking, slot, bookableTablesFor } from './booking-policy.ts';
 import type { OperationsConfig } from './operations-config.ts';
+// No 0/O or 1/I/L, so a code read out over the phone is hard to mistype.
+const SHORT_CODE_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+export function shortCode() {
+  return 'BLMS-' + Array.from(crypto.getRandomValues(new Uint8Array(6)), byte => SHORT_CODE_ALPHABET[byte % SHORT_CODE_ALPHABET.length]).join('');
+}
 export async function digest(value: string) {
   return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value))), b => b.toString(16).padStart(2, '0')).join('');
 }
@@ -8,7 +13,7 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
   if (!/^[a-zA-Z0-9-]{20,100}$/.test(key)) throw new BookingError(400,'INVALID_KEY','Bitte laden Sie das Formular neu.');
   const b = parseBooking(body,config), keyHash = await digest(key), payloadHash = await digest(JSON.stringify(b));
   async function response(row: Row, replayed: boolean) {
-    return {ok:true,replayed,reservation:{id:row.id,status:row.status,date:row.date,time:row.time,tableId:row.table_id,guestCount:row.guest_count},cancellationToken:await digest(`cancel:${key}:${row.id}`),marketingConsent:Boolean(row.newsletter_opt_in)};
+    return {ok:true,replayed,reservation:{id:row.id,shortCode:row.short_code,status:row.status,date:row.date,time:row.time,tableId:row.table_id,guestCount:row.guest_count},cancellationToken:await digest(`cancel:${key}:${row.id}`),marketingConsent:Boolean(row.newsletter_opt_in)};
   }
   async function replay() {
     const row = await db.prepare('SELECT * FROM reservations WHERE booking_key_hash = ?').bind(keyHash).first<Row>();
@@ -21,14 +26,14 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
   const interval = slot(b.date,b.time,now,config),duration=config?.restaurant.reservation.durationMinutes??120;
   const fingerprint = await digest(JSON.stringify([b.customer.email,b.customer.phone,b.date,b.time,b.guestCount]));
   for (const table of bookableTablesFor(config).filter(t => t.capacity >= b.guestCount && (b.tableId === 'restaurant-choice' || t.id === b.tableId))) {
-    const id = `R-${crypto.randomUUID()}`, stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
+    const id = `R-${crypto.randomUUID()}`, code = shortCode(), stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
     try {
-      const inserted = await db.prepare(`INSERT INTO reservations (id,status,date,time,guest_count,duration_minutes,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,cancel_token,booking_key_hash,booking_payload_hash,duplicate_fingerprint,starts_at,ends_at,updated_by,newsletter_opt_in,newsletter_consent_at,created_at,updated_at)
-        SELECT ?,'pending',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'customer',?,?,?,?
+      const inserted = await db.prepare(`INSERT INTO reservations (id,short_code,status,date,time,guest_count,duration_minutes,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,cancel_token,booking_key_hash,booking_payload_hash,duplicate_fingerprint,starts_at,ends_at,updated_by,newsletter_opt_in,newsletter_consent_at,created_at,updated_at)
+        SELECT ?,?,'pending',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'customer',?,?,?,?
         WHERE NOT EXISTS (SELECT 1 FROM reservations WHERE table_id = ? AND status IN ('pending','confirmed','arrived','seated') AND (
           (starts_at IS NOT NULL AND starts_at < ? AND ? < ends_at)
           OR (starts_at IS NULL AND julianday(date || ' ' || time) < julianday(? || ' ' || ?) + ? / 1440.0 AND julianday(? || ' ' || ?) < julianday(date || ' ' || time) + duration_minutes / 1440.0)
-        ))`).bind(id,b.date,b.time,b.guestCount,duration,table.id,b.customer.name,b.customer.phone,b.customer.email,b.occasion,b.dietary,b.notes,`sha256:${await digest(token)}`,keyHash,payloadHash,fingerprint,interval.startsAt,interval.endsAt,b.marketingConsent?1:0,b.marketingConsent?stamp:null,stamp,stamp,table.id,interval.endsAt,interval.startsAt,b.date,b.time,duration,b.date,b.time).run();
+        ))`).bind(id,code,b.date,b.time,b.guestCount,duration,table.id,b.customer.name,b.customer.phone,b.customer.email,b.occasion,b.dietary,b.notes,`sha256:${await digest(token)}`,keyHash,payloadHash,fingerprint,interval.startsAt,interval.endsAt,b.marketingConsent?1:0,b.marketingConsent?stamp:null,stamp,stamp,table.id,interval.endsAt,interval.startsAt,b.date,b.time,duration,b.date,b.time).run();
       if (!inserted.meta.changes) {
         const repeated = await replay();
         if (repeated) return repeated;
@@ -49,7 +54,7 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
         db.prepare('UPDATE reservations SET newsletter_synced_at = ? WHERE id = ?').bind(stamp,id),
       ]); } catch { console.error('Reservation newsletter sync pending'); }
     }
-    return response({id,status:'pending',date:b.date,time:b.time,table_id:table.id,guest_count:b.guestCount,newsletter_opt_in:b.marketingConsent?1:0},false);
+    return response({id,short_code:code,status:'pending',date:b.date,time:b.time,table_id:table.id,guest_count:b.guestCount,newsletter_opt_in:b.marketingConsent?1:0},false);
   }
   throw new BookingError(409,'NO_AVAILABILITY','Für diese Auswahl ist kein Tisch mehr frei. Bitte wählen Sie einen anderen Termin oder Tisch.');
 }
