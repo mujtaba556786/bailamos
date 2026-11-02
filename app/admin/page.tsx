@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { AlertCircle, CalendarDays, Check, ChevronLeft, ChevronRight, Clock3, KeyRound, Loader2, LogOut, Mail, MessageCircle, Phone, RefreshCw, Search, ShieldCheck, TableProperties, UserRound, Users, X } from "lucide-react";
 import { berlinDate } from "../../lib/booking-policy";
 import { AdminStatistics } from "../../components/admin-statistics";
+import { AdminNewsletter } from "../../components/admin-newsletter";
 import tables from "../../data/tables.json";
 import { AdminContent } from "../../components/admin-content";
 import { AdminMenu } from "../../components/admin-menu";
@@ -43,7 +44,7 @@ export default function Admin(){
   const [pending,setPending]=useState<Reservation[]>([]);
   const [pendingStatus,setPendingStatus]=useState<Status|null>(null);
   const [saving,setSaving]=useState(false);
-  const [view,setView]=useState<"reservations"|"statistics"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
+  const [view,setView]=useState<"reservations"|"statistics"|"newsletter"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
   // Optional filters for the reservation list: an empty range means the single day above.
   const [rangeFrom,setRangeFrom]=useState(""),[rangeTo,setRangeTo]=useState(""),[statusFilter,setStatusFilter]=useState("");
 
@@ -158,6 +159,6 @@ export default function Admin(){
           </article>}
         </div>
       </section>
-    </div>:view==="statistics"?<AdminStatistics adminKey={key}/>:view==="content"?<AdminContent adminKey={key}/>:view==="studio"?<AdminMarketingStudio adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
+    </div>:view==="statistics"?<AdminStatistics adminKey={key}/>:view==="newsletter"?<AdminNewsletter adminKey={key}/>:view==="content"?<AdminContent adminKey={key}/>:view==="studio"?<AdminMarketingStudio adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
   </main>;
 }
