@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AlertCircle, CalendarDays, Check, ChevronLeft, ChevronRight, Clock3, KeyRound, Loader2, LogOut, Mail, MessageCircle, Phone, RefreshCw, Search, ShieldCheck, TableProperties, UserRound, Users, X } from "lucide-react";
 import { berlinDate } from "../../lib/booking-policy";
+import { AdminStatistics } from "../../components/admin-statistics";
 import tables from "../../data/tables.json";
 import { AdminContent } from "../../components/admin-content";
 import { AdminMenu } from "../../components/admin-menu";
@@ -42,7 +43,9 @@ export default function Admin(){
   const [pending,setPending]=useState<Reservation[]>([]);
   const [pendingStatus,setPendingStatus]=useState<Status|null>(null);
   const [saving,setSaving]=useState(false);
-  const [view,setView]=useState<"reservations"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
+  const [view,setView]=useState<"reservations"|"statistics"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
+  // Optional filters for the reservation list: an empty range means the single day above.
+  const [rangeFrom,setRangeFrom]=useState(""),[rangeTo,setRangeTo]=useState(""),[statusFilter,setStatusFilter]=useState("");
 
   useEffect(()=>{const saved=sessionStorage.getItem("bailamos-admin-key");if(saved){setKey(saved)}const requested=new URLSearchParams(window.location.search).get("view");if(requested==="studio")setView("studio")},[]);
 
@@ -57,7 +60,8 @@ export default function Admin(){
     if(!accessKey)return;
     setLoading(true);setError("");
     try{
-      const response=await fetch(`/api/admin/reservations?date=${chosenDate}`,{headers:{"x-admin-key":accessKey}});
+      const scope=rangeFrom&&rangeTo?`from=${rangeFrom}&to=${rangeTo}`:`date=${chosenDate}`;
+      const response=await fetch(`/api/admin/reservations?${scope}`,{headers:{"x-admin-key":accessKey}});
       const result=await response.json() as {error?:string;reservations?:Reservation[]};
       if(!response.ok)throw Object.assign(new Error(result.error||"Reservierungen konnten nicht geladen werden."),{status:response.status});
       setReservations(result.reservations||[]);
@@ -65,7 +69,7 @@ export default function Admin(){
       if((cause as {status?:number}).status===401){sessionStorage.removeItem("bailamos-admin-key");setKey("");}
       setError(cause instanceof Error?cause.message:"Reservierungen konnten nicht geladen werden.");
     }finally{setLoading(false);setAuthorizing(false)}
-  },[date,key]);
+  },[date,key,rangeFrom,rangeTo]);
 
   const loadPending=useCallback(async(accessKey=key)=>{
     if(!accessKey)return;
@@ -84,6 +88,9 @@ export default function Admin(){
     }catch(cause){setError(cause instanceof Error?cause.message:"Zugang nicht möglich.");}
     finally{setAuthorizing(false)}
   }
+
+  // Opens a booking from an email link (/admin?reservation=ID) once the admin key is known.
+  useEffect(()=>{const id=new URLSearchParams(window.location.search).get("reservation");if(!key||!id)return;void (async()=>{try{const result=await api(`/api/admin/reservations?id=${encodeURIComponent(id)}`);if(!result.reservation)return;setView("reservations");setDate(String(result.reservation.date));setSelected(result.reservation as Reservation);setEvents(result.events||[])}catch{}})()},[key]);
 
   function shiftDate(days:number){const next=new Date(`${date}T12:00:00`);next.setDate(next.getDate()+days);setDate(next.toLocaleDateString("sv-SE"));setSelected(null)}
 
@@ -106,7 +113,7 @@ export default function Admin(){
     finally{setSaving(false)}
   }
 
-  const shown=useMemo(()=>reservations.filter(item=>`${item.customer_name} ${item.customer_email} ${item.customer_phone} ${item.id} ${item.short_code||""}`.toLowerCase().includes(query.toLowerCase())),[reservations,query]);
+  const shown=useMemo(()=>reservations.filter(item=>(!statusFilter||item.status===statusFilter)&&`${item.customer_name} ${item.customer_email} ${item.customer_phone} ${item.id} ${item.short_code||""}`.toLowerCase().includes(query.toLowerCase())),[reservations,query,statusFilter]);
   const active=reservations.filter(item=>!["declined","cancelled","completed","no_show"].includes(item.status));
   const counts={pending:reservations.filter(item=>item.status==="pending").length,confirmed:reservations.filter(item=>item.status==="confirmed").length,guests:active.reduce((sum,item)=>sum+item.guest_count,0)};
 
@@ -116,7 +123,7 @@ export default function Admin(){
     <header className="border-b border-[#10261e]/10 bg-[#0b1712] px-4 py-4 text-[#f5e8d3] sm:px-8">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-5"><a href="/" className="flex items-center gap-3"><Image src="/bailamos-logo.jpg" width={48} height={48} alt="Bailamos" className="h-11 w-11 rounded-full object-cover"/><div><p className="font-display text-xl">BAILAMOS</p><p className="text-xs text-white/45">Reservierungen</p></div></a><button onClick={()=>{sessionStorage.removeItem("bailamos-admin-key");setKey("");setReservations([])}} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-4 text-sm text-white/70 hover:bg-white/10"><LogOut size={17}/> <span className="hidden sm:inline">Abmelden</span></button></div>
     </header>
-    <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">{[["reservations","Reservierungen"],["content","Website-Inhalte"],["studio","Marketing Studio (bald)"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].map(([id,label])=><button key={id} disabled={id==="studio"} onClick={()=>setView(id as typeof view)} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${id==="studio"?"cursor-not-allowed text-[#10261e]/30":view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
+    <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">{[["reservations","Reservierungen"],["statistics","Statistik"],["content","Website-Inhalte"],["studio","Marketing Studio (bald)"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].map(([id,label])=><button key={id} disabled={id==="studio"} onClick={()=>setView(id as typeof view)} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${id==="studio"?"cursor-not-allowed text-[#10261e]/30":view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
     {view==="reservations"?<div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="eyebrow">Restaurantbetrieb</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Reservierungen</h1><p className="mt-2 text-base text-[#10261e]/55">{localDate(date)}</p></div><div className="flex flex-wrap items-center gap-2"><button onClick={()=>{setDate(berlinDate());setSelected(null)}} disabled={date===berlinDate()} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-sm font-semibold hover:bg-[#fff8ec] disabled:opacity-40">Heute</button><button onClick={()=>shiftDate(-1)} aria-label="Einen Tag zurück" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><ChevronLeft size={18}/></button><label className="grid text-sm"><span className="sr-only">Datum</span><input type="date" value={date} onChange={e=>{setDate(e.target.value);setSelected(null)}} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base"/></label><button onClick={()=>shiftDate(1)} aria-label="Einen Tag weiter" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><ChevronRight size={18}/></button><button onClick={()=>load()} aria-label="Aktualisieren" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><RefreshCw size={18} className={loading?"animate-spin":""}/></button></div></section>
 
@@ -131,7 +138,10 @@ export default function Admin(){
 
       <section className="mt-6 grid min-h-[520px] overflow-hidden rounded-[2rem] bg-white shadow-sm lg:grid-cols-[.9fr_1.1fr]">
         <div className="border-b border-[#10261e]/10 lg:border-b-0 lg:border-r">
-          <div className="border-b border-[#10261e]/10 p-5"><label className="flex min-h-12 items-center gap-3 rounded-xl bg-[#f4f0e8] px-4"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} aria-label="Reservierungen suchen" placeholder="Name, E-Mail, Telefon oder BLMS-Code" className="min-w-0 flex-1 bg-transparent text-base outline-none"/></label></div>
+          <div className="space-y-3 border-b border-[#10261e]/10 p-5"><label className="flex min-h-12 items-center gap-3 rounded-xl bg-[#f4f0e8] px-4"><Search size={18}/><input value={query} onChange={e=>setQuery(e.target.value)} aria-label="Reservierungen suchen" placeholder="Name, E-Mail, Telefon oder BLMS-Code" className="min-w-0 flex-1 bg-transparent text-base outline-none"/></label>
+            <div className="flex flex-wrap items-center gap-2 text-sm"><select aria-label="Status filtern" value={statusFilter} onChange={e=>setStatusFilter(e.target.value)} className="min-h-11 rounded-xl border border-[#10261e]/15 bg-white px-3"><option value="">Alle Status</option>{(Object.keys(labels) as Status[]).map(status=><option key={status} value={status}>{labels[status]}</option>)}</select><input type="date" aria-label="Von" value={rangeFrom} onChange={e=>setRangeFrom(e.target.value)} className="min-h-11 rounded-xl border border-[#10261e]/15 bg-white px-3"/><input type="date" aria-label="Bis" value={rangeTo} onChange={e=>setRangeTo(e.target.value)} className="min-h-11 rounded-xl border border-[#10261e]/15 bg-white px-3"/>{(rangeFrom||rangeTo||statusFilter)&&<button onClick={()=>{setRangeFrom("");setRangeTo("");setStatusFilter("")}} className="min-h-11 rounded-xl px-3 text-[#a52520] underline">Filter zurücksetzen</button>}</div>
+            {rangeFrom&&rangeTo&&<p className="text-xs text-[#10261e]/55">Zeitraum {rangeFrom.split("-").reverse().join(".")} bis {rangeTo.split("-").reverse().join(".")} – das Datum oben wird dafür nicht verwendet.</p>}
+          </div>
           {loading?<div className="grid min-h-72 place-items-center text-[#10261e]/50"><Loader2 className="animate-spin" size={28}/></div>:error&&!reservations.length?<div className="p-8 text-center"><AlertCircle className="mx-auto text-[#a52520]" size={30}/><p className="mt-4">{error}</p><button onClick={()=>load()} className="mt-4 text-[#a52520] underline">Erneut versuchen</button></div>:shown.length?<div className="divide-y divide-[#10261e]/10">{shown.map(item=><button key={item.id} onClick={()=>open(item)} className={`grid w-full grid-cols-[62px_1fr_auto] items-center gap-3 p-5 text-left transition hover:bg-[#fff8ec] ${selected?.id===item.id?"bg-[#fff8ec]":""}`}><strong className="text-lg">{item.time}</strong><span className="min-w-0"><span className="block truncate font-semibold">{item.customer_name}</span><span className="mt-1 block text-sm text-[#10261e]/50">{item.guest_count} Gäste · {tableName(item.table_id,item.table_name)}</span><span className="mt-0.5 block font-mono text-xs text-[#10261e]/40">{item.short_code||""}</span></span><span className="flex items-center gap-2"><StatusBadge status={item.status}/><ChevronRight size={16} className="hidden text-[#10261e]/30 sm:block"/></span></button>)}</div>:<div className="grid min-h-72 place-items-center p-8 text-center"><div><CalendarDays className="mx-auto text-[#c68a3b]" size={32}/><p className="mt-4 font-semibold">Keine Reservierungen</p><p className="mt-1 text-sm text-[#10261e]/50">Für diesen Tag sind noch keine Anfragen vorhanden.</p></div></div>}
         </div>
 
@@ -148,6 +158,6 @@ export default function Admin(){
           </article>}
         </div>
       </section>
-    </div>:view==="content"?<AdminContent adminKey={key}/>:view==="studio"?<AdminMarketingStudio adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
+    </div>:view==="statistics"?<AdminStatistics adminKey={key}/>:view==="content"?<AdminContent adminKey={key}/>:view==="studio"?<AdminMarketingStudio adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
   </main>;
 }

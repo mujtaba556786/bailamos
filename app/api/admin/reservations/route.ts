@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { changeStatus } from '../../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../../lib/booking-http.ts';
-import { BookingError, berlinDate, validDate } from '../../../../lib/booking-policy.ts';
+import { BookingError, addDays, berlinDate, validDate } from '../../../../lib/booking-policy.ts';
 import { getOperations } from '../../../../lib/operations-config.ts';
 import { sendReservationMail } from '../../../../lib/reservation-mail.ts';
 function database(request: Request) {
@@ -22,6 +22,14 @@ export async function GET(request: Request) {
     }
     if (params.get('pending') === '1') {
       const rows = await db.prepare("SELECT id,short_code,status,version,date,time,guest_count,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,created_at,updated_at,change_reason FROM reservations WHERE status = 'pending' AND date >= ? ORDER BY date, time LIMIT 100").bind(berlinDate(new Date())).all();
+      const {config}=await getOperations(db),names=new Map(config.tables.map(table=>[table.id,table.name]));
+      return {reservations:rows.results.map(row=>({...row,table_name:names.get(String(row.table_id))||row.table_id}))};
+    }
+    const from = params.get('from'), to = params.get('to');
+    if (from || to) {
+      // A date range for the statistics tab and the list filters; at most one year at a time.
+      if (!validDate(from) || !validDate(to) || from > to || to > addDays(from, 366)) throw new BookingError(400,'INVALID_RANGE','Bitte einen gültigen Zeitraum wählen (höchstens ein Jahr).');
+      const rows = await db.prepare('SELECT id,short_code,status,version,date,time,guest_count,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,created_at,updated_at,change_reason FROM reservations WHERE date BETWEEN ? AND ? ORDER BY date, time LIMIT 1000').bind(from, to).all();
       const {config}=await getOperations(db),names=new Map(config.tables.map(table=>[table.id,table.name]));
       return {reservations:rows.results.map(row=>({...row,table_name:names.get(String(row.table_id))||row.table_id}))};
     }
