@@ -3,6 +3,7 @@ import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqli
 
 export const reservations = sqliteTable("reservations", {
   id: text("id").primaryKey(),
+  shortCode: text("short_code"),
   status: text("status").notNull().default("pending"),
   date: text("date").notNull(),
   time: text("time").notNull(),
@@ -33,6 +34,7 @@ export const reservations = sqliteTable("reservations", {
   index("idx_reservations_date_table_status").on(table.date, table.tableId, table.status),
   index("idx_reservations_cancel_token").on(table.cancelToken),
   uniqueIndex("idx_reservations_booking_key").on(table.bookingKeyHash),
+  uniqueIndex("idx_reservations_short_code").on(table.shortCode),
   uniqueIndex("idx_reservations_active_duplicate").on(table.duplicateFingerprint)
     .where(sql`${table.status} IN ('pending', 'confirmed', 'arrived', 'seated')`),
   index("idx_reservations_resource_interval").on(table.tableId, table.startsAt, table.endsAt),
