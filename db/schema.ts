@@ -57,6 +57,9 @@ export const newsletterSubscribers = sqliteTable("newsletter_subscribers", {
   status: text("status").notNull().default("pending"),
   consentSource: text("consent_source").notNull().default("reservation"),
   consentAt: text("consent_at").notNull(),
+  confirmTokenHash: text("confirm_token_hash"),
+  unsubscribeToken: text("unsubscribe_token"),
+  confirmedAt: text("confirmed_at"),
   createdAt: text("created_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 }, (table) => [

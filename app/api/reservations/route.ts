@@ -4,6 +4,7 @@ import { bookingResponse, readBody } from '../../../lib/booking-http.ts';
 import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests, parseBooking } from '../../../lib/booking-policy.ts';
 import { sendReservationMail } from '../../../lib/reservation-mail.ts';
 import { sendTelegramAlert } from '../../../lib/telegram-alert.ts';
+import { requestNewsletterConfirmation } from '../../../lib/newsletter.ts';
 import { getSiteUrl } from '../../../lib/site-url.ts';
 import { getOperations } from '../../../lib/operations-config.ts';
 import {getMarketingContent} from '../../../lib/marketing-content.ts';
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
       const guest = {id,reference:String(result.reservation.shortCode),name:b.customer.name,email:b.customer.email,date:b.date,time:b.time,guests:b.guestCount};
       await sendReservationMail(env,'request',{...guest,cancelUrl:getSiteUrl(`/reservierungen/${id}/stornieren?token=${result.cancellationToken}`).toString()});
       await sendReservationMail(env,'owner',{...guest,phone:b.customer.phone});
+      if (b.marketingConsent) await requestNewsletterConfirmation(env.DB, env, b.customer.email, b.customer.name);
       await sendTelegramAlert(env,{id,reference:guest.reference,name:b.customer.name,phone:b.customer.phone,date:b.date,time:b.time,guests:b.guestCount});
     }
     return result;
