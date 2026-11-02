@@ -14,5 +14,7 @@ declare namespace Cloudflare {
     SMTP_PORT?: string;
     SMTP_USER?: string;
     SMTP_PASSWORD?: string;
+    TELEGRAM_BOT_TOKEN?: string;
+    TELEGRAM_CHAT_ID?: string;
   }
 }
