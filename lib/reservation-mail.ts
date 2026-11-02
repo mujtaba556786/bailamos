@@ -9,7 +9,7 @@ function germanDate(date: string) {
   const [year, month, day] = date.split('-');
   return `${day}.${month}.${year}`;
 }
-function esc(value: string) {
+export function esc(value: string) {
   return value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character] || character));
 }
 function rows(r: ReservationMailDetails, de: boolean) {
@@ -27,10 +27,10 @@ function detailsHtml(r: ReservationMailDetails, de: boolean) {
   const body = rows(r, de).map(([label, value]) => `<tr><td style="padding:8px 0;color:${COLORS.muted};font-size:13px;width:44%;border-bottom:1px solid #eadfcb">${esc(label)}</td><td style="padding:8px 0;color:${COLORS.ink};font-size:15px;font-weight:600;border-bottom:1px solid #eadfcb">${esc(value)}</td></tr>`).join('');
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:18px 0 6px">${body}</table>`;
 }
-function button(label: string, url: string) {
+export function button(label: string, url: string) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0 6px"><tr><td style="border-radius:999px;background:${COLORS.red}"><a href="${esc(url)}" style="display:inline-block;padding:13px 24px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:999px">${esc(label)}</a></td></tr></table>`;
 }
-function layout(inner: string) {
+export function layout(inner: string) {
   return `<!doctype html>
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bailamos Waldcafé</title></head>
 <body style="margin:0;padding:0;background:${COLORS.night}">
@@ -47,7 +47,7 @@ Bailamos Waldcafé · ${esc(ADDRESS)}<br>${esc(CONTACT)} · <a href="${SITE_URL}
 </table></td></tr></table>
 </body></html>`;
 }
-function heading(text: string) {
+export function heading(text: string) {
   return `<h1 style="margin:0 0 10px;font-family:Didot,'Bodoni 72',Georgia,'Times New Roman',serif;font-weight:normal;font-size:28px;color:${COLORS.deep}">${esc(text)}</h1>`;
 }
 function divider(label: string) {

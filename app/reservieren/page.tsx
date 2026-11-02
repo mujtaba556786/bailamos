@@ -25,7 +25,6 @@ export function ReservationExperience({locale}:{locale:Locale}) {
   const [nextFreeDate,setNextFreeDate]=useState("");
   const [times,setTimes]=useState<string[]>([]),[maxGuests,setMaxGuests]=useState(4),[horizonDays,setHorizonDays]=useState(180),[slotsLoading,setSlotsLoading]=useState(true);
   const [details, setDetails] = useState(emptyDetails);
-  const [newsletter, setNewsletter] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [id, setId] = useState("");
@@ -69,7 +68,7 @@ export function ReservationExperience({locale}:{locale:Locale}) {
     event.preventDefault();
     if (saving) return;
     setSaving(true); setError("");
-    const payload = JSON.stringify({ date, time: selectedTime, guestCount: guests, tableId: "restaurant-choice", customer: { name: details.name, phone: details.phone, email: details.email }, occasion: details.occasion, dietary: details.dietary, notes: details.notes, marketingConsent: newsletter });
+    const payload = JSON.stringify({ date, time: selectedTime, guestCount: guests, tableId: "restaurant-choice", customer: { name: details.name, phone: details.phone, email: details.email }, occasion: details.occasion, dietary: details.dietary, notes: details.notes, marketingConsent: false });
     let key = attempts.current.get(payload);
     if (!key) { key = crypto.randomUUID(); attempts.current.set(payload, key); }
     try {
@@ -132,7 +131,6 @@ export function ReservationExperience({locale}:{locale:Locale}) {
               <label className="grid gap-2 text-base sm:col-span-2">{L("Allergien oder Wünsche","Allergies or requests")}<textarea rows={3} value={details.notes} onChange={e => setDetails({...details,notes:e.target.value})} className="rounded-xl border bg-white px-4 py-3" /></label>
             </div>
             <label className="mt-6 flex gap-3 text-base"><input required type="checkbox" className="mt-1 h-5 w-5" /><span>{L("Ich akzeptiere die Reservierungsbedingungen.","I accept the reservation terms.")}</span></label>
-            <label className="mt-4 flex gap-3 rounded-2xl border border-[#c68a3b]/30 bg-[#fff3df] p-4 text-base"><input checked={newsletter} onChange={e => setNewsletter(e.target.checked)} type="checkbox" className="mt-1 h-5 w-5" /><span><strong>{L("Events und Angebote erhalten","Receive events and offers")}</strong><span className="mt-1 block text-sm text-[#10261e]/60">{L("Optional. Der Versand wird erst nach Einrichtung des Newsletter-Systems aktiviert.","Optional. Messages begin after the newsletter system is activated.")}</span></span></label>
             {error && <p role="alert" className="mt-5 rounded-xl bg-red-50 p-4 text-base text-red-700">{error}</p>}
           </div>
         </section>

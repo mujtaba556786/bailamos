@@ -1,5 +1,6 @@
 import { digest } from './booking-service.ts';
-import { sendMail, type MailEnv } from './mail.ts';
+import { sendMail, type MailEnv, type MailMessage } from './mail.ts';
+import { button, esc, heading, layout } from './reservation-mail.ts';
 
 // Newsletter sign-up is double opt-in: the guest first clicks a link in an email.
 const SITE_URL = 'https://bailamos-waldcafe.de';
@@ -14,15 +15,15 @@ export function unsubscribeUrl(token: string) {
 }
 
 // Stores a fresh confirmation link and emails it. Someone who is already subscribed is left alone.
-export async function requestNewsletterConfirmation(db: D1Database, env: MailEnv, email: string, name: string) {
+export async function requestNewsletterConfirmation(db: D1Database, env: MailEnv, email: string, name: string, source = 'website') {
   const existing = await db.prepare('SELECT status FROM newsletter_subscribers WHERE email = ?').bind(email).first<{ status: string }>();
   if (existing?.status === 'subscribed') return false;
   const token = randomToken(), unsubscribe = randomToken(), stamp = new Date().toISOString();
   await db.prepare(`INSERT INTO newsletter_subscribers (email,name,status,consent_source,consent_at,created_at,updated_at,confirm_token_hash,unsubscribe_token)
-    VALUES (?,?,'pending','reservation',?,?,?,?,?)
+    VALUES (?,?,'pending',?,?,?,?,?,?)
     ON CONFLICT(email) DO UPDATE SET status = 'pending', confirm_token_hash = excluded.confirm_token_hash,
       unsubscribe_token = COALESCE(newsletter_subscribers.unsubscribe_token, excluded.unsubscribe_token), updated_at = excluded.updated_at`)
-    .bind(email, name, stamp, stamp, stamp, await digest(token), unsubscribe).run();
+    .bind(email, name, source, stamp, stamp, stamp, await digest(token), unsubscribe).run();
   try {
     await sendMail(env, confirmationMessage(email, `${SITE_URL}/api/newsletter/confirm?token=${token}`));
   } catch {
@@ -47,26 +48,33 @@ export async function unsubscribeNewsletter(db: D1Database, token: string) {
   return result.meta.changes > 0;
 }
 
-function confirmationMessage(email: string, confirmUrl: string) {
+function confirmationMessage(email: string, confirmUrl: string): MailMessage {
+  const de = [
+    heading('Bitte bestätigen Sie Ihre Anmeldung'),
+    '<p style="margin:0 0 12px">Danke für Ihr Interesse an Bailamos Waldcafé. Wir informieren Sie gelegentlich über Events und Angebote.</p>',
+    button('Anmeldung bestätigen', confirmUrl),
+    '<p style="margin:18px 0 0;font-size:13px;color:#6b6f66">Wenn Sie sich nicht angemeldet haben, können Sie diese E-Mail einfach ignorieren.</p>',
+  ].join('');
+  const en = [
+    heading('Please confirm your subscription'),
+    '<p style="margin:0 0 12px">Thank you for your interest in Bailamos Waldcafé. We will let you know about events and offers now and then.</p>',
+    button('Confirm subscription', confirmUrl),
+    '<p style="margin:18px 0 0;font-size:13px;color:#6b6f66">If you did not sign up, you can simply ignore this email.</p>',
+  ].join('');
+  const html = layout(`${de}<div style="margin:26px 0 4px;padding-top:18px;border-top:1px solid #eadfcb;color:#c68a3b;font-size:11px;letter-spacing:2px;text-transform:uppercase">English</div>${en}`);
   const text = [
-    'Bitte bestätigen Sie Ihre Anmeldung zu den Events und Angeboten von Bailamos Waldcafé.',
+    'Bitte bestätigen Sie Ihre Anmeldung zu Events und Angeboten von Bailamos Waldcafé:',
+    confirmUrl,
     '',
-    `Link: ${confirmUrl}`,
-    '',
-    'Wenn Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.',
+    'Wenn Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail.',
     '',
     '---',
     '',
-    'Please confirm your subscription to Bailamos Waldcafé events and offers.',
-    `Link: ${confirmUrl}`,
+    'Please confirm your subscription to Bailamos Waldcafé events and offers:',
+    confirmUrl,
     'If you did not sign up, you can ignore this email.',
   ].join('\n');
-  const html = `<p>Bitte bestätigen Sie Ihre Anmeldung zu den Events und Angeboten von Bailamos Waldcafé.</p><p><a href="${confirmUrl}">Anmeldung bestätigen</a></p><p>Wenn Sie sich nicht angemeldet haben, ignorieren Sie diese E-Mail einfach.</p><hr><p>Please confirm your subscription to Bailamos Waldcafé events and offers.</p><p><a href="${confirmUrl}">Confirm subscription</a></p>`;
-  return { to: email, subject: 'Bitte bestätigen / Please confirm: Bailamos Waldcafé', text, html };
-}
-
-export function esc(value: string) {
-  return value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character] || character));
+  return { to: email, subject: 'Bitte bestätigen / Please confirm · Bailamos Waldcafé', text, html };
 }
 
 // Small page shown after a confirm or unsubscribe click.

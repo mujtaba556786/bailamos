@@ -1,3 +1,5 @@
+import { NewsletterSignup } from "./newsletter-signup";
+
 export function Footer({ lang = "de" }: { lang?: "de" | "en" }) {
   const isDe = lang === "de";
   const tagline = isDe ? "Authentisch · Leidenschaftlich · Mexikanisch" : "Authentic · Passionate · Mexican";
@@ -5,6 +7,10 @@ export function Footer({ lang = "de" }: { lang?: "de" | "en" }) {
   return (
     <footer className="bg-[#09130f] px-5 py-12 sm:px-10">
       <div className="mx-auto max-w-7xl">
+        <div className="mb-10 border-b border-[#c68a3b]/25 pb-10">
+          <h2 className="font-display text-2xl text-white">{isDe ? "Events und Angebote per E-Mail" : "Events and offers by email"}</h2>
+          <div className="mt-5 max-w-2xl"><NewsletterSignup lang={lang} /></div>
+        </div>
         <div className="border-t border-[#c68a3b]/25 pt-8">
           {/* Legal Links */}
           <nav className="mb-6 flex flex-wrap items-center justify-center gap-4">
