@@ -27,7 +27,9 @@ export async function sendTelegramAlert(env: TelegramEnv, booking: BookingAlert)
       }),
     });
     if (!response.ok) {
-      console.error('Telegram alert failed', response.status);
+      // Telegram's reply says why (for example, the bot is not in the chat). It never contains the token.
+      const reason = await response.text();
+      console.error('Telegram alert failed', response.status, reason.slice(0, 300));
       return false;
     }
     return true;
