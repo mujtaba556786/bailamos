@@ -126,7 +126,8 @@ export function cancelledMessage(r: ReservationMailDetails): MailMessage {
   return { to: r.email, subject: 'Ihre Reservierung wurde storniert / Your reservation has been cancelled', text, html };
 }
 export function ownerRequestMessage(r: ReservationMailDetails): MailMessage {
-  const adminUrl = `${SITE_URL}/admin`;
+  // Opens the admin straight at this booking (after sign-in).
+  const adminUrl = `${SITE_URL}/admin?reservation=${encodeURIComponent(r.id)}`;
   const summary = `${germanDate(r.date)} · ${r.time} Uhr · ${r.guests} Gäste`;
   const contact = [r.phone, r.email].filter(Boolean).join(' · ');
   const html = layout([
