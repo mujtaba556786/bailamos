@@ -3,6 +3,7 @@ import { getSiteUrl } from "../lib/site-url";
 import { env } from "cloudflare:workers";
 import { getSeoContent } from "../lib/seo-content.ts";
 import "./globals.css";
+import { Analytics } from "../components/analytics";
 
 export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB);return {
   metadataBase: getSiteUrl(),
@@ -32,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">{children}<Analytics /></body>
     </html>
   );
 }
