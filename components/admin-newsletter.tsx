@@ -74,6 +74,61 @@ export function AdminNewsletter({ adminKey }: { adminKey: string }) {
     URL.revokeObjectURL(link.href);
   }
 
+  // Event email: a test goes to one address, and a campaign goes to confirmed subscribers in batches.
+  const [subject, setSubject] = useState("");
+  const [body, setBody] = useState("");
+  const [testTo, setTestTo] = useState("info@bailamos-waldcafe.de");
+  const [mailStatus, setMailStatus] = useState("");
+  const [mailBusy, setMailBusy] = useState(false);
+
+  async function sendMail(payload: Record<string, unknown>) {
+    const response = await fetch("/api/admin/newsletter/send", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-admin-key": adminKey },
+      body: JSON.stringify({ subject, body, ...payload }),
+    });
+    const result = await response.json() as { error?: string; sent?: number; failed?: number; remaining?: number };
+    if (!response.ok) throw new Error(result.error || "Die E-Mail konnte nicht gesendet werden.");
+    return result;
+  }
+
+  async function sendTest() {
+    setMailBusy(true);
+    setMailStatus("Testmail wird gesendet …");
+    try {
+      await sendMail({ mode: "test", to: testTo });
+      setMailStatus(`Testmail gesendet an ${testTo}. Bitte prüfen Sie das Postfach.`);
+    } catch (cause) {
+      setMailStatus(cause instanceof Error ? cause.message : "Testmail fehlgeschlagen.");
+    } finally {
+      setMailBusy(false);
+    }
+  }
+
+  async function sendToAll() {
+    const confirmed = counts.subscribed;
+    if (!confirmed) return setMailStatus("Es gibt noch keine bestätigten Abonnenten.");
+    if (!window.confirm(`Diese E-Mail jetzt an ${confirmed} bestätigte Abonnenten senden?`)) return;
+    // A new campaign id per send, so the same text is never sent twice to the same person.
+    const bytes = crypto.getRandomValues(new Uint8Array(8));
+    const campaignId = "EV-" + Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
+    setMailBusy(true);
+    let sentTotal = 0;
+    try {
+      for (;;) {
+        const result = await sendMail({ mode: "campaign", campaignId });
+        sentTotal += result.sent ?? 0;
+        setMailStatus(`Gesendet: ${sentTotal} · Noch offen: ${result.remaining ?? 0}`);
+        if (!result.remaining || (result.sent ?? 0) === 0) break;
+      }
+      setMailStatus(`Fertig. ${sentTotal} E-Mails gesendet.`);
+    } catch (cause) {
+      setMailStatus(`${cause instanceof Error ? cause.message : "Versand unterbrochen."} Bereits gesendet: ${sentTotal}.`);
+    } finally {
+      setMailBusy(false);
+    }
+  }
+
   return <div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
     <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
       <div><p className="eyebrow">E-Mail-Liste</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Newsletter</h1><p className="mt-2 text-base text-[#10261e]/55">Wer Events und Angebote erhält</p></div>
@@ -104,6 +159,21 @@ export function AdminNewsletter({ adminKey }: { adminKey: string }) {
           </table>
         </div>
         : <div className="grid min-h-72 place-items-center p-8 text-center"><div><p className="font-semibold">Noch keine Abonnenten</p><p className="mt-1 text-sm text-[#10261e]/50">Sobald sich jemand über die Website anmeldet, erscheint die Person hier.</p></div></div>}
+    </section>
+
+    <section className="mt-6 rounded-[2rem] bg-white p-5 shadow-sm sm:p-7">
+      <h2 className="font-display text-2xl">Event-E-Mail senden</h2>
+      <p className="mt-1 text-sm text-[#10261e]/55">Die Nachricht geht nur an bestätigte Abonnenten. Jede E-Mail enthält einen Abmelde-Link.</p>
+      <div className="mt-5 grid gap-4">
+        <label className="grid gap-1 text-sm font-semibold">Betreff<input value={subject} onChange={e => setSubject(e.target.value)} placeholder="z. B. Mezcal-Abend am 18. November" className="min-h-11 rounded-xl border border-[#10261e]/15 px-4 text-base font-normal" /></label>
+        <label className="grid gap-1 text-sm font-semibold">Text (Absätze mit einer Leerzeile trennen)<textarea value={body} onChange={e => setBody(e.target.value)} rows={8} className="rounded-xl border border-[#10261e]/15 px-4 py-3 text-base font-normal" /></label>
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="grid gap-1 text-sm font-semibold">Testmail an<input value={testTo} onChange={e => setTestTo(e.target.value)} type="email" className="min-h-11 rounded-xl border border-[#10261e]/15 px-4 text-base font-normal" /></label>
+          <button onClick={sendTest} disabled={mailBusy || !subject.trim() || !body.trim()} className="min-h-11 rounded-full border border-[#10261e]/20 px-5 text-sm font-semibold hover:bg-[#fff8ec] disabled:opacity-40">Testmail senden</button>
+          <button onClick={sendToAll} disabled={mailBusy || !subject.trim() || !body.trim()} className="min-h-11 rounded-full bg-[#a52520] px-5 text-sm font-semibold text-white hover:bg-[#bf3029] disabled:opacity-40">An alle bestätigten senden ({counts.subscribed})</button>
+        </div>
+        {mailStatus && <p role="status" className="text-sm text-[#10261e]/70">{mailStatus}</p>}
+      </div>
     </section>
 
     <p className="mt-5 text-sm leading-6 text-[#10261e]/55">Nur „Bestätigt“ erhält Events und Angebote. „Noch nicht bestätigt“ hat den Bestätigungslink noch nicht angeklickt.</p>
