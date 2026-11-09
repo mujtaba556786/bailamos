@@ -9,8 +9,8 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null) as { name?: unknown; email?: unknown } | null;
   const name = typeof body?.name === 'string' ? body.name.trim().slice(0, 80) : '';
   const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase().slice(0, 200) : '';
-  if (!name || !EMAIL_PATTERN.test(email)) {
-    return Response.json({ ok: false, error: 'Bitte Name und eine gültige E-Mail-Adresse angeben.' }, { status: 400 });
+  if (!EMAIL_PATTERN.test(email)) {
+    return Response.json({ ok: false, error: 'Bitte eine gültige E-Mail-Adresse angeben. / Please enter a valid email address.' }, { status: 400 });
   }
   if (!env.DB) throw new Error('Missing DB');
   // Too many sign-ups from one visitor, or for the whole site today, gets a polite refusal.

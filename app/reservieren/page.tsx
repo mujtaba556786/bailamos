@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, CalendarDays, Check, Clock3, Copy, Users } from "lucide-react";
 import { SiteHeader } from "../../components/site-header";
+import { NewsletterSignup } from "../../components/newsletter-signup";
 import { addDays, berlinDate } from "../../lib/booking-policy";
 import { withLocale,type Locale } from "../../lib/i18n";
 
@@ -147,6 +148,7 @@ export function ReservationExperience({locale}:{locale:Locale}) {
         <p className="eyebrow mt-8">{L("Anfrage","Request")} {id}</p><h1 className="font-display mt-3 text-5xl sm:text-6xl">{L("Ihre Anfrage ist eingegangen.","Your request has been received.")}</h1>
         <p className="mx-auto mt-5 max-w-xl text-lg leading-8 text-white/65">{L("Wir haben Ihre Reservierungsanfrage gespeichert. Der Tisch ist erst nach Bestätigung durch das Restaurant verbindlich reserviert.","We saved your reservation request. Your table is confirmed only after the restaurant accepts it.")}</p>
         <div className="mt-9 rounded-2xl border border-[#c68a3b]/30 bg-white/5 p-6 text-left"><strong className="text-lg">{L("Diesen Link sicher aufbewahren","Keep this link safe")}</strong><p className="mt-2 text-sm leading-6 text-white/55">{L("Damit können Sie Ihre Anfrage später verwalten oder stornieren. Der Link ist persönlich und sollte nicht weitergegeben werden.","Use it to manage or cancel your request later. This link is personal and should not be shared.")}</p><button onClick={copyLink} className="button-secondary mt-5 w-full"><Copy size={17} />{copied ? L("Link kopiert","Link copied") : L("Verwaltungslink kopieren","Copy management link")}</button><a href={manageUrl} className="mt-4 block text-center text-sm text-[#d6a45f] underline underline-offset-4">{L("Reservierung jetzt verwalten","Manage reservation now")}</a></div>
+        <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-[#c68a3b]/30 bg-white/5 p-6 text-left"><p className="font-semibold">{L("Möchten Sie über neue Events informiert werden?","Would you like to hear about new events?")}</p><p className="mt-1 text-sm text-white/55">{L("Freiwillig. Sie bestätigen die Anmeldung erst per E-Mail.","Optional. You confirm the sign-up by email first.")}</p><div className="mt-4"><NewsletterSignup lang={locale} /></div></div>
         <a href={withLocale("/",locale)} className="button-primary mt-8">{L("Zur Startseite","Back to home")}</a>
       </section>}
     </div>
