@@ -1,16 +1,1244 @@
 {
   "categories": [
-    {"id":"tacos","name":{"de":"Tacos","en":"Tacos"}},
-    {"id":"principales","name":{"de":"Hauptgerichte","en":"Main courses"}},
-    {"id":"postres","name":{"de":"Desserts","en":"Desserts"}},
-    {"id":"cocktails","name":{"de":"Cocktails","en":"Cocktails"}}
+    {
+      "id": "sopas",
+      "name": {
+        "de": "Sopas – Suppen",
+        "en": "Sopas – Soups"
+      }
+    },
+    {
+      "id": "ensaladas",
+      "name": {
+        "de": "Ensaladas – Salate",
+        "en": "Ensaladas – Salads"
+      }
+    },
+    {
+      "id": "vorspeisen",
+      "name": {
+        "de": "Vorspeisen – Entradas",
+        "en": "Starters – Entradas"
+      }
+    },
+    {
+      "id": "tacos",
+      "name": {
+        "de": "Tacos",
+        "en": "Tacos"
+      }
+    },
+    {
+      "id": "quesadillas",
+      "name": {
+        "de": "Quesadillas",
+        "en": "Quesadillas"
+      }
+    },
+    {
+      "id": "enchiladas",
+      "name": {
+        "de": "Enchiladas",
+        "en": "Enchiladas"
+      }
+    },
+    {
+      "id": "burritos",
+      "name": {
+        "de": "Burritos",
+        "en": "Burritos"
+      }
+    },
+    {
+      "id": "tacos-spezial",
+      "name": {
+        "de": "Tacos Spezial",
+        "en": "Tacos Special"
+      }
+    },
+    {
+      "id": "fajitas",
+      "name": {
+        "de": "Fajitas – aus der heißen Pfanne",
+        "en": "Fajitas – from the hot pan"
+      }
+    },
+    {
+      "id": "kinder",
+      "name": {
+        "de": "Für unsere kleinen Gäste",
+        "en": "For our little guests"
+      }
+    },
+    {
+      "id": "principales",
+      "name": {
+        "de": "Hauptgerichte",
+        "en": "Main courses"
+      }
+    },
+    {
+      "id": "postres",
+      "name": {
+        "de": "Desserts",
+        "en": "Desserts"
+      }
+    },
+    {
+      "id": "cocktails",
+      "name": {
+        "de": "Cocktails",
+        "en": "Cocktails"
+      }
+    }
   ],
   "dishes": [
-    {"id":"tacos-al-pastor","categoryId":"tacos","name":{"de":"Tacos al Pastor","en":"Tacos al Pastor"},"description":{"de":"Mariniertes Schweinefleisch, Ananas, Zwiebel und Koriander.","en":"Marinated pork, pineapple, onion and coriander."},"price":14.9,"image":"/samples/tacos-al-pastor.webp","featured":true,"available":true,"spicy":1,"allergens":[]},
-    {"id":"tacos-birria","categoryId":"tacos","name":{"de":"Tacos de Birria","en":"Birria Tacos"},"description":{"de":"Langsam geschmortes Rind, Oaxaca-Käse und kräftige Consomé.","en":"Slow-braised beef, Oaxaca cheese and rich consommé."},"price":16.9,"image":"/samples/birria.webp","featured":true,"available":true,"spicy":2,"allergens":["Milch"]},
-    {"id":"mole-poblano","categoryId":"principales","name":{"de":"Mole Poblano","en":"Mole Poblano"},"description":{"de":"Hähnchen, geröstete Gewürze, Chili-Schokoladen-Sauce und Reis.","en":"Chicken, toasted spices, chilli-chocolate sauce and rice."},"price":23.9,"image":"/samples/mole-poblano.webp","featured":true,"available":true,"spicy":1,"allergens":["Nüsse"]},
-    {"id":"calabaza","categoryId":"principales","name":{"de":"Geröstete Calabaza","en":"Roasted Calabaza"},"description":{"de":"Kürbis, schwarze Bohnen, Pepita-Salsa und Limettencreme.","en":"Pumpkin, black beans, pepita salsa and lime crema."},"price":19.5,"image":"/samples/veggie-tacos.webp","featured":false,"available":true,"vegetarian":true,"spicy":0,"allergens":[]},
-    {"id":"tres-leches","categoryId":"postres","name":{"de":"Tres Leches","en":"Tres Leches"},"description":{"de":"Saftiger Milchkuchen, Zimt und karamellisierte Ananas.","en":"Milk cake, cinnamon and caramelised pineapple."},"price":9.5,"image":"/samples/tres-leches.webp","featured":false,"available":true,"spicy":0,"allergens":["Milch","Gluten"]},
-    {"id":"margarita","categoryId":"cocktails","name":{"de":"Bailamos Margarita","en":"Bailamos Margarita"},"description":{"de":"Tequila Blanco, Limette, Agave und Meersalz.","en":"Blanco tequila, lime, agave and sea salt."},"price":12.5,"image":"/samples/margarita-bar.webp","featured":true,"available":true,"spicy":0,"allergens":[]}
+    {
+      "id": "sopa-de-tortilla",
+      "categoryId": "sopas",
+      "name": {
+        "de": "Sopa de Tortilla",
+        "en": "Sopa de Tortilla"
+      },
+      "description": {
+        "de": "Tomatensuppe mit Fetakäse und Avocado, serviert mit knusprigen Tortillastreifen.",
+        "en": "Tomato soup with feta cheese and avocado, served with crispy tortilla strips."
+      },
+      "price": 5.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "sopa-de-maiz",
+      "categoryId": "sopas",
+      "name": {
+        "de": "Sopa de Maíz",
+        "en": "Sopa de Maíz"
+      },
+      "description": {
+        "de": "Mexikanische Maiscremesuppe.",
+        "en": "Mexican sweetcorn cream soup."
+      },
+      "price": 5.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "chili-con-carne",
+      "categoryId": "sopas",
+      "name": {
+        "de": "Chili con Carne",
+        "en": "Chili con Carne"
+      },
+      "description": {
+        "de": "Herzhafter Eintopf mit Rinderhackfleisch, Mais, Bohnen und Jalapeños, serviert mit Tortillas.",
+        "en": "Hearty stew with beef mince, corn, beans and jalapeños, served with tortillas."
+      },
+      "price": 6.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A"
+      ]
+    },
+    {
+      "id": "chili-con-carne-y-queso",
+      "categoryId": "sopas",
+      "name": {
+        "de": "Chili con Carne y Queso",
+        "en": "Chili con Carne y Queso"
+      },
+      "description": {
+        "de": "Herzhafter Eintopf mit Rinderhackfleisch, Mais, Bohnen und Jalapeños, mit Käse überbacken.",
+        "en": "Hearty stew with beef mince, corn, beans and jalapeños, topped with melted cheese."
+      },
+      "price": 7.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "ensalada-mixta",
+      "categoryId": "ensaladas",
+      "name": {
+        "de": "Ensalada Mixta",
+        "en": "Ensalada Mixta"
+      },
+      "description": {
+        "de": "Gemischter Salat mit hausgemachtem Dressing, Kidneybohnen, Schafskäse und Tortilla.",
+        "en": "Mixed salad with house-made dressing, kidney beans, feta cheese and tortilla."
+      },
+      "price": 8.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "chicken-caesar-salat",
+      "categoryId": "ensaladas",
+      "name": {
+        "de": "Chicken Caesar Salat",
+        "en": "Chicken Caesar Salad"
+      },
+      "description": {
+        "de": "Knackiger Salat mit gegrillter Hähnchenbrust, Croutons, Parmesankäse und Caesar-Dressing.",
+        "en": "Crisp salad with grilled chicken breast, croutons, Parmesan and Caesar dressing."
+      },
+      "price": 11.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "C",
+        "G"
+      ]
+    },
+    {
+      "id": "chicken-mango-salat",
+      "categoryId": "ensaladas",
+      "name": {
+        "de": "Chicken Mango Salat",
+        "en": "Chicken Mango Salad"
+      },
+      "description": {
+        "de": "Bunter Salat mit gegrillter Hähnchenbrust, frischer Mango und hausgemachtem Dressing.",
+        "en": "Colourful salad with grilled chicken breast, fresh mango and house-made dressing."
+      },
+      "price": 11.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "ensalada-rancho",
+      "categoryId": "ensaladas",
+      "name": {
+        "de": "Ensalada Rancho",
+        "en": "Ensalada Rancho"
+      },
+      "description": {
+        "de": "Gemischter Salat mit Rinderstreifen, Avocado, Mais, Bohnen, Paprika und Schafskäse.",
+        "en": "Mixed salad with beef strips, avocado, corn, beans, bell pepper and feta cheese."
+      },
+      "price": 13.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "ensalada-de-camarones",
+      "categoryId": "ensaladas",
+      "name": {
+        "de": "Ensalada de Camarones",
+        "en": "Ensalada de Camarones"
+      },
+      "description": {
+        "de": "Gemischter Salat mit gebratenen Garnelen, Avocado, Cocktailtomaten und hausgemachtem Dressing.",
+        "en": "Mixed salad with fried prawns, avocado, cherry tomatoes and house-made dressing."
+      },
+      "price": 12.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "B",
+        "G"
+      ]
+    },
+    {
+      "id": "chips-contres-salsa",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Chips Contres Salsa",
+        "en": "Chips Contres Salsa"
+      },
+      "description": {
+        "de": "Tortillachips mit Guacamole, Sauerrahm und Salsa.",
+        "en": "Tortilla chips with guacamole, sour cream and salsa."
+      },
+      "price": 8.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "nachos-con-queso",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Nachos con Queso",
+        "en": "Nachos con Queso"
+      },
+      "description": {
+        "de": "Tortillachips mit Käse überbacken, serviert mit Salsa Picante.",
+        "en": "Tortilla chips baked with cheese, served with salsa picante."
+      },
+      "price": 9.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "nachos-mexicana",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Nachos Mexicana",
+        "en": "Nachos Mexicana"
+      },
+      "description": {
+        "de": "Tortillachips mit gebackenen Zwiebeln, Tomaten, Jalapeños, Koriander und Käse überbacken, serviert mit Sauerrahm.",
+        "en": "Tortilla chips with baked onions, tomatoes, jalapeños, coriander and melted cheese, served with sour cream."
+      },
+      "price": 10.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "nachos-con-pollo",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Nachos con Pollo",
+        "en": "Nachos con Pollo"
+      },
+      "description": {
+        "de": "Tortillachips mit Hähnchenfleisch und Käse überbacken, serviert mit Sauerrahm und Guacamole.",
+        "en": "Tortilla chips with chicken and melted cheese, served with sour cream and guacamole."
+      },
+      "price": 10.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "nachos-con-carne",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Nachos con Carne",
+        "en": "Nachos con Carne"
+      },
+      "description": {
+        "de": "Tortillachips mit Rinderhackfleisch und Käse überbacken, serviert mit Sauerrahm und Guacamole.",
+        "en": "Tortilla chips with beef mince and melted cheese, served with sour cream and guacamole."
+      },
+      "price": 11.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "diablitos",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Diablitos",
+        "en": "Diablitos"
+      },
+      "description": {
+        "de": "6 Jalapeños, gefüllt mit Cheddarkäse, serviert mit Sauerrahm.",
+        "en": "6 jalapeños filled with cheddar cheese, served with sour cream."
+      },
+      "price": 8.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "mozzarella-cheese-sticks",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Mozzarella Cheese Sticks",
+        "en": "Mozzarella Cheese Sticks"
+      },
+      "description": {
+        "de": "6 Mozzarella-Sticks, gefüllt mit Mozzarellakäse, serviert mit Sauerrahm.",
+        "en": "6 mozzarella sticks filled with mozzarella cheese, served with sour cream."
+      },
+      "price": 8.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "chicken-wings",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Chicken Wings",
+        "en": "Chicken Wings"
+      },
+      "description": {
+        "de": "Knusprig frittierte Hähnchenflügel, serviert mit B.B.Q. Sauce.",
+        "en": "Crispy fried chicken wings, served with B.B.Q. sauce."
+      },
+      "price": 8.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "M"
+      ]
+    },
+    {
+      "id": "stiky-fingers",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Stiky Fingers",
+        "en": "Stiky Fingers"
+      },
+      "description": {
+        "de": "Hähnchenbruststreifen, serviert mit Cornflakes und Salatbouquet in Honig-Senf-Dressing.",
+        "en": "Chicken breast strips, served with cornflakes and a salad bouquet in honey-mustard dressing."
+      },
+      "price": 9.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "M"
+      ]
+    },
+    {
+      "id": "taquitos",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Taquitos",
+        "en": "Taquitos"
+      },
+      "description": {
+        "de": "Gebackene Tortillaröllchen, gefüllt mit „Pikanten“ Hähnchenbruststreifen, serviert mit Cheddar-Cheese-Dip.",
+        "en": "Fried tortilla rolls filled with spicy chicken breast strips, served with cheddar cheese dip."
+      },
+      "price": 9.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G"
+      ]
+    },
+    {
+      "id": "platte-de-bailamos",
+      "categoryId": "vorspeisen",
+      "name": {
+        "de": "Platte de Bailamos",
+        "en": "Platte de Bailamos"
+      },
+      "description": {
+        "de": "Eine Zusammenstellung der oben genannten Vorspeisen. Für 2 Personen.",
+        "en": "A selection of the starters above. For 2 people."
+      },
+      "price": 16.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "tacos-mexicana",
+      "categoryId": "tacos",
+      "name": {
+        "de": "Tacos Mexicana",
+        "en": "Tacos Mexicana"
+      },
+      "description": {
+        "de": "Drei Maistortillas mit würzigem Rinderhackfleisch, Salat, Tomaten, Zwiebeln und Käse.",
+        "en": "Three corn tortillas with spiced beef mince, lettuce, tomatoes, onions and cheese."
+      },
+      "price": 8.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "tacos-con-pollo",
+      "categoryId": "tacos",
+      "name": {
+        "de": "Tacos con Pollo",
+        "en": "Tacos con Pollo"
+      },
+      "description": {
+        "de": "Drei Maistortillas mit saftigem Hähnchenfleisch, Salat, Tomaten, Zwiebeln und Käse.",
+        "en": "Three corn tortillas with juicy chicken, lettuce, tomatoes, onions and cheese."
+      },
+      "price": 9.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "tacos-con-carne",
+      "categoryId": "tacos",
+      "name": {
+        "de": "Tacos con Carne",
+        "en": "Tacos con Carne"
+      },
+      "description": {
+        "de": "Drei Maistortillas mit zarten Rinderstreifen, Paprika, Zwiebeln, Salat und Käse.",
+        "en": "Three corn tortillas with tender beef strips, bell pepper, onions, lettuce and cheese."
+      },
+      "price": 10.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "quesadilla-vegetarianas",
+      "categoryId": "quesadillas",
+      "name": {
+        "de": "Quesadilla Vegetarianas",
+        "en": "Quesadilla Vegetarianas"
+      },
+      "description": {
+        "de": "Weizentortilla gefüllt mit Käse, gebratenem Gemüse, Paprika und Zwiebeln, serviert mit Salat, Guacamole und Sauerrahm.",
+        "en": "Wheat tortilla filled with cheese, sautéed vegetables, bell pepper and onions, served with salad, guacamole and sour cream."
+      },
+      "price": 13.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G",
+        "J"
+      ],
+      "vegetarian": true
+    },
+    {
+      "id": "quesadilla-de-pollo",
+      "categoryId": "quesadillas",
+      "name": {
+        "de": "Quesadilla de Pollo",
+        "en": "Quesadilla de Pollo"
+      },
+      "description": {
+        "de": "Weizentortilla gefüllt mit Hähnchenfleisch, Käse, Paprika und Zwiebeln, serviert mit Salat, Guacamole und Sauerrahm.",
+        "en": "Wheat tortilla filled with chicken, cheese, bell pepper and onions, served with salad, guacamole and sour cream."
+      },
+      "price": 14.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "quesadilla-de-carne",
+      "categoryId": "quesadillas",
+      "name": {
+        "de": "Quesadilla de Carne",
+        "en": "Quesadilla de Carne"
+      },
+      "description": {
+        "de": "Weizentortilla gefüllt mit Rindfleisch, Käse, Paprika und Zwiebeln, serviert mit Salat, Guacamole und Sauerrahm.",
+        "en": "Wheat tortilla filled with beef, cheese, bell pepper and onions, served with salad, guacamole and sour cream."
+      },
+      "price": 15.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "quesadilla-combinada",
+      "categoryId": "quesadillas",
+      "name": {
+        "de": "Quesadilla Combinada",
+        "en": "Quesadilla Combinada"
+      },
+      "description": {
+        "de": "Weizentortilla mit Hähnchen- und Rindfleisch, Käse, Paprika und Zwiebeln, serviert mit Salat, Guacamole und Sauerrahm.",
+        "en": "Wheat tortilla with chicken and beef, cheese, bell pepper and onions, served with salad, guacamole and sour cream."
+      },
+      "price": 16.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "enchiladas-de-vegetarianas",
+      "categoryId": "enchiladas",
+      "name": {
+        "de": "Enchiladas de Vegetarianas",
+        "en": "Enchiladas de Vegetarianas"
+      },
+      "description": {
+        "de": "Zwei Maistortillas, gefüllt mit frischem Gemüse, mit Tomatensoße und Käse überbacken, dazu Reis, Bohnenpüree, Guacamole, Sauerrahm und Salat.",
+        "en": "Two corn tortillas filled with fresh vegetables, baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
+      },
+      "price": 14.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "J"
+      ],
+      "vegetarian": true
+    },
+    {
+      "id": "enchiladas-de-pollo",
+      "categoryId": "enchiladas",
+      "name": {
+        "de": "Enchiladas de Pollo",
+        "en": "Enchiladas de Pollo"
+      },
+      "description": {
+        "de": "Zwei Maistortillas, gefüllt mit Hähnchenfleisch, mit Tomatensoße und Käse überbacken, dazu Reis, Bohnenpüree, Guacamole, Sauerrahm und Salat.",
+        "en": "Two corn tortillas filled with chicken, baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
+      },
+      "price": 15.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "enchiladas-de-carne",
+      "categoryId": "enchiladas",
+      "name": {
+        "de": "Enchiladas de Carne",
+        "en": "Enchiladas de Carne"
+      },
+      "description": {
+        "de": "Zwei Maistortillas, gefüllt mit Rindfleisch, mit Tomatensoße und Käse überbacken, dazu Reis, Bohnenpüree, Guacamole, Sauerrahm und Salat.",
+        "en": "Two corn tortillas filled with beef, baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
+      },
+      "price": 16.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "enchiladas-combinadas",
+      "categoryId": "enchiladas",
+      "name": {
+        "de": "Enchiladas Combinadas",
+        "en": "Enchiladas Combinadas"
+      },
+      "description": {
+        "de": "Drei Maistortillas – eine mit Hähnchenfleisch, eine mit Rindfleisch und eine vegetarische – mit Tomatensoße und Käse überbacken, dazu Reis, Bohnenpüree, Guacamole, Sauerrahm und Salat.",
+        "en": "Three corn tortillas – one with chicken, one with beef and one vegetarian – baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
+      },
+      "price": 18.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "G",
+        "J"
+      ]
+    },
+    {
+      "id": "burrito-vegetariano",
+      "categoryId": "burritos",
+      "name": {
+        "de": "Burrito Vegetariano",
+        "en": "Burrito Vegetariano"
+      },
+      "description": {
+        "de": "Große, gerollte Weizenmehltortilla, gefüllt mit verschiedenem Gemüse, Reis und Bohnenpüree, mit Tomatensauce und Käse überbacken, dazu Guacamole, Sauerrahm und Salat.",
+        "en": "Large rolled wheat tortilla filled with mixed vegetables, rice and refried beans, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
+      },
+      "price": 14.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ],
+      "vegetarian": true
+    },
+    {
+      "id": "burrito-pollo",
+      "categoryId": "burritos",
+      "name": {
+        "de": "Burrito Pollo",
+        "en": "Burrito Pollo"
+      },
+      "description": {
+        "de": "Große, gerollte Weizenmehltortilla, gefüllt mit Hähnchenfleisch, Reis und Bohnenpüree, mit Tomatensauce und Käse überbacken, dazu Guacamole, Sauerrahm und Salat.",
+        "en": "Large rolled wheat tortilla filled with chicken, rice and refried beans, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
+      },
+      "price": 15.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "burrito-carne",
+      "categoryId": "burritos",
+      "name": {
+        "de": "Burrito Carne",
+        "en": "Burrito Carne"
+      },
+      "description": {
+        "de": "Große, gerollte Weizenmehltortilla, gefüllt mit Rinderhackfleisch, Reis und Bohnenpüree, mit Tomatensauce und Käse überbacken, dazu Guacamole, Sauerrahm und Salat.",
+        "en": "Large rolled wheat tortilla filled with beef mince, rice and refried beans, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
+      },
+      "price": 16.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "burrito-bailamos",
+      "categoryId": "burritos",
+      "name": {
+        "de": "Burrito Bailamos",
+        "en": "Burrito Bailamos"
+      },
+      "description": {
+        "de": "Große, gerollte Weizenmehltortilla, gefüllt mit marinierten Hähnchenbrustfiletstreifen und Bohnen sowie verschiedenen Käsesorten, mit Tomatensauce und Käse überbacken, dazu Guacamole, Sauerrahm und Salat.",
+        "en": "Large rolled wheat tortilla filled with marinated chicken breast strips, beans and several cheeses, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
+      },
+      "price": 17.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "burritos-tres-amigos",
+      "categoryId": "burritos",
+      "name": {
+        "de": "Burritos Tres Amigos",
+        "en": "Burritos Tres Amigos"
+      },
+      "description": {
+        "de": "Drei kleine Weizenmehltortillas, gefüllt mit Hähnchen, Rinderhackfleisch und Gemüse, mit Käse überbacken, dazu Reis, Guacamole, Sauerrahm und Salat.",
+        "en": "Three small wheat tortillas filled with chicken, beef mince and vegetables, baked with cheese, served with rice, guacamole, sour cream and salad."
+      },
+      "price": 18.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "tacos-vegetarianos",
+      "categoryId": "tacos-spezial",
+      "name": {
+        "de": "Tacos Vegetarianos",
+        "en": "Tacos Vegetarianos"
+      },
+      "description": {
+        "de": "Gebratene Zucchini, Auberginen, Tomaten, Paprika, Zwiebeln und Champignons in Kräuter-Tomatensauce, mit Käse überbacken, dazu 4 Maistortillas.",
+        "en": "Fried zucchini, aubergine, tomatoes, bell pepper, onions and mushrooms in herb tomato sauce, baked with cheese, served with 4 corn tortillas."
+      },
+      "price": 16.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ],
+      "vegetarian": true
+    },
+    {
+      "id": "tacos-de-pollo",
+      "categoryId": "tacos-spezial",
+      "name": {
+        "de": "Tacos de Pollo",
+        "en": "Tacos de Pollo"
+      },
+      "description": {
+        "de": "Gebratene Hähnchenbruststreifen mit Zwiebeln und Tomaten in einer exotischen Sauce, mit Käse überbacken, dazu 4 Weizenmehltortillas.",
+        "en": "Fried chicken breast strips with onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
+      },
+      "price": 17.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "tacos-de-carne",
+      "categoryId": "tacos-spezial",
+      "name": {
+        "de": "Tacos de Carne",
+        "en": "Tacos de Carne"
+      },
+      "description": {
+        "de": "Gebratene Rindersteakstreifen mit Paprika, Zwiebeln und Tomaten in exotischer Sauce, mit Käse überbacken, dazu 4 Weizenmehltortillas.",
+        "en": "Fried beef steak strips with bell pepper, onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
+      },
+      "price": 18.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "tacos-mexicanos-de-camarones",
+      "categoryId": "tacos-spezial",
+      "name": {
+        "de": "Tacos Mexicanos de Camarones",
+        "en": "Tacos Mexicanos de Camarones"
+      },
+      "description": {
+        "de": "Gegrillte Garnelen mit Paprika, Zwiebeln und Tomaten in exotischer Sauce, mit Käse überbacken, dazu 4 Weizenmehltortillas.",
+        "en": "Grilled prawns with bell pepper, onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
+      },
+      "price": 18.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "B",
+        "G"
+      ]
+    },
+    {
+      "id": "tacos-combinadas",
+      "categoryId": "tacos-spezial",
+      "name": {
+        "de": "Tacos Combinadas",
+        "en": "Tacos Combinadas"
+      },
+      "description": {
+        "de": "Gebratene Hähnchenbruststreifen und Rindersteakstreifen mit Paprika, Zwiebeln und Tomaten in exotischer Sauce, mit Käse überbacken, dazu 4 Weizenmehltortillas.",
+        "en": "Fried chicken breast and beef steak strips with bell pepper, onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
+      },
+      "price": 18.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "tacos-al-pastor",
+      "categoryId": "tacos-spezial",
+      "name": {
+        "de": "Tacos al Pastor",
+        "en": "Tacos al Pastor"
+      },
+      "description": {
+        "de": "Gebratene Rinderhüftsteakstreifen mit Paprika und Zwiebeln, serviert mit 3 Weizenmehltortillas, dazu Bohnen, Fetakäse, Guacamole, Salsa verde und Salat.",
+        "en": "Fried beef hip steak strips with bell pepper and onions, served with 3 wheat tortillas, beans, feta cheese, guacamole, salsa verde and salad."
+      },
+      "price": 18.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "fajita-amazona",
+      "categoryId": "fajitas",
+      "name": {
+        "de": "Fajita Amazona",
+        "en": "Fajita Amazona"
+      },
+      "description": {
+        "de": "Mit verschiedenen gegrillten Gemüsesorten in Spezialsoße. Serviert in der heißen Pfanne, dazu 4 Tortillas, Guacamole, Salsa und Sauerrahm.",
+        "en": "With assorted grilled vegetables in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
+      },
+      "price": 16.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ],
+      "vegetarian": true
+    },
+    {
+      "id": "fajitas-de-pollo",
+      "categoryId": "fajitas",
+      "name": {
+        "de": "Fajitas de Pollo",
+        "en": "Fajitas de Pollo"
+      },
+      "description": {
+        "de": "Mit Hähnchenbruststreifen in Spezialsoße. Serviert in der heißen Pfanne, dazu 4 Tortillas, Guacamole, Salsa und Sauerrahm.",
+        "en": "With chicken breast strips in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
+      },
+      "price": 18.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "fajitas-de-carne",
+      "categoryId": "fajitas",
+      "name": {
+        "de": "Fajitas de Carne",
+        "en": "Fajitas de Carne"
+      },
+      "description": {
+        "de": "Mit Rindersteakstreifen in Spezialsoße. Serviert in der heißen Pfanne, dazu 4 Tortillas, Guacamole, Salsa und Sauerrahm.",
+        "en": "With beef steak strips in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
+      },
+      "price": 19.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "fajitas-de-camarones",
+      "categoryId": "fajitas",
+      "name": {
+        "de": "Fajitas de Camarones",
+        "en": "Fajitas de Camarones"
+      },
+      "description": {
+        "de": "Mit gegrillten Garnelen in Spezialsoße. Serviert in der heißen Pfanne, dazu 4 Tortillas, Guacamole, Salsa und Sauerrahm.",
+        "en": "With grilled prawns in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
+      },
+      "price": 20.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "B",
+        "G"
+      ]
+    },
+    {
+      "id": "fajitas-combinadas",
+      "categoryId": "fajitas",
+      "name": {
+        "de": "Fajitas Combinadas",
+        "en": "Fajitas Combinadas"
+      },
+      "description": {
+        "de": "Mit Rinderhüftsteakstreifen und Hähnchenbruststreifen in Spezialsoße. Serviert in der heißen Pfanne, dazu 4 Tortillas, Guacamole, Salsa und Sauerrahm.",
+        "en": "With beef hip steak strips and chicken breast strips in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
+      },
+      "price": 20.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "junior-burger",
+      "categoryId": "kinder",
+      "name": {
+        "de": "Junior Burger",
+        "en": "Junior Burger"
+      },
+      "description": {
+        "de": "Saftiges Rinderfleisch mit Eisbergsalat, Tomaten und Gurken, serviert mit Pommes Frites.",
+        "en": "Juicy beef with iceberg lettuce, tomatoes and cucumber, served with fries."
+      },
+      "price": 9.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "pasta-bambini",
+      "categoryId": "kinder",
+      "name": {
+        "de": "Pasta Bambini",
+        "en": "Pasta Bambini"
+      },
+      "description": {
+        "de": "Mit Tomatensoße oder Sahnesoße.",
+        "en": "With tomato or cream sauce."
+      },
+      "price": 9.5,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A",
+        "G"
+      ]
+    },
+    {
+      "id": "chicken-nuggets",
+      "categoryId": "kinder",
+      "name": {
+        "de": "Chicken Nuggets",
+        "en": "Chicken Nuggets"
+      },
+      "description": {
+        "de": "6 Stück, serviert mit Pommes Frites.",
+        "en": "6 pieces, served with fries."
+      },
+      "price": 8.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "A"
+      ]
+    },
+    {
+      "id": "new-york-chicken",
+      "categoryId": "kinder",
+      "name": {
+        "de": "New York Chicken",
+        "en": "New York Chicken"
+      },
+      "description": {
+        "de": "Gegrilltes Hähnchenbrustfilet, serviert mit Pommes und Salat.",
+        "en": "Grilled chicken breast fillet, served with fries and salad."
+      },
+      "price": 8.9,
+      "image": "/samples/taco-spread.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "J"
+      ]
+    },
+    {
+      "id": "mole-poblano",
+      "categoryId": "principales",
+      "name": {
+        "de": "Mole Poblano",
+        "en": "Mole Poblano"
+      },
+      "description": {
+        "de": "Hähnchen, geröstete Gewürze, Chili-Schokoladen-Sauce und Reis.",
+        "en": "Chicken, toasted spices, chilli-chocolate sauce and rice."
+      },
+      "price": 23.9,
+      "image": "/samples/mole-poblano.webp",
+      "featured": true,
+      "available": true,
+      "spicy": 1,
+      "allergens": [
+        "Nüsse"
+      ]
+    },
+    {
+      "id": "calabaza",
+      "categoryId": "principales",
+      "name": {
+        "de": "Geröstete Calabaza",
+        "en": "Roasted Calabaza"
+      },
+      "description": {
+        "de": "Kürbis, schwarze Bohnen, Pepita-Salsa und Limettencreme.",
+        "en": "Pumpkin, black beans, pepita salsa and lime crema."
+      },
+      "price": 19.5,
+      "image": "/samples/veggie-tacos.webp",
+      "featured": false,
+      "available": true,
+      "vegetarian": true,
+      "spicy": 0,
+      "allergens": []
+    },
+    {
+      "id": "tres-leches",
+      "categoryId": "postres",
+      "name": {
+        "de": "Tres Leches",
+        "en": "Tres Leches"
+      },
+      "description": {
+        "de": "Saftiger Milchkuchen, Zimt und karamellisierte Ananas.",
+        "en": "Milk cake, cinnamon and caramelised pineapple."
+      },
+      "price": 9.5,
+      "image": "/samples/tres-leches.webp",
+      "featured": false,
+      "available": true,
+      "spicy": 0,
+      "allergens": [
+        "Milch",
+        "Gluten"
+      ]
+    },
+    {
+      "id": "margarita",
+      "categoryId": "cocktails",
+      "name": {
+        "de": "Bailamos Margarita",
+        "en": "Bailamos Margarita"
+      },
+      "description": {
+        "de": "Tequila Blanco, Limette, Agave und Meersalz.",
+        "en": "Blanco tequila, lime, agave and sea salt."
+      },
+      "price": 12.5,
+      "image": "/samples/margarita-bar.webp",
+      "featured": true,
+      "available": true,
+      "spicy": 0,
+      "allergens": []
+    }
   ]
 }
