@@ -5,91 +5,104 @@
       "name": {
         "de": "Sopas – Suppen",
         "en": "Sopas – Soups"
-      }
+      },
+      "image": "/category-images/sopas.jpg"
     },
     {
       "id": "ensaladas",
       "name": {
         "de": "Ensaladas – Salate",
         "en": "Ensaladas – Salads"
-      }
+      },
+      "image": "/category-images/ensaladas.jpg"
     },
     {
       "id": "vorspeisen",
       "name": {
         "de": "Vorspeisen – Entradas",
         "en": "Starters – Entradas"
-      }
+      },
+      "image": "/category-images/vorspeisen.jpg"
     },
     {
       "id": "tacos",
       "name": {
         "de": "Tacos",
         "en": "Tacos"
-      }
+      },
+      "image": "/category-images/tacos.jpg"
     },
     {
       "id": "quesadillas",
       "name": {
         "de": "Quesadillas",
         "en": "Quesadillas"
-      }
+      },
+      "image": "/category-images/quesadillas.jpg"
     },
     {
       "id": "enchiladas",
       "name": {
         "de": "Enchiladas",
         "en": "Enchiladas"
-      }
+      },
+      "image": "/category-images/enchiladas.jpg"
     },
     {
       "id": "burritos",
       "name": {
         "de": "Burritos",
         "en": "Burritos"
-      }
+      },
+      "image": "/category-images/burritos.jpg"
     },
     {
       "id": "tacos-spezial",
       "name": {
         "de": "Tacos Spezial",
         "en": "Tacos Special"
-      }
+      },
+      "image": "/category-images/tacos-spezial.jpg"
     },
     {
       "id": "fajitas",
       "name": {
         "de": "Fajitas – aus der heißen Pfanne",
         "en": "Fajitas – from the hot pan"
-      }
+      },
+      "image": "/category-images/fajitas.jpg"
     },
     {
       "id": "kinder",
       "name": {
         "de": "Für unsere kleinen Gäste",
         "en": "For our little guests"
-      }
+      },
+      "image": "/category-images/kinder.jpg"
     },
     {
       "id": "principales",
       "name": {
         "de": "Hauptgerichte",
         "en": "Main courses"
-      }
+      },
+      "image": "/category-images/principales.jpg"
     },
     {
       "id": "postres",
       "name": {
         "de": "Desserts",
         "en": "Desserts"
-      }
+      },
+      "image": "/category-images/postres.jpg"
     },
     {
       "id": "cocktails",
       "name": {
         "de": "Cocktails",
         "en": "Cocktails"
-      }
+      },
+      "image": "/category-images/cocktails.jpg"
     }
   ],
   "dishes": [
