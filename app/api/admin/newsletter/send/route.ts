@@ -31,6 +31,10 @@ export async function POST(request: Request) {
     if (b?.mode === 'test') {
       const to = typeof b.to === 'string' ? b.to.trim() : '';
       if (!EMAIL_PATTERN.test(to)) throw new BookingError(400,'INVALID_EMAIL','Bitte eine gültige Test-Adresse angeben.');
+      // Tests go only to the restaurant inbox or to someone who has confirmed the newsletter,
+      // so this form cannot be used to write to anyone else.
+      const allowed = to.toLowerCase() === 'info@bailamos-waldcafe.de' || await db.prepare("SELECT 1 FROM newsletter_subscribers WHERE email = ? AND status = 'subscribed'").bind(to.toLowerCase()).first();
+      if (!allowed) throw new BookingError(403,'TEST_NOT_ALLOWED','Testmails gehen nur an info@bailamos-waldcafe.de oder an bestätigte Abonnenten.');
       await sendEventTest(env, to, subject, body);
       return { ok: true };
     }
