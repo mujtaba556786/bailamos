@@ -76,10 +76,14 @@ export async function changeStatus(db: D1Database,id: string,status: string,vers
   await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING`).bind(`${id}:${version+1}`,id,String(row.status),status,actor,reason,version+1,new Date().toISOString()).run();
   return {ok:true,status,version:version+1};
 }
-export async function cancelBooking(db: D1Database,id: string,token: string) {
+export async function getManagedBooking(db: D1Database,id: string,token: string) {
   if (!token || token.length > 128 || token.startsWith('sha256:')) throw new BookingError(404,'NOT_FOUND','Reservierung nicht gefunden.');
-  const row = await db.prepare('SELECT status,version FROM reservations WHERE id = ? AND (cancel_token = ? OR cancel_token = ?)').bind(id,`sha256:${await digest(token)}`,token).first<Row>();
+  const row = await db.prepare('SELECT short_code,status,version FROM reservations WHERE id = ? AND (cancel_token = ? OR cancel_token = ?)').bind(id,`sha256:${await digest(token)}`,token).first<Row>();
   if (!row) throw new BookingError(404,'NOT_FOUND','Reservierung nicht gefunden.');
+  return row;
+}
+export async function cancelBooking(db: D1Database,id: string,token: string) {
+  const row = await getManagedBooking(db,id,token);
   if (row.status === 'cancelled') return {ok:true,status:'cancelled'};
   if (!['pending','confirmed'].includes(String(row.status))) throw new BookingError(409,'CANNOT_CANCEL','Diese Reservierung kann nicht mehr online storniert werden.');
   return changeStatus(db,id,'cancelled',Number(row.version),'customer','Online-Stornierung');

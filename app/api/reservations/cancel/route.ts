@@ -10,8 +10,8 @@ export async function POST(request: Request) {
     if (!env.DB) throw new Error('Missing DB');
     const result = await cancelBooking(env.DB,b.id,b.token);
     if ('version' in result) {
-      const row = await env.DB.prepare('SELECT customer_name,customer_email,date,time,guest_count FROM reservations WHERE id = ?').bind(b.id).first<Record<string,string|number>>();
-      if (row) await sendReservationMail(env,'cancelled',{id:b.id,name:String(row.customer_name),email:String(row.customer_email),date:String(row.date),time:String(row.time),guests:Number(row.guest_count)});
+      const row = await env.DB.prepare('SELECT short_code,customer_name,customer_email,date,time,guest_count FROM reservations WHERE id = ?').bind(b.id).first<Record<string,string|number>>();
+      if (row) await sendReservationMail(env,'cancelled',{id:b.id,reference:row.short_code?String(row.short_code):undefined,name:String(row.customer_name),email:String(row.customer_email),date:String(row.date),time:String(row.time),guests:Number(row.guest_count)});
     }
     return result;
   });
