@@ -105,7 +105,7 @@
         "en": "Tomato soup with feta cheese and avocado, served with crispy tortilla strips."
       },
       "price": 5.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/sopa-de-tortilla.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -126,7 +126,7 @@
         "en": "Mexican sweetcorn cream soup."
       },
       "price": 5.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/sopa-de-maiz.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -147,7 +147,7 @@
         "en": "Hearty stew with beef mince, corn, beans and jalapeños, served with tortillas."
       },
       "price": 6.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/chili-con-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -167,7 +167,7 @@
         "en": "Hearty stew with beef mince, corn, beans and jalapeños, topped with melted cheese."
       },
       "price": 7.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/chili-con-carne-y-queso.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -188,7 +188,7 @@
         "en": "Mixed salad with house-made dressing, kidney beans, feta cheese and tortilla."
       },
       "price": 8.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/ensalada-mixta.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -208,7 +208,7 @@
         "en": "Crisp salad with grilled chicken breast, croutons, Parmesan and Caesar dressing."
       },
       "price": 11.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/chicken-caesar-salat.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -230,7 +230,7 @@
         "en": "Colourful salad with grilled chicken breast, fresh mango and house-made dressing."
       },
       "price": 11.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/chicken-mango-salat.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -250,7 +250,7 @@
         "en": "Mixed salad with beef strips, avocado, corn, beans, bell pepper and feta cheese."
       },
       "price": 13.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/ensalada-rancho.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -270,7 +270,7 @@
         "en": "Mixed salad with fried prawns, avocado, cherry tomatoes and house-made dressing."
       },
       "price": 12.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/ensalada-de-camarones.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -291,7 +291,7 @@
         "en": "Tortilla chips with guacamole, sour cream and salsa."
       },
       "price": 8.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/chips-contres-salsa.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -311,7 +311,7 @@
         "en": "Tortilla chips baked with cheese, served with salsa picante."
       },
       "price": 9.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/nachos-con-queso.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -331,7 +331,7 @@
         "en": "Tortilla chips with baked onions, tomatoes, jalapeños, coriander and melted cheese, served with sour cream."
       },
       "price": 10.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/nachos-mexicana.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -351,7 +351,7 @@
         "en": "Tortilla chips with chicken and melted cheese, served with sour cream and guacamole."
       },
       "price": 10.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/nachos-con-pollo.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -371,7 +371,7 @@
         "en": "Tortilla chips with beef mince and melted cheese, served with sour cream and guacamole."
       },
       "price": 11.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/nachos-con-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -391,7 +391,7 @@
         "en": "6 jalapeños filled with cheddar cheese, served with sour cream."
       },
       "price": 8.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/diablitos.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -411,7 +411,7 @@
         "en": "6 mozzarella sticks filled with mozzarella cheese, served with sour cream."
       },
       "price": 8.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/mozzarella-cheese-sticks.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -431,7 +431,7 @@
         "en": "Crispy fried chicken wings, served with B.B.Q. sauce."
       },
       "price": 8.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/chicken-wings.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -451,7 +451,7 @@
         "en": "Chicken breast strips, served with cornflakes and a salad bouquet in honey-mustard dressing."
       },
       "price": 9.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/stiky-fingers.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -472,7 +472,7 @@
         "en": "Fried tortilla rolls filled with spicy chicken breast strips, served with cheddar cheese dip."
       },
       "price": 9.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/taquitos.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -492,7 +492,7 @@
         "en": "A selection of the starters above. For 2 people."
       },
       "price": 16.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/platte-de-bailamos.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -514,7 +514,7 @@
         "en": "Three corn tortillas with spiced beef mince, lettuce, tomatoes, onions and cheese."
       },
       "price": 8.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-mexicana.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -535,7 +535,7 @@
         "en": "Three corn tortillas with juicy chicken, lettuce, tomatoes, onions and cheese."
       },
       "price": 9.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-con-pollo.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -556,7 +556,7 @@
         "en": "Three corn tortillas with tender beef strips, bell pepper, onions, lettuce and cheese."
       },
       "price": 10.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-con-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -577,7 +577,7 @@
         "en": "Wheat tortilla filled with cheese, sautéed vegetables, bell pepper and onions, served with salad, guacamole and sour cream."
       },
       "price": 13.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/quesadilla-vegetarianas.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -600,7 +600,7 @@
         "en": "Wheat tortilla filled with chicken, cheese, bell pepper and onions, served with salad, guacamole and sour cream."
       },
       "price": 14.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/quesadilla-de-pollo.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -622,7 +622,7 @@
         "en": "Wheat tortilla filled with beef, cheese, bell pepper and onions, served with salad, guacamole and sour cream."
       },
       "price": 15.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/quesadilla-de-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -644,7 +644,7 @@
         "en": "Wheat tortilla with chicken and beef, cheese, bell pepper and onions, served with salad, guacamole and sour cream."
       },
       "price": 16.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/quesadilla-combinada.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -666,7 +666,7 @@
         "en": "Two corn tortillas filled with fresh vegetables, baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
       },
       "price": 14.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/enchiladas-de-vegetarianas.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -688,7 +688,7 @@
         "en": "Two corn tortillas filled with chicken, baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
       },
       "price": 15.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/enchiladas-de-pollo.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -709,7 +709,7 @@
         "en": "Two corn tortillas filled with beef, baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
       },
       "price": 16.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/enchiladas-de-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -730,7 +730,7 @@
         "en": "Three corn tortillas – one with chicken, one with beef and one vegetarian – baked with tomato sauce and cheese, served with rice, refried beans, guacamole, sour cream and salad."
       },
       "price": 18.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/enchiladas-combinadas.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -751,7 +751,7 @@
         "en": "Large rolled wheat tortilla filled with mixed vegetables, rice and refried beans, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
       },
       "price": 14.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/burrito-vegetariano.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -773,7 +773,7 @@
         "en": "Large rolled wheat tortilla filled with chicken, rice and refried beans, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
       },
       "price": 15.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/burrito-pollo.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -794,7 +794,7 @@
         "en": "Large rolled wheat tortilla filled with beef mince, rice and refried beans, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
       },
       "price": 16.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/burrito-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -815,7 +815,7 @@
         "en": "Large rolled wheat tortilla filled with marinated chicken breast strips, beans and several cheeses, baked with tomato sauce and cheese, served with guacamole, sour cream and salad."
       },
       "price": 17.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/burrito-bailamos.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -836,7 +836,7 @@
         "en": "Three small wheat tortillas filled with chicken, beef mince and vegetables, baked with cheese, served with rice, guacamole, sour cream and salad."
       },
       "price": 18.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/burritos-tres-amigos.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -857,7 +857,7 @@
         "en": "Fried zucchini, aubergine, tomatoes, bell pepper, onions and mushrooms in herb tomato sauce, baked with cheese, served with 4 corn tortillas."
       },
       "price": 16.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-vegetarianos.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -879,7 +879,7 @@
         "en": "Fried chicken breast strips with onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
       },
       "price": 17.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-de-pollo.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -900,7 +900,7 @@
         "en": "Fried beef steak strips with bell pepper, onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
       },
       "price": 18.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-de-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -921,7 +921,7 @@
         "en": "Grilled prawns with bell pepper, onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
       },
       "price": 18.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-mexicanos-de-camarones.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -943,7 +943,7 @@
         "en": "Fried chicken breast and beef steak strips with bell pepper, onions and tomatoes in an exotic sauce, baked with cheese, served with 4 wheat tortillas."
       },
       "price": 18.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-combinadas.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -964,7 +964,7 @@
         "en": "Fried beef hip steak strips with bell pepper and onions, served with 3 wheat tortillas, beans, feta cheese, guacamole, salsa verde and salad."
       },
       "price": 18.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/tacos-al-pastor.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -985,7 +985,7 @@
         "en": "With assorted grilled vegetables in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
       },
       "price": 16.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/fajita-amazona.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1007,7 +1007,7 @@
         "en": "With chicken breast strips in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
       },
       "price": 18.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/fajitas-de-pollo.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1028,7 +1028,7 @@
         "en": "With beef steak strips in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
       },
       "price": 19.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/fajitas-de-carne.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1049,7 +1049,7 @@
         "en": "With grilled prawns in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
       },
       "price": 20.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/fajitas-de-camarones.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1071,7 +1071,7 @@
         "en": "With beef hip steak strips and chicken breast strips in a special sauce. Served on a hot pan with 4 tortillas, guacamole, salsa and sour cream."
       },
       "price": 20.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/fajitas-combinadas.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1092,7 +1092,7 @@
         "en": "Juicy beef with iceberg lettuce, tomatoes and cucumber, served with fries."
       },
       "price": 9.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/junior-burger.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1113,7 +1113,7 @@
         "en": "With tomato or cream sauce."
       },
       "price": 9.5,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/pasta-bambini.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1134,7 +1134,7 @@
         "en": "6 pieces, served with fries."
       },
       "price": 8.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/chicken-nuggets.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
@@ -1154,7 +1154,7 @@
         "en": "Grilled chicken breast fillet, served with fries and salad."
       },
       "price": 8.9,
-      "image": "/samples/taco-spread.webp",
+      "image": "/menu-images/new-york-chicken.jpg",
       "featured": false,
       "available": true,
       "spicy": 0,
