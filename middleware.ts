@@ -9,6 +9,20 @@ const securityHeaders={
   'Referrer-Policy':'strict-origin-when-cross-origin',
   'Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=()',
   'Strict-Transport-Security':'max-age=15552000; includeSubDomains',
+  // Report-only: violations are logged in the browser console, nothing is blocked yet.
+  // 'unsafe-inline' is needed for the framework's inline scripts; it is tightened later with nonces.
+  'Content-Security-Policy-Report-Only':[
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://www.googletagmanager.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+  ].join('; '),
 };
 
 export async function middleware(request:NextRequest){
