@@ -12,7 +12,7 @@ export async function GET(request:Request){return bookingResponse(async()=>{
  return {campaigns:await listCampaigns(await db(request)),publishing:{configured:false,reason:'Zuerst Veröffentlichungsdienst auswählen und Social-Media-Konten verbinden.'}};
 })}
 export async function PUT(request:Request){return bookingResponse(async()=>{
- const database=await db(request),body=await readBody(request);
+ const database=await db(request),body=await readBody(request, 200000);
  return saveCampaign(database,body?.content,body?.version);
 })}
 export async function POST(request:Request){return bookingResponse(async()=>{

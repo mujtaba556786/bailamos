@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { BookingError } from './booking-policy.ts';
-export async function readBody(request: Request) {
+export async function readBody(request: Request, maxLength = 16000) {
   const raw = await request.text();
-  if (raw.length > 16000) throw new BookingError(413,'BODY_TOO_LARGE','Die Anfrage ist zu groß.');
+  if (raw.length > maxLength) throw new BookingError(413,'BODY_TOO_LARGE','Die Anfrage ist zu groß.');
   try { return JSON.parse(raw); } catch { throw new BookingError(400,'INVALID_JSON','Ungültige Anfrage.'); }
 }
 export async function bookingResponse(action: () => Promise<unknown>) {
