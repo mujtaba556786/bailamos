@@ -8,13 +8,7 @@
       {"title":"Aus der Küche","source":"Mixkit","url":"https://mixkit.co/free-stock-video/chef-cooking-on-a-large-grill-4678/","poster":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"},
       {"title":"Tacos im Fokus","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","poster":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"}
     ],
-    "gallery": [
-      {"label":"Cocktails","source":"Pexels","url":"https://www.pexels.com/video/close-up-shot-of-cocktails-on-the-table-in-the-restaurant-7505585/","image":"https://images.pexels.com/videos/7505585/alcohol-alcoholic-beverage-alcoholic-drink-bar-cafe-7505585.jpeg?auto=compress&dpr=1&h=750&w=1260"},
-      {"label":"Tacos","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","image":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"},
-      {"label":"Küche","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","image":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"},
-      {"label":"Drinks","source":"Pexels","url":"https://www.pexels.com/video/close-up-shot-of-cocktails-on-the-table-in-the-restaurant-7505585/","image":"https://images.pexels.com/videos/7505585/alcohol-alcoholic-beverage-alcoholic-drink-bar-cafe-7505585.jpeg?auto=compress&dpr=1&h=750&w=1260"},
-      {"label":"Abend","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","image":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"}
-    ]
+    "gallery": [{"label": {"de": "Bar", "en": "Bar"}, "source": "Bailamos", "url": "https://www.instagram.com/bailamos_waldcafe/", "image": "/restaurant/bar-interior.jpg"}, {"label": {"de": "Terrasse", "en": "Terrace"}, "source": "Bailamos", "url": "https://www.instagram.com/bailamos_waldcafe/", "image": "/restaurant/terrace-exterior.jpg"}, {"label": {"de": "Dekor", "en": "Decor"}, "source": "Bailamos", "url": "https://www.instagram.com/bailamos_waldcafe/", "image": "/restaurant/wall-lamp.jpg"}]
   },
   "social":{"instagram":{"url":"https://www.instagram.com/bailamos_waldcafe/","handle":"@bailamos_waldcafe"},"facebook":{"url":"https://www.facebook.com/people/Bailamos-Mexikanisches-Restaurant-Wald-Caf%C3%A9/61595073784535/","handle":"Bailamos Mexikanisches Restaurant - Wald Café"},"youtube":{"url":"https://www.youtube.com/channel/UCOix77VvOuExvfUWhey8sWw","handle":"Bailamos Waldcafé"},"tiktok":{"url":"https://www.tiktok.com/@bailamos.waldcafe","handle":"@bailamos.waldcafe"}},
   "events":[
