@@ -1,17 +1,18 @@
+import { requireAdmin } from '../../../../lib/admin-auth.ts';
 import { env } from 'cloudflare:workers';
 import { changeStatus } from '../../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../../lib/booking-http.ts';
 import { BookingError, addDays, berlinDate, validDate } from '../../../../lib/booking-policy.ts';
 import { getOperations } from '../../../../lib/operations-config.ts';
 import { sendReservationMail } from '../../../../lib/reservation-mail.ts';
-function database(request: Request) {
-  if (!env.ADMIN_API_KEY || request.headers.get('x-admin-key') !== env.ADMIN_API_KEY) throw new BookingError(401,'UNAUTHORIZED','Nicht autorisiert.');
+async function database(request: Request) {
+  await requireAdmin(request);
   if (!env.DB) throw new Error('Missing DB');
   return env.DB;
 }
 export async function GET(request: Request) {
   return bookingResponse(async () => {
-    const db = database(request), params = new URL(request.url).searchParams, id = params.get('id');
+    const db = await database(request), params = new URL(request.url).searchParams, id = params.get('id');
     if (id) {
       if (id.length > 100) throw new BookingError(400,'INVALID_ID','Ungültige Reservierung.');
       const reservation = await db.prepare('SELECT id,short_code,status,version,date,time,guest_count,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,newsletter_opt_in,created_at,updated_at,change_reason FROM reservations WHERE id = ?').bind(id).first();
@@ -42,7 +43,7 @@ export async function GET(request: Request) {
 }
 export async function PATCH(request: Request) {
   return bookingResponse(async () => {
-    const db = database(request), b = await readBody(request);
+    const db = await database(request), b = await readBody(request);
     if (!b || typeof b.id !== 'string' || typeof b.status !== 'string' || !Number.isInteger(b.version) || b.version < 0 || (b.reason !== undefined && typeof b.reason !== 'string')) throw new BookingError(400,'INVALID_REQUEST','Bitte Status und aktuelle Version angeben.');
     const reason = (b.reason || '').trim();
     if (reason.length > 500 || (['declined','cancelled'].includes(b.status) && !reason)) throw new BookingError(400,'INVALID_REASON','Bitte einen kurzen Grund angeben.');
