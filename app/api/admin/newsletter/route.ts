@@ -8,6 +8,8 @@ export async function GET(request: Request) {
     if (!env.ADMIN_API_KEY || request.headers.get('x-admin-key') !== env.ADMIN_API_KEY) throw new BookingError(401,'UNAUTHORIZED','Nicht autorisiert.');
     if (!env.DB) throw new Error('Missing DB');
     const rows = await env.DB.prepare('SELECT email,name,status,consent_source,created_at,confirmed_at,updated_at FROM newsletter_subscribers ORDER BY created_at DESC LIMIT 2000').all();
-    return {subscribers: rows.results};
+    // Campaigns that have been sent, newest first, for the E-Mail history.
+    const campaigns = await env.DB.prepare('SELECT campaign_id, MAX(subject) AS subject, COUNT(*) AS recipients, MIN(sent_at) AS sent_at FROM newsletter_sends GROUP BY campaign_id ORDER BY MIN(sent_at) DESC LIMIT 50').all();
+    return {subscribers: rows.results, campaigns: campaigns.results};
   });
 }

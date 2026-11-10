@@ -30,6 +30,7 @@ function csvCell(value: string) {
 
 export function AdminNewsletter({ adminKey }: { adminKey: string }) {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
+  const [campaigns, setCampaigns] = useState<{ campaign_id: string; subject: string | null; recipients: number; sent_at: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -42,9 +43,9 @@ export function AdminNewsletter({ adminKey }: { adminKey: string }) {
     setError("");
     fetch("/api/admin/newsletter", { headers: { "x-admin-key": adminKey } })
       .then(async response => {
-        const result = await response.json() as { error?: string; subscribers?: Subscriber[] };
+        const result = await response.json() as { error?: string; subscribers?: Subscriber[]; campaigns?: { campaign_id: string; subject: string | null; recipients: number; sent_at: string }[] };
         if (!response.ok) throw new Error(result.error || "Abonnenten konnten nicht geladen werden.");
-        if (active) setSubscribers(result.subscribers || []);
+        if (active) { setSubscribers(result.subscribers || []); setCampaigns((result as { campaigns?: typeof campaigns }).campaigns || []); }
       })
       .catch(cause => { if (active) setError(cause instanceof Error ? cause.message : "Abonnenten konnten nicht geladen werden."); })
       .finally(() => { if (active) setLoading(false); });
@@ -131,8 +132,32 @@ export function AdminNewsletter({ adminKey }: { adminKey: string }) {
 
   return <div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
     <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-      <div><p className="eyebrow">E-Mail-Liste</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Newsletter</h1><p className="mt-2 text-base text-[#10261e]/55">Wer Events und Angebote erhält</p></div>
+      <div><p className="eyebrow">E-Mail</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">E-Mail</h1><p className="mt-2 text-base text-[#10261e]/55">Abonnenten verwalten und Nachrichten senden</p></div>
       <button onClick={downloadCsv} disabled={!shown.length} className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#10261e]/15 bg-white px-4 text-sm font-semibold hover:bg-[#fff8ec] disabled:opacity-40"><Download size={17} /> Als Tabelle (CSV) speichern</button>
+    </section>
+
+    <section className="mt-6 rounded-[2rem] bg-white p-5 shadow-sm sm:p-7">
+      <h2 className="font-display text-2xl">Event-E-Mail senden</h2>
+      <p className="mt-1 text-sm text-[#10261e]/55">Die Nachricht geht nur an bestätigte Abonnenten. Jede E-Mail enthält einen Abmelde-Link.</p>
+      <div className="mt-5 grid gap-4">
+        <label className="grid gap-1 text-sm font-semibold">Betreff<input value={subject} onChange={e => setSubject(e.target.value)} placeholder="z. B. Mezcal-Abend am 18. November" className="min-h-11 rounded-xl border border-[#10261e]/15 px-4 text-base font-normal" /></label>
+        <label className="grid gap-1 text-sm font-semibold">Text (Absätze mit einer Leerzeile trennen)<textarea value={body} onChange={e => setBody(e.target.value)} rows={8} className="rounded-xl border border-[#10261e]/15 px-4 py-3 text-base font-normal" /></label>
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="grid gap-1 text-sm font-semibold">Testmail an<input value={testTo} onChange={e => setTestTo(e.target.value)} type="email" className="min-h-11 rounded-xl border border-[#10261e]/15 px-4 text-base font-normal" /></label>
+          <button onClick={sendTest} disabled={mailBusy || !subject.trim() || !body.trim()} className="min-h-11 rounded-full border border-[#10261e]/20 px-5 text-sm font-semibold hover:bg-[#fff8ec] disabled:opacity-40">Testmail senden</button>
+          <button onClick={sendToAll} disabled={mailBusy || !subject.trim() || !body.trim()} className="min-h-11 rounded-full bg-[#a52520] px-5 text-sm font-semibold text-white hover:bg-[#bf3029] disabled:opacity-40">An alle bestätigten senden ({counts.subscribed})</button>
+        </div>
+        {mailStatus && <p role="status" className="text-sm text-[#10261e]/70">{mailStatus}</p>}
+      </div>
+    </section>
+
+    <section className="mt-6 overflow-hidden rounded-[2rem] bg-white shadow-sm">
+      <div className="border-b border-[#10261e]/10 p-5"><h2 className="font-display text-2xl">Gesendete E-Mails</h2><p className="mt-1 text-sm text-[#10261e]/55">Jede Aussendung mit Datum und Anzahl der Empfänger</p></div>
+      {campaigns.length ? <div className="overflow-x-auto"><table className="w-full min-w-[560px] text-left text-sm">
+        <thead className="bg-[#f4f0e8] text-[#10261e]/60"><tr>{["Gesendet am", "Betreff", "Empfänger"].map(head => <th key={head} scope="col" className="px-5 py-3 font-semibold">{head}</th>)}</tr></thead>
+        <tbody className="divide-y divide-[#10261e]/10">{campaigns.map(item => <tr key={item.campaign_id}><td className="px-5 py-3">{germanDateTime(item.sent_at)}</td><td className="px-5 py-3 font-semibold">{item.subject || "(ohne Betreff)"}</td><td className="px-5 py-3">{item.recipients}</td></tr>)}</tbody>
+      </table></div>
+        : <div className="p-8 text-center text-sm text-[#10261e]/50">Noch keine E-Mail gesendet.</div>}
     </section>
 
     <section className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-3">
@@ -159,21 +184,6 @@ export function AdminNewsletter({ adminKey }: { adminKey: string }) {
           </table>
         </div>
         : <div className="grid min-h-72 place-items-center p-8 text-center"><div><p className="font-semibold">Noch keine Abonnenten</p><p className="mt-1 text-sm text-[#10261e]/50">Sobald sich jemand über die Website anmeldet, erscheint die Person hier.</p></div></div>}
-    </section>
-
-    <section className="mt-6 rounded-[2rem] bg-white p-5 shadow-sm sm:p-7">
-      <h2 className="font-display text-2xl">Event-E-Mail senden</h2>
-      <p className="mt-1 text-sm text-[#10261e]/55">Die Nachricht geht nur an bestätigte Abonnenten. Jede E-Mail enthält einen Abmelde-Link.</p>
-      <div className="mt-5 grid gap-4">
-        <label className="grid gap-1 text-sm font-semibold">Betreff<input value={subject} onChange={e => setSubject(e.target.value)} placeholder="z. B. Mezcal-Abend am 18. November" className="min-h-11 rounded-xl border border-[#10261e]/15 px-4 text-base font-normal" /></label>
-        <label className="grid gap-1 text-sm font-semibold">Text (Absätze mit einer Leerzeile trennen)<textarea value={body} onChange={e => setBody(e.target.value)} rows={8} className="rounded-xl border border-[#10261e]/15 px-4 py-3 text-base font-normal" /></label>
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="grid gap-1 text-sm font-semibold">Testmail an<input value={testTo} onChange={e => setTestTo(e.target.value)} type="email" className="min-h-11 rounded-xl border border-[#10261e]/15 px-4 text-base font-normal" /></label>
-          <button onClick={sendTest} disabled={mailBusy || !subject.trim() || !body.trim()} className="min-h-11 rounded-full border border-[#10261e]/20 px-5 text-sm font-semibold hover:bg-[#fff8ec] disabled:opacity-40">Testmail senden</button>
-          <button onClick={sendToAll} disabled={mailBusy || !subject.trim() || !body.trim()} className="min-h-11 rounded-full bg-[#a52520] px-5 text-sm font-semibold text-white hover:bg-[#bf3029] disabled:opacity-40">An alle bestätigten senden ({counts.subscribed})</button>
-        </div>
-        {mailStatus && <p role="status" className="text-sm text-[#10261e]/70">{mailStatus}</p>}
-      </div>
     </section>
 
     <p className="mt-5 text-sm leading-6 text-[#10261e]/55">Nur „Bestätigt“ erhält Events und Angebote. „Noch nicht bestätigt“ hat den Bestätigungslink noch nicht angeklickt.</p>

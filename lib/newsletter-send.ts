@@ -36,7 +36,7 @@ export async function sendCampaignBatch(db: D1Database, env: MailEnv, campaignId
     }
     try {
       await sendMail(env, eventMessage(subscriber.email, subject, body, `${SITE_URL}/api/newsletter/unsubscribe?token=${token}`));
-      await db.prepare('INSERT INTO newsletter_sends (campaign_id, email, sent_at) VALUES (?, ?, ?)').bind(campaignId, subscriber.email, new Date().toISOString()).run();
+      await db.prepare('INSERT INTO newsletter_sends (campaign_id, email, sent_at, subject) VALUES (?, ?, ?, ?)').bind(campaignId, subscriber.email, new Date().toISOString(), subject).run();
       sent += 1;
     } catch {
       failed += 1;
