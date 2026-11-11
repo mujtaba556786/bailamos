@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSiteUrl } from "../lib/site-url";
 import { env } from "cloudflare:workers";
+import { headers } from "next/headers";
 import { getSeoContent } from "../lib/seo-content.ts";
 import "./globals.css";
 import { Analytics } from "../components/analytics";
@@ -18,7 +19,7 @@ export async function generateMetadata():Promise<Metadata>{const {content}=await
     url: "/",
     siteName: "Bailamos",
   },
-  twitter: { card: "summary", title: content.pages.home.title.de, description: content.pages.home.description.de },
+  twitter: { card: "summary_large_image" }, // title and description fall back to the Open Graph tags of each page
   alternates: { canonical: "/" },
   icons: {
     icon: "/favicon.svg",
@@ -26,13 +27,15 @@ export async function generateMetadata():Promise<Metadata>{const {content}=await
   },
 }}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Set by middleware.ts from the URL (/en/..., ?lang=en); German is the default.
+  const lang = (await headers()).get("x-bailamos-lang") === "en" ? "en" : "de";
   return (
-    <html lang="de">
+    <html lang={lang}>
       <body className="antialiased">{children}<Analytics /></body>
     </html>
   );

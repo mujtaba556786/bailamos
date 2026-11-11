@@ -12,14 +12,14 @@ import { HomeCarousel, type HighlightSlide } from "../components/home-carousel";
 import { Footer } from "../components/footer";
 import { NewsletterSignup } from "../components/newsletter-signup";
 import { SocialLink } from "../components/social-link";
-import { getSiteUrl } from "../lib/site-url";
 import { localized,withLocale,type Locale } from "../lib/i18n";
 import type {Metadata} from "next";
 import {getSeoContent} from "../lib/seo-content.ts";
+import {restaurantJsonLd} from "../lib/seo";
+import {localeAlternates} from "../lib/seo";
 
-export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB),page=content.pages.home;return{title:page.title.de,description:page.description.de,keywords:content.keywords.de.split(",").map(x=>x.trim()),alternates:{canonical:"/",languages:{de:"/",en:"/en"}},openGraph:{title:page.title.de,description:page.description.de,url:"/",locale:"de_DE"}}}
+export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB),page=content.pages.home;return{title:page.title.de,description:page.description.de,keywords:content.keywords.de.split(",").map(x=>x.trim()),alternates:localeAlternates("/","/en","de"),openGraph:{title:page.title.de,description:page.description.de,url:"/",locale:"de_DE",alternateLocale:["en_GB"],siteName:"Bailamos Waldcafé",images:[{url:"/restaurant/terrace-exterior.jpg",alt:"Bailamos Waldcafé Terrasse"}]}}}
 
-const schemaDays:Record<string,string>={monday:"Monday",tuesday:"Tuesday",wednesday:"Wednesday",thursday:"Thursday",friday:"Friday",saturday:"Saturday",sunday:"Sunday"};
 const weekdays=[["monday","Mo","Mon"],["tuesday","Di","Tue"],["wednesday","Mi","Wed"],["thursday","Do","Thu"],["friday","Fr","Fri"],["saturday","Sa","Sat"],["sunday","So","Sun"]] as const;
 
 export async function HomeContent({locale}:{locale:Locale}) {
@@ -41,14 +41,14 @@ export async function HomeContent({locale}:{locale:Locale}) {
   ];
 
   return <><main className="overflow-hidden bg-[#09130f] text-[#f5e8d3]">
-    <StructuredData data={{"@context":"https://schema.org","@type":"Restaurant","@id":`${getSiteUrl()}#restaurant`,name:restaurant.name,legalName:restaurant.legalName,url:getSiteUrl().toString(),telephone:restaurant.contact.phone,email:restaurant.contact.email,address:{"@type":"PostalAddress",streetAddress:restaurant.contact.address,addressCountry:"DE"},servesCuisine:"Mexican",acceptsReservations:true,menu:getSiteUrl("/menu").toString(),sameAs:[marketing.social.youtube.url,marketing.social.tiktok.url].filter(url=>url!=="#"),openingHoursSpecification:Object.entries(restaurant.openingHours).filter(([,hours])=>hours!=="closed").map(([day,hours])=>{const [opens,closes]=(hours as string).split("-");return{"@type":"OpeningHoursSpecification",dayOfWeek:`https://schema.org/${schemaDays[day]}`,opens,closes}}),potentialAction:{"@type":"ReserveAction",target:getSiteUrl("/reservieren").toString()}}}/>
+    <StructuredData data={restaurantJsonLd(restaurant, [marketing.social.youtube.url, marketing.social.tiktok.url].filter(url=>url!=="#"))}/>
     <SiteHeader active="Start" locale={locale}/>
 
     <HomeCarousel slides={slides} labels={{previous:L("Vorheriges Highlight","Previous highlight"),next:L("Nächstes Highlight","Next highlight"),pause:L("Automatisches Weiterblättern anhalten","Pause slideshow"),play:L("Automatisches Weiterblättern starten","Play slideshow"),region:L("Neuigkeiten bei Bailamos","News at Bailamos"),slide:L("von","of")}}/>
 
     <section id="story" className="relative scroll-mt-24 bg-[#f4ead8] px-5 py-24 text-[#10261e] sm:px-10 lg:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.95fr_1.05fr] lg:items-end">
-        <div><p className="eyebrow">{L("Mexikanisches Restaurant & Cocktail Bar","Mexican restaurant & cocktail bar")}</p><h1 className="font-display mt-4 max-w-xl text-5xl leading-[.92] sm:text-7xl">{L("Willkommen bei Bailamos.","Welcome to Bailamos.")}</h1></div>
+        <div><p className="eyebrow">{L("Mexikanisches Restaurant & Cocktailbar in Brandenburg an der Havel","Mexican restaurant & cocktail bar in Brandenburg an der Havel")}</p><h1 className="font-display mt-4 max-w-xl text-5xl leading-[.92] sm:text-7xl">{L("Willkommen bei Bailamos.","Welcome to Bailamos.")}</h1></div>
         <p className="max-w-2xl text-lg leading-8 text-[#10261e]/65">{L("Unsere Küche verbindet das Vertraute mit dem Unerwarteten. Warme Musik, klare Drinks und Tische, die zum Bleiben einladen.","Our kitchen brings the familiar together with the unexpected. Warm music, confident drinks and tables made for staying.")}</p>
       </div>
       <div className="mx-auto mt-14 grid max-w-7xl gap-4 md:grid-cols-[1.25fr_.75fr]">
