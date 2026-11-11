@@ -1,17 +1,26 @@
-import Image from "next/image";
 import { env } from "cloudflare:workers";
-import { notFound } from "next/navigation";
-import { ArrowRight, Flame, Leaf } from "lucide-react";
-import { getMenuContent } from "../../../lib/menu-content.ts";
-import { SiteHeader } from "../../../components/site-header";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
-import { absoluteMediaUrl } from "../../../lib/site-url";
-import { localeFrom,localized,withLocale } from "../../../lib/i18n";
+import { getMenuContent } from "../../../lib/menu-content.ts";
+import { dishMetadata, dishPath } from "../../../lib/seo";
+import { DishPage, relatedDishes } from "../../../components/dish-page";
 
-export async function generateMetadata({params,searchParams}:{params:Promise<{id:string}>,searchParams:Promise<{lang?:string}>}):Promise<Metadata>{const locale=localeFrom((await searchParams).lang),{id}=await params,{content}=await getMenuContent(env.DB),dish=content.dishes.find(item=>item.id===id);if(!dish)return{title:locale==="en"?"Dish not found":"Gericht nicht gefunden",robots:{index:false}};return{title:localized(dish.name,locale),description:localized(dish.description,locale),alternates:{canonical:`/menu/${dish.id}`,languages:{de:`/menu/${dish.id}`,en:`/menu/${dish.id}?lang=en`}},openGraph:{title:`${localized(dish.name,locale)} | Bailamos`,description:localized(dish.description,locale),url:withLocale(`/menu/${dish.id}`,locale),images:[absoluteMediaUrl(dish.image)]}}}
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const { content } = await getMenuContent(env.DB);
+  const dish = content.dishes.find((item) => item.id === id);
+  if (!dish) return { title: "Gericht nicht gefunden", robots: { index: false, follow: false } };
+  return dishMetadata(dish, "de");
+}
 
-export default async function DishPage({params,searchParams}:{params:Promise<{id:string}>,searchParams:Promise<{lang?:string}>}){
-  const locale=localeFrom((await searchParams).lang),L=(de:string,en:string)=>locale==="en"?en:de,{id}=await params,{content:menu}=await getMenuContent(env.DB),dish=menu.dishes.find(item=>item.id===id);
-  if(!dish)notFound();
-  return <main className="min-h-screen bg-[#0b1712] text-[#f5e8d3]"><SiteHeader active="Speisekarte"/><div className="grid min-h-[calc(100vh-6rem)] lg:grid-cols-2"><div className="relative min-h-[48vh]"><Image src={dish.image} alt={localized(dish.name,locale)} fill className="object-cover" priority/><div className="absolute inset-0 bg-gradient-to-t from-[#0b1712] via-transparent to-black/20"/></div><section className="flex items-center px-7 py-14 sm:px-14 lg:px-20"><div className="max-w-xl"><p className="eyebrow">Bailamos {L("Speisekarte","Menu")}</p><h1 className="font-display mt-4 text-6xl">{localized(dish.name,locale)}</h1><p className="mt-5 text-2xl text-[#d6a45f]">€ {dish.price.toFixed(2).replace(".",",")}</p>{!dish.available&&<p className="mt-6 inline-flex rounded-full bg-[#a52520] px-4 py-2 text-sm font-semibold">{L("Aktuell nicht verfügbar","Currently unavailable")}</p>}<p className="mt-8 text-lg leading-8 text-white/68">{localized(dish.description,locale)}</p><div className="mt-8 flex flex-wrap gap-3">{dish.vegetarian?<span className="rounded-full border border-[#c68a3b]/35 px-4 py-2 text-sm"><Leaf className="mr-2 inline" size={16}/>{L("Vegetarisch","Vegetarian")}</span>:null}{dish.spicy?<span className="rounded-full border border-[#c68a3b]/35 px-4 py-2 text-sm"><Flame className="mr-2 inline" size={16}/>{L("Schärfe","Heat")} {dish.spicy}/3</span>:null}{dish.allergens.map(allergen=><span key={allergen} className="rounded-full border border-white/15 px-4 py-2 text-sm">{L("Enthält","Contains")} {allergen}</span>)}</div><div className="mt-12 border-t border-[#c68a3b]/30 pt-9"><h2 className="font-display text-3xl">{L("Dieses Gericht probieren?","Want to try this dish?")}</h2><p className="mt-2 text-white/55">{L("Das Gericht wird nicht vorbestellt. Wir reservieren ausschließlich Ihren Tisch.","The dish is not pre-ordered; we reserve your table only.")}</p><div className="mt-6 flex gap-4"><a href={withLocale("/menu",locale)} className="button-secondary">{L("Zur Speisekarte","Back to menu")}</a><a href={withLocale("/reservieren",locale)} className="button-primary">{L("Tisch reservieren","Reserve a table")} <ArrowRight size={17}/></a></div></div></div></section></div></main>;
+// German dish page. English dishes live at /en/menu/[id]; ?lang=en is redirected there so there is one URL per language.
+export default async function DishPageDe({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ lang?: string }> }) {
+  const { id } = await params;
+  const query = await searchParams;
+  const { content: menu } = await getMenuContent(env.DB);
+  const dish = menu.dishes.find((item) => item.id === id);
+  if (!dish) notFound();
+  if (query.lang === "en") permanentRedirect(dishPath(dish.id, "en"));
+  const category = menu.categories.find((item) => item.id === dish.categoryId);
+  return <DishPage dish={dish} category={category} related={relatedDishes(menu, dish)} locale="de" />;
 }
