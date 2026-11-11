@@ -13,7 +13,7 @@ function displayDate(value: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale === "de" ? "de-DE" : "en-US", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date(`${value}T12:00:00`));
 }
 
-type Result = { error?: string; tables?: { id: string }[]; times?:string[]; maxGuests?:number; horizonDays?:number; reservation?: { id: string }; cancellationToken?: string };
+type Result = { error?: string; tables?: { id: string }[]; times?:string[]; maxGuests?:number; horizonDays?:number; guestLimit?:number; largeGroupNote?:{de:string;en:string}; reservation?: { id: string }; cancellationToken?: string };
 const emptyDetails = { name: "", phone: "", email: "", occasion: "", dietary: "", notes: "" };
 
 export function ReservationExperience({locale}:{locale:Locale}) {
@@ -24,7 +24,7 @@ export function ReservationExperience({locale}:{locale:Locale}) {
   const [time, setTime] = useState("");
   const [guests, setGuests] = useState(2);
   const [nextFreeDate,setNextFreeDate]=useState("");
-  const [times,setTimes]=useState<string[]>([]),[maxGuests,setMaxGuests]=useState(4),[horizonDays,setHorizonDays]=useState(180),[slotsLoading,setSlotsLoading]=useState(true);
+  const [times,setTimes]=useState<string[]>([]),[maxGuests,setMaxGuests]=useState(4),[guestLimit,setGuestLimit]=useState(6),[groupNote,setGroupNote]=useState<{de:string;en:string}>({de:"Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 8609300.",en:"For groups of more than 6 people, please email us at info@bailamos-waldcafe.de or call us on +49 173 8609300."}),[horizonDays,setHorizonDays]=useState(180),[slotsLoading,setSlotsLoading]=useState(true);
   const [details, setDetails] = useState(emptyDetails);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +36,7 @@ export function ReservationExperience({locale}:{locale:Locale}) {
   // The home page booking teaser links here with ?date=YYYY-MM-DD&guests=N.
   useEffect(()=>{const params=new URLSearchParams(window.location.search),wantedDate=params.get("date")||"",wantedTime=params.get("time")||"",wantedGuests=Number(params.get("guests"));if(/^\d{4}-\d{2}-\d{2}$/.test(wantedDate)&&wantedDate>=today)setDate(wantedDate);if(/^([01]\d|2[0-3]):[0-5]\d$/.test(wantedTime))setTime(wantedTime);if(Number.isInteger(wantedGuests)&&wantedGuests>=1&&wantedGuests<=8)setGuests(wantedGuests)},[today]);
 
-  useEffect(()=>{let active=true;setSlotsLoading(true);setError("");fetch(`/api/reservations?date=${date}&guests=${guests}`).then(async response=>{const result=await response.json() as Result;if(!response.ok)throw new Error(result.error);if(active){setTimes(result.times||[]);if(!(result.times||[]).length){void findNextFreeDate(date,guests).then(next=>{if(active)setNextFreeDate(next)})}else setNextFreeDate("");setMaxGuests(result.maxGuests||4);setHorizonDays(result.horizonDays||180);setTime(current=>(result.times||[]).includes(current)?current:result.times?.[0]||"")}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:"Termine konnten nicht geladen werden.")}).finally(()=>{if(active)setSlotsLoading(false)});return()=>{active=false}},[date,guests]);
+  useEffect(()=>{let active=true;setSlotsLoading(true);setError("");fetch(`/api/reservations?date=${date}&guests=${guests}`).then(async response=>{const result=await response.json() as Result;if(!response.ok)throw new Error(result.error);if(active){setTimes(result.times||[]);if(!(result.times||[]).length){void findNextFreeDate(date,guests).then(next=>{if(active)setNextFreeDate(next)})}else setNextFreeDate("");setMaxGuests(result.maxGuests||4);if(result.guestLimit)setGuestLimit(result.guestLimit);if(result.largeGroupNote)setGroupNote(result.largeGroupNote);setHorizonDays(result.horizonDays||180);setTime(current=>(result.times||[]).includes(current)?current:result.times?.[0]||"")}}).catch(cause=>{if(active)setError(cause instanceof Error?cause.message:"Termine konnten nicht geladen werden.")}).finally(()=>{if(active)setSlotsLoading(false)});return()=>{active=false}},[date,guests]);
 
   // Looks ahead up to two weeks for the first day that still has free times.
   async function findNextFreeDate(from: string, partySize: number) {
@@ -107,7 +107,8 @@ export function ReservationExperience({locale}:{locale:Locale}) {
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
             <label className="grid gap-2 text-base font-medium"><span className="flex items-center gap-2"><CalendarDays size={18} /> {L("Datum","Date")}</span><input value={date} min={today} max={addDays(today, horizonDays)} onChange={event => { setDate(event.target.value); setTime(""); setError(""); }} type="date" className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base" /></label>
             <label className="grid gap-2 text-base font-medium"><span className="flex items-center gap-2"><Clock3 size={18} /> {L("Uhrzeit","Time")}</span><select value={selectedTime} onChange={event => setTime(event.target.value)} className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base">{!times.length && <option value="">{L("Keine Termine verfügbar","No times available")}</option>}{times.map(value => <option key={value} value={value}>{value}{locale==="de"?" Uhr":""}</option>)}</select></label>
-            <label className="grid gap-2 text-base font-medium sm:col-span-2"><span className="flex items-center gap-2"><Users size={18} /> {L("Gäste","Guests")}</span><select value={guests} onChange={event => { setGuests(Number(event.target.value)); setError(""); }} className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base">{Array.from({ length: 8 }, (_, index) => index + 1).map(value => <option key={value} value={value}>{value} {value === 1 ? L("Person","person") : L("Personen","people")}</option>)}</select></label>
+            <p className="rounded-xl bg-[#f4f0e8] p-4 text-sm leading-6 sm:col-span-2">{locale==="en"?groupNote.en:groupNote.de}</p>
+            <label className="grid gap-2 text-base font-medium sm:col-span-2"><span className="flex items-center gap-2"><Users size={18} /> {L("Gäste","Guests")}</span><select value={guests} onChange={event => { setGuests(Number(event.target.value)); setError(""); }} className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base">{Array.from({ length: guestLimit }, (_, index) => index + 1).map(value => <option key={value} value={value}>{value} {value === 1 ? L("Person","person") : L("Personen","people")}</option>)}</select></label>
           </div>
           {guests > maxGuests && <p role="status" className="mt-5 rounded-xl bg-[#fff0d6] p-4 text-base">{L(`Online sind aktuell bis zu ${maxGuests} Personen möglich. Größere Gruppen stimmen Sie bitte direkt mit dem Restaurant ab.`,`Online booking currently supports up to ${maxGuests} guests. Please contact the restaurant directly for larger groups.`)}</p>}
           {error && <p role="alert" className="mt-5 rounded-xl bg-red-50 p-4 text-base text-red-700">{error}</p>}
