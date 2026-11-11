@@ -8,10 +8,12 @@ export const INTERVAL = restaurant.reservation.intervalMinutes;
 export const BOOKING_HORIZON_DAYS = 180;
 export const LEAD_MINUTES = 30;
 export const bookableTables = tables.filter((table) => table.enabled);
-export const ONLINE_MAX_GUESTS = Math.min(restaurant.reservation.maximumGuests, Math.max(...bookableTables.map((table) => table.capacity), 0));
+export const ONLINE_MAX_GUESTS = Math.min(restaurant.reservation.maximumGuests, restaurant.reservation.guestSelectLimit);
 const policy=(config?:OperationsConfig)=>({restaurant:config?.restaurant??restaurant,tables:config?.tables??tables,leadMinutes:config?.booking.leadMinutes??LEAD_MINUTES,horizonDays:config?.booking.horizonDays??BOOKING_HORIZON_DAYS});
 export const bookableTablesFor=(config?:OperationsConfig)=>policy(config).tables.filter(table=>table.enabled);
-export const onlineMaxGuests=(config?:OperationsConfig)=>Math.min(policy(config).restaurant.reservation.maximumGuests,Math.max(...bookableTablesFor(config).map(table=>table.capacity),0));
+export const onlineMaxGuests=(config?:OperationsConfig)=>Math.min(policy(config).restaurant.reservation.maximumGuests,policy(config).restaurant.reservation.guestSelectLimit);
+// Online, a table takes any party up to the online maximum: the restaurant adds chairs or combines tables on the day.
+export const seatsFit=(table:{capacity:number},guests:number,config?:OperationsConfig)=>table.capacity>=guests||guests<=onlineMaxGuests(config);
 
 export class BookingError extends Error {
   status: number;
@@ -58,7 +60,7 @@ export function validateGuests(value: unknown,config?:OperationsConfig): asserts
   if (typeof value !== "number" || !Number.isInteger(value) || value < 1 || value > maximum) {
     throw new BookingError(400, "INVALID_GUESTS", "Bitte prüfen Sie die Gästezahl.");
   }
-  if (value > maxOnline) throw new BookingError(422, "GROUP_REQUEST_REQUIRED", `Online können wir aktuell bis zu ${maxOnline} Personen an einem Tisch reservieren. Für größere Gruppen stimmen Sie die Plätze bitte direkt mit dem Restaurant ab.`);
+  if (value > maxOnline) throw new BookingError(422, "GROUP_REQUEST_REQUIRED", `Online können wir aktuell bis zu ${maxOnline} Personen reservieren. Für größere Gruppen stimmen Sie die Plätze bitte direkt mit dem Restaurant ab.`);
 }
 const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
 export function serviceWindow(date: string,config?:OperationsConfig): [number, number] | null {
@@ -136,7 +138,7 @@ export function parseBooking(body: unknown,config?:OperationsConfig) {
   const phone = field(customer?.phone, "die Telefonnummer", 40).replace(/[\s().-]/g, "");
   if (!/^\+?\d{7,15}$/.test(phone)) throw new BookingError(400, "INVALID_PHONE", "Bitte geben Sie eine gültige Telefonnummer ein.");
   const tableId = b.tableId === undefined ? "restaurant-choice" : field(b.tableId, "den Tisch", 60);
-  if (tableId !== "restaurant-choice" && !bookableTablesFor(config).some((table) => table.id === tableId && table.capacity >= guestCount)) throw new BookingError(422, "INVALID_TABLE", "Dieser Tisch passt nicht zur Gästezahl oder ist nicht buchbar.");
+  if (tableId !== "restaurant-choice" && !bookableTablesFor(config).some((table) => table.id === tableId && seatsFit(table, guestCount, config))) throw new BookingError(422, "INVALID_TABLE", "Dieser Tisch passt nicht zur Gästezahl oder ist nicht buchbar.");
   if (b.marketingConsent !== undefined && typeof b.marketingConsent !== "boolean") throw new BookingError(400, "INVALID_CONSENT", "Bitte prüfen Sie die Newsletter-Auswahl.");
   return { date: b.date, time: b.time, guestCount: b.guestCount, tableId, customer: { name, email, phone }, occasion: field(b.occasion, "den Anlass", 120, true), dietary: field(b.dietary, "die Ernährungsangabe", 120, true), notes: field(b.notes, "die Wünsche", 2000, true), marketingConsent: b.marketingConsent === true };
 }

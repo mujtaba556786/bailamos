@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { createBooking, digest } from '../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../lib/booking-http.ts';
-import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests, parseBooking } from '../../../lib/booking-policy.ts';
+import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests, parseBooking, seatsFit } from '../../../lib/booking-policy.ts';
 import { sendReservationMail } from '../../../lib/reservation-mail.ts';
 import { sendTelegramAlert } from '../../../lib/telegram-alert.ts';
 import { getSiteUrl } from '../../../lib/site-url.ts';
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     const interval = slot(date,time,new Date(),config);
     const rows = await env.DB.prepare(`SELECT DISTINCT table_id FROM reservations WHERE status IN ('pending','confirmed','arrived','seated') AND ((starts_at IS NOT NULL AND starts_at < ? AND ends_at > ?) OR (starts_at IS NULL AND julianday(date || ' ' || time) < julianday(? || ' ' || ?) + ? / 1440.0 AND julianday(? || ' ' || ?) < julianday(date || ' ' || time) + duration_minutes / 1440.0))`).bind(interval.endsAt,interval.startsAt,date,time,(interval.endsAt-interval.startsAt)/60,date,time).all<{table_id:string}>();
     const busy = new Set(rows.results.map(r=>r.table_id));
-    const tables=bookableTablesFor(config).filter(t=>t.capacity>=guests && !busy.has(t.id));
+    const tables=bookableTablesFor(config).filter(t=>seatsFit(t,guests,config) && !busy.has(t.id));
     return {tables,tableIds:tables.map(t=>t.id)};
   });
 }
