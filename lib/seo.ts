@@ -95,8 +95,9 @@ const cityLine = { de: "Mexikanische Küche im Bailamos Waldcafé, Brandenburg a
 
 export function dishMetadata(dish: MenuContent["dishes"][number], locale: Locale): Metadata {
   const name = localized(dish.name, locale);
-  const title = locale === "en" ? `${name} – Bailamos Waldcafé menu` : `${name} – Speisekarte Bailamos Waldcafé`;
-  const description = `${localized(dish.description, locale)} ${cityLine[locale]}`.slice(0, 300);
+  // Text entered in the admin menu wins; otherwise the automatic text is used.
+  const title = dish.seoTitle?.[locale]?.trim() || (locale === "en" ? `${name} – Bailamos Waldcafé menu` : `${name} – Speisekarte Bailamos Waldcafé`);
+  const description = dish.seoDescription?.[locale]?.trim() || `${localized(dish.description, locale)} ${cityLine[locale]}`.slice(0, 300);
   const dePath = dishPath(dish.id, "de");
   const enPath = dishPath(dish.id, "en");
   return {
