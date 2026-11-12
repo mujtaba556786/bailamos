@@ -33,11 +33,6 @@ export default function Impressum() {
           </div>
 
           <div>
-            <h2 className="mb-3 text-lg font-semibold">Umsatzsteuer-Identifikationsnummer</h2>
-            <p>[TODO: USt-ID oder "Nicht registriert"]</p>
-          </div>
-
-          <div>
             <h2 className="mb-3 text-lg font-semibold">Verantwortliche Person</h2>
             <p>Shief Ullah</p>
           </div>
