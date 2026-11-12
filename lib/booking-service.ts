@@ -1,4 +1,4 @@
-import { BookingError, parseBooking, slot, bookableTablesFor } from './booking-policy.ts';
+import { BookingError, parseBooking, slot, bookableTablesFor, seatsFit } from './booking-policy.ts';
 import type { OperationsConfig } from './operations-config.ts';
 // No 0/O or 1/I/L, so a code read out over the phone is hard to mistype.
 const SHORT_CODE_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
@@ -25,7 +25,7 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
   if (existing) return existing;
   const interval = slot(b.date,b.time,now,config),duration=config?.restaurant.reservation.durationMinutes??120;
   const fingerprint = await digest(JSON.stringify([b.customer.email,b.customer.phone,b.date,b.time,b.guestCount]));
-  for (const table of bookableTablesFor(config).filter(t => t.capacity >= b.guestCount && (b.tableId === 'restaurant-choice' || t.id === b.tableId))) {
+  for (const table of bookableTablesFor(config).filter(t => seatsFit(t, b.guestCount, config) && (b.tableId === 'restaurant-choice' || t.id === b.tableId))) {
     const id = `R-${crypto.randomUUID()}`, code = shortCode(), stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
     try {
       const inserted = await db.prepare(`INSERT INTO reservations (id,short_code,status,date,time,guest_count,duration_minutes,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,cancel_token,booking_key_hash,booking_payload_hash,duplicate_fingerprint,starts_at,ends_at,updated_by,newsletter_opt_in,newsletter_consent_at,created_at,updated_at)
