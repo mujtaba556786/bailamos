@@ -54,6 +54,7 @@ export function validateDate(date: unknown, now = new Date(),config?:OperationsC
   if (date < berlinDate(now)) throw new BookingError(400, "PAST_DATE", "Bitte wählen Sie einen zukünftigen Termin.");
   const horizon=policy(config).horizonDays;
   if (date > addDays(berlinDate(now), horizon)) throw new BookingError(400, "BOOKING_HORIZON", `Reservierungen sind bis ${horizon} Tage im Voraus möglich.`);
+  if (policy(config).restaurant.reservation.blockedDates?.includes(date)) throw new BookingError(422, "BLOCKED_DATE", "An diesem Tag sind Online-Reservierungen nicht möglich. Bitte wählen Sie einen anderen Tag oder rufen Sie uns an.");
 }
 export function validateGuests(value: unknown,config?:OperationsConfig): asserts value is number {
   const maximum=policy(config).restaurant.reservation.maximumGuests,maxOnline=onlineMaxGuests(config);
