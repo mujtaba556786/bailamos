@@ -47,3 +47,6 @@ next-env.d.ts
 tsconfig.tsbuildinfo
 marketing/*.mp4
 marketing/*.png
+
+# Database backups made before a purge (contain personal data)
+/backups/

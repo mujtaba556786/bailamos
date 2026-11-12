@@ -15,8 +15,8 @@ export default function Impressum() {
         <section className="mb-8 space-y-4 text-gray-700">
           <div>
             <h2 className="mb-3 text-lg font-semibold">Information pursuant to § 5 TMG</h2>
-            <p className="font-semibold">[TODO: Full name of operator]</p>
-            <p>[TODO: Business form (e.g., Sole proprietorship, GmbH)]</p>
+            <p className="font-semibold">Shief Ullah</p>
+            <p>Sole proprietorship (Einzelunternehmen)</p>
             <p className="mt-4">
               Anton-Saefkow-Allee 2A<br />
               14772 Brandenburg an der Havel<br />
@@ -39,7 +39,7 @@ export default function Impressum() {
 
           <div>
             <h2 className="mb-3 text-lg font-semibold">Responsible Person</h2>
-            <p>[TODO: Name of person responsible for content]</p>
+            <p>Shief Ullah</p>
           </div>
 
           <div>
