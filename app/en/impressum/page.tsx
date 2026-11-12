@@ -33,11 +33,6 @@ export default function Impressum() {
           </div>
 
           <div>
-            <h2 className="mb-3 text-lg font-semibold">VAT ID</h2>
-            <p>[TODO: VAT ID or "Not registered"]</p>
-          </div>
-
-          <div>
             <h2 className="mb-3 text-lg font-semibold">Responsible Person</h2>
             <p>Shief Ullah</p>
           </div>
