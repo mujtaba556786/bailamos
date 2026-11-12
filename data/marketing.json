@@ -1,19 +1,188 @@
 {
-  "announcement":{"enabled":true,"de":"Noche de Mezcal · Jeden Freitag ab 20 Uhr","en":"Noche de Mezcal · Every Friday from 8 pm","link":"/events/noche-de-mezcal"},
-  "hero":{"type":"image","image":"/table-terrace.webp","video":null,"poster":"/table-terrace.webp"},
+  "announcement": {
+    "enabled": true,
+    "de": "Noche de Mezcal · Jeden Freitag ab 20 Uhr",
+    "en": "Noche de Mezcal · Every Friday from 8 pm",
+    "link": "/events/noche-de-mezcal"
+  },
+  "hero": {
+    "type": "image",
+    "image": "/table-terrace.webp",
+    "video": null,
+    "poster": "/table-terrace.webp"
+  },
   "demoMedia": {
     "notice": "Temporäre, lizenzierte Beispielmedien – vor dem Launch durch eigene Bailamos-Fotos und -Videos ersetzen.",
     "videos": [
-      {"title":"Bar bei Nacht","source":"Mixkit","url":"https://mixkit.co/free-stock-video/a-busy-elegant-bar-4043/","poster":"https://images.pexels.com/videos/7505585/alcohol-alcoholic-beverage-alcoholic-drink-bar-cafe-7505585.jpeg?auto=compress&dpr=1&h=750&w=1260"},
-      {"title":"Aus der Küche","source":"Mixkit","url":"https://mixkit.co/free-stock-video/chef-cooking-on-a-large-grill-4678/","poster":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"},
-      {"title":"Tacos im Fokus","source":"Pexels","url":"https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/","poster":"https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"}
+      {
+        "title": "Bar bei Nacht",
+        "source": "Mixkit",
+        "url": "https://mixkit.co/free-stock-video/a-busy-elegant-bar-4043/",
+        "poster": "https://images.pexels.com/videos/7505585/alcohol-alcoholic-beverage-alcoholic-drink-bar-cafe-7505585.jpeg?auto=compress&dpr=1&h=750&w=1260"
+      },
+      {
+        "title": "Aus der Küche",
+        "source": "Mixkit",
+        "url": "https://mixkit.co/free-stock-video/chef-cooking-on-a-large-grill-4678/",
+        "poster": "https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"
+      },
+      {
+        "title": "Tacos im Fokus",
+        "source": "Pexels",
+        "url": "https://www.pexels.com/video/close-up-video-of-tacos-on-plate-8448299/",
+        "poster": "https://images.pexels.com/videos/8448299/appetizer-bread-breakfast-chili-8448299.jpeg?auto=compress&dpr=1&h=750&w=1260"
+      }
     ],
-    "gallery": [{"label": {"de": "Bar", "en": "Bar"}, "source": "Bailamos", "url": "https://www.instagram.com/bailamos_waldcafe/", "image": "/restaurant/bar-interior.jpg"}, {"label": {"de": "Terrasse", "en": "Terrace"}, "source": "Bailamos", "url": "https://www.instagram.com/bailamos_waldcafe/", "image": "/restaurant/terrace-exterior.jpg"}, {"label": {"de": "Dekor", "en": "Decor"}, "source": "Bailamos", "url": "https://www.instagram.com/bailamos_waldcafe/", "image": "/restaurant/wall-lamp.jpg"}]
+    "gallery": [
+      {
+        "label": {
+          "de": "Bar",
+          "en": "Bar"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/restaurant/bar-interior.jpg"
+      },
+      {
+        "label": {
+          "de": "Terrasse",
+          "en": "Terrace"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/restaurant/terrace-exterior.jpg"
+      },
+      {
+        "label": {
+          "de": "Dekor",
+          "en": "Decor"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/restaurant/wall-lamp.jpg"
+      },
+      {
+        "label": {
+          "de": "Terrasse",
+          "en": "Terrace"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/gallery-ai/gallery-ai-02.jpg"
+      },
+      {
+        "label": {
+          "de": "Außenbereich",
+          "en": "Outdoor area"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/gallery-ai/gallery-ai-03.jpg"
+      },
+      {
+        "label": {
+          "de": "Dekor",
+          "en": "Decor"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/gallery-ai/gallery-ai-04.jpg"
+      },
+      {
+        "label": {
+          "de": "Bar",
+          "en": "Bar"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/gallery-ai/gallery-ai-05.jpg"
+      },
+      {
+        "label": {
+          "de": "Cocktail",
+          "en": "Cocktail"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/gallery-ai/gallery-ai-06.jpg"
+      },
+      {
+        "label": {
+          "de": "Fassade",
+          "en": "Facade"
+        },
+        "source": "Bailamos",
+        "url": "https://www.instagram.com/bailamos_waldcafe/",
+        "image": "/gallery-ai/gallery-ai-07.jpg"
+      }
+    ]
   },
-  "social":{"instagram":{"url":"https://www.instagram.com/bailamos_waldcafe/","handle":"@bailamos_waldcafe"},"facebook":{"url":"https://www.facebook.com/people/Bailamos-Mexikanisches-Restaurant-Wald-Caf%C3%A9/61595073784535/","handle":"Bailamos Mexikanisches Restaurant - Wald Café"},"youtube":{"url":"https://www.youtube.com/channel/UCOix77VvOuExvfUWhey8sWw","handle":"Bailamos Waldcafé"},"tiktok":{"url":"https://www.tiktok.com/@bailamos.waldcafe","handle":"@bailamos.waldcafe"}},
-  "events":[
-    {"id":"noche-de-mezcal","title":{"de":"Noche de Mezcal","en":"Mezcal Night"},"summary":{"de":"Eine geführte Reise durch drei ausgewählte Mezcals, begleitet von kleinen Gerichten aus unserer Küche.","en":"A guided tasting of three selected mezcals with small plates from our kitchen."},"date":"2026-09-18","time":"20:00","image":"/samples/cocktails-night.webp","featured":true,"published":true},
-    {"id":"domingo-familiar","title":{"de":"Domingo Familiar","en":"Family Sunday"},"summary":{"de":"Ein entspannter Sonntagabend für die ganze Familie mit einer besonderen Sharing-Karte.","en":"A relaxed family Sunday with a special sharing menu."},"date":"2026-09-27","time":"17:00","image":"/samples/table-spread.webp","featured":true,"published":true},
-    {"id":"eroeffnungsabend","title":{"de":"Eröffnungsabend","en":"Opening Night"},"summary":{"de":"Wir feiern die Eröffnung von Bailamos Waldcafe mit einem besonderen Abend für Gäste, Nachbarn und Freunde. Details folgen.","en":"We celebrate the opening of Bailamos Waldcafe with a special evening for guests, neighbours and friends. Details to follow."},"date":"2026-11-25","time":"18:00","image":"/restaurant/terrace-exterior.jpg","featured":true,"published":true}
+  "social": {
+    "instagram": {
+      "url": "https://www.instagram.com/bailamos_waldcafe/",
+      "handle": "@bailamos_waldcafe"
+    },
+    "facebook": {
+      "url": "https://www.facebook.com/people/Bailamos-Mexikanisches-Restaurant-Wald-Caf%C3%A9/61595073784535/",
+      "handle": "Bailamos Mexikanisches Restaurant - Wald Café"
+    },
+    "youtube": {
+      "url": "https://www.youtube.com/channel/UCOix77VvOuExvfUWhey8sWw",
+      "handle": "Bailamos Waldcafé"
+    },
+    "tiktok": {
+      "url": "https://www.tiktok.com/@bailamos.waldcafe",
+      "handle": "@bailamos.waldcafe"
+    }
+  },
+  "events": [
+    {
+      "id": "noche-de-mezcal",
+      "title": {
+        "de": "Noche de Mezcal",
+        "en": "Mezcal Night"
+      },
+      "summary": {
+        "de": "Eine geführte Reise durch drei ausgewählte Mezcals, begleitet von kleinen Gerichten aus unserer Küche.",
+        "en": "A guided tasting of three selected mezcals with small plates from our kitchen."
+      },
+      "date": "2026-09-18",
+      "time": "20:00",
+      "image": "/samples/cocktails-night.webp",
+      "featured": true,
+      "published": true
+    },
+    {
+      "id": "domingo-familiar",
+      "title": {
+        "de": "Domingo Familiar",
+        "en": "Family Sunday"
+      },
+      "summary": {
+        "de": "Ein entspannter Sonntagabend für die ganze Familie mit einer besonderen Sharing-Karte.",
+        "en": "A relaxed family Sunday with a special sharing menu."
+      },
+      "date": "2026-09-27",
+      "time": "17:00",
+      "image": "/samples/table-spread.webp",
+      "featured": true,
+      "published": true
+    },
+    {
+      "id": "eroeffnungsabend",
+      "title": {
+        "de": "Eröffnungsabend",
+        "en": "Opening Night"
+      },
+      "summary": {
+        "de": "Wir feiern die Eröffnung von Bailamos Waldcafe mit einem besonderen Abend für Gäste, Nachbarn und Freunde. Details folgen.",
+        "en": "We celebrate the opening of Bailamos Waldcafe with a special evening for guests, neighbours and friends. Details to follow."
+      },
+      "date": "2026-11-25",
+      "time": "18:00",
+      "image": "/restaurant/terrace-exterior.jpg",
+      "featured": true,
+      "published": true
+    }
   ]
 }
