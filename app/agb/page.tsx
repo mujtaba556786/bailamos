@@ -29,19 +29,8 @@ export default function AGB() {
           </p>
         </section>
 
-        <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">3. Stornierungsbedingungen</h2>
-          <p className="font-semibold">[TODO: Definieren Sie Ihre Stornierungspolitik, z.B.:]</p>
-          <ul className="list-inside list-disc space-y-2">
-            <li>Kostenlose Stornierung bis 48 Stunden vor der reservierten Zeit</li>
-            <li>Bei Stornierung weniger als 48 Stunden vorher: 50% des durchschnittlichen Rechnungsbetrages</li>
-            <li>Bei Nichterscheinen (No-Show): 100% des durchschnittlichen Rechnungsbetrages</li>
-          </ul>
-        </section>
-
-        <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">4. Tischdauer</h2>
-          <p className="font-semibold">[TODO: Definieren Sie die Tischdauer, z.B.:]</p>
+                <section className="space-y-4 text-gray-700">
+          <h2 className="text-xl font-semibold">3. Tischdauer</h2>
           <p>
             Die maximale Tischnutzungsdauer beträgt:
           </p>
@@ -53,19 +42,18 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">5. Zahlung</h2>
+          <h2 className="text-xl font-semibold">4. Zahlung</h2>
           <p>
             Die Bezahlung erfolgt direkt im Restaurant. Wir akzeptieren:
           </p>
           <ul className="list-inside list-disc space-y-2">
             <li>Barzahlung</li>
             <li>Kartenzahlung (EC/Kreditkarte)</li>
-            <li>[TODO: Weitere Zahlungsarten hinzufügen]</li>
           </ul>
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">6. Allergien & Unverträglichkeiten</h2>
+          <h2 className="text-xl font-semibold">5. Allergien & Unverträglichkeiten</h2>
           <p>
             Bitte informieren Sie uns bei der Reservierung über bekannte Allergien und
             Unverträglichkeiten. Wir können nicht vollständig ausschließen, dass Allergene
@@ -74,7 +62,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">7. Hausordnung</h2>
+          <h2 className="text-xl font-semibold">6. Hausordnung</h2>
           <p>Wir behalten uns das Recht vor, den Eintritt zu verweigern bei:</p>
           <ul className="list-inside list-disc space-y-2">
             <li>Starker Alkoholeinfluss</li>
@@ -87,7 +75,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">8. Haftung</h2>
+          <h2 className="text-xl font-semibold">7. Haftung</h2>
           <p>
             Wir haften nicht für Verlust, Beschädigung oder Diebstahl von persönlichen Gegenständen.
             Bitte bewahren Sie Ihre Wertsachen sorgfältig auf oder geben Sie diese an unseren Service.
@@ -95,7 +83,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">9. Fotografien & Videoaufnahmen</h2>
+          <h2 className="text-xl font-semibold">8. Fotografien & Videoaufnahmen</h2>
           <p>
             Fotografieren und Videoaufnahmen zu privaten Zwecken sind erlaubt. Kommerzielle Nutzung
             bedarf unserer ausdrücklichen Genehmigung.
@@ -103,7 +91,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">10. Änderung der AGB</h2>
+          <h2 className="text-xl font-semibold">9. Änderung der AGB</h2>
           <p>
             Wir behalten uns das Recht vor, diese AGB jederzeit zu ändern. Änderungen werden
             auf unserer Website veröffentlicht. Bei weiteren Reservierungen akzeptieren Sie die
@@ -112,7 +100,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">11. Schlussbestimmungen</h2>
+          <h2 className="text-xl font-semibold">10. Schlussbestimmungen</h2>
           <p>
             Es gilt deutsches Recht. Gerichtsstand ist Brandenburg an der Havel.
           </p>

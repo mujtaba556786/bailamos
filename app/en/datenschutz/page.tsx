@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
           <h2 className="text-xl font-semibold">1. Responsible Party</h2>
           <p>
             Responsible for data processing:<br />
-            <span className="font-semibold">[TODO: Name of operator]</span><br />
+            <span className="font-semibold">Shief Ullah</span><br />
             Anton-Saefkow-Allee 2A<br />
             14772 Brandenburg an der Havel<br />
             Email: info@bailamos-waldcafe.de<br />
@@ -58,8 +58,8 @@ export default function PrivacyPolicy() {
         <section className="space-y-4 text-gray-700">
           <h2 className="text-xl font-semibold">5. Storage Duration</h2>
           <p>
-            Reservation data: [TODO: e.g., "6 months after reservation date"]<br />
-            Contact inquiries: [TODO: e.g., "12 months"]<br />
+            Reservation data: 6 months after the reservation date<br />
+            Contact inquiries: 6 months<br />
             Website analytics: 14 months
           </p>
         </section>

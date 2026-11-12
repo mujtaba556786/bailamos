@@ -16,7 +16,7 @@ export default function Datenschutz() {
           <h2 className="text-xl font-semibold">1. Verantwortlicher</h2>
           <p>
             Verantwortlich für die Datenverarbeitung:<br />
-            <span className="font-semibold">[TODO: Name des Betreibers]</span><br />
+            <span className="font-semibold">Shief Ullah</span><br />
             Anton-Saefkow-Allee 2A<br />
             14772 Brandenburg an der Havel<br />
             E-Mail: info@bailamos-waldcafe.de<br />
@@ -62,8 +62,8 @@ export default function Datenschutz() {
         <section className="space-y-4 text-gray-700">
           <h2 className="text-xl font-semibold">5. Speicherdauer</h2>
           <p>
-            Reservierungsdaten: [TODO: z.B. "6 Monate nach Reservierungsdatum"]<br />
-            Kontaktanfragen: [TODO: z.B. "12 Monate"]<br />
+            Reservierungsdaten: 6 Monate nach dem Reservierungsdatum<br />
+            Kontaktanfragen: 6 Monate<br />
             Website-Analyse: 14 Monate
           </p>
         </section>
