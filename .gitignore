@@ -50,3 +50,6 @@ marketing/*.png
 
 # Database backups made before a purge (contain personal data)
 /backups/
+
+# Local exports (menu spreadsheets, prompts); not part of the site
+/exports/

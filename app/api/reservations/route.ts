@@ -6,6 +6,7 @@ import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests,
 import { sendReservationMail } from '../../../lib/reservation-mail.ts';
 import { sendTelegramAlert } from '../../../lib/telegram-alert.ts';
 import { getSiteUrl } from '../../../lib/site-url.ts';
+import { adminRateLimit } from '../../../lib/admin-rate-limit.ts';
 import { getOperations } from '../../../lib/operations-config.ts';
 import {getMarketingContent} from '../../../lib/marketing-content.ts';
 import {openingActive} from '../../../lib/opening.ts';
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
     const body = await readBody(request);
     const key = request.headers.get('Idempotency-Key') || '';
     const seen = await env.DB.prepare('SELECT 1 FROM reservations WHERE booking_key_hash = ?').bind(`${await digest(key)}`).first();
+    if (!seen) await adminRateLimit(env.DB, request, 'booking');
     const result = await createBooking(env.DB,body,key,new Date(),config);
     if (!seen) {
       const b = parseBooking(body,config);

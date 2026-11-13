@@ -8,7 +8,7 @@ const securityHeaders={
   'X-Frame-Options':'SAMEORIGIN',
   'Referrer-Policy':'strict-origin-when-cross-origin',
   'Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=()',
-  'Strict-Transport-Security':'max-age=15552000; includeSubDomains',
+  'Strict-Transport-Security':'max-age=31536000; includeSubDomains',
   // Report-only: violations are logged in the browser console, nothing is blocked yet.
   // 'unsafe-inline' is needed for the framework's inline scripts; it is tightened later with nonces.
   'Content-Security-Policy-Report-Only':[
