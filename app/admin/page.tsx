@@ -10,6 +10,7 @@ import tables from "../../data/tables.json";
 import { AdminContent } from "../../components/admin-content";
 import { AdminMenu } from "../../components/admin-menu";
 import { AdminOperations } from "../../components/admin-operations";
+import { AdminClosedDays } from "../../components/admin-closed-days";
 import { AdminSeo } from "../../components/admin-seo";
 import { AdminMarketingStudio } from "../../components/admin-marketing-studio";
 
@@ -126,6 +127,7 @@ export default function Admin(){
     </header>
     <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">{[["reservations","Reservierungen"],["statistics","Statistik"],["newsletter","E-Mail"],["content","Website-Inhalte"],["studio","Marketing Studio (bald)"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].map(([id,label])=><button key={id} disabled={id==="studio"} onClick={()=>setView(id as typeof view)} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${id==="studio"?"cursor-not-allowed text-[#10261e]/30":view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
     {view==="reservations"?<div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
+      <AdminClosedDays adminKey={key}/>
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="eyebrow">Restaurantbetrieb</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Reservierungen</h1><p className="mt-2 text-base text-[#10261e]/55">{localDate(date)}</p></div><div className="flex flex-wrap items-center gap-2"><button onClick={()=>{setDate(berlinDate());setSelected(null)}} disabled={date===berlinDate()} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-sm font-semibold hover:bg-[#fff8ec] disabled:opacity-40">Heute</button><button onClick={()=>shiftDate(-1)} aria-label="Einen Tag zurück" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><ChevronLeft size={18}/></button><label className="grid text-sm"><span className="sr-only">Datum</span><input type="date" value={date} onChange={e=>{setDate(e.target.value);setSelected(null)}} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base"/></label><button onClick={()=>shiftDate(1)} aria-label="Einen Tag weiter" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><ChevronRight size={18}/></button><button onClick={()=>load()} aria-label="Aktualisieren" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><RefreshCw size={18} className={loading?"animate-spin":""}/></button></div></section>
 
       <section className="mt-7 rounded-[2rem] border border-[#c68a3b]/35 bg-white p-5 shadow-sm sm:p-6">
