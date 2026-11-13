@@ -1,4 +1,4 @@
-import { requireAdmin } from '../../../../../lib/admin-auth.ts';
+import { requireTab } from '../../../../../lib/admin-auth.ts';
 import { env } from 'cloudflare:workers';
 import { bookingResponse, readBody } from '../../../../../lib/booking-http.ts';
 import { BookingError } from '../../../../../lib/booking-policy.ts';
@@ -7,7 +7,7 @@ import { countConfirmed, sendCampaignBatch, sendEventTest } from '../../../../..
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 async function checkKey(request: Request) {
-  await requireAdmin(request);
+  await requireTab(request, 'newsletter');
   if (!env.DB) throw new Error('Missing DB');
   return env.DB;
 }
