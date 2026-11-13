@@ -1,10 +1,10 @@
-import { requireAdmin } from '../../../../lib/admin-auth.ts';
+import { requireTab } from '../../../../lib/admin-auth.ts';
 import { env } from "cloudflare:workers";
 import { bookingResponse } from "../../../../lib/booking-http.ts";
 import { BookingError } from "../../../../lib/booking-policy.ts";
 const allowed=new Set(["image/jpeg","image/png","image/webp","video/mp4","video/webm"]);
 export async function POST(request:Request){return bookingResponse(async()=>{
-  await requireAdmin(request);
+  await requireTab(request, 'content');
   if(!env.BUCKET)throw new Error("Missing BUCKET");
   const type=(request.headers.get("content-type")||"").split(";")[0],length=Number(request.headers.get("content-length")||0);
   if(!allowed.has(type))throw new BookingError(415,"INVALID_MEDIA","Bitte JPG, PNG, WebP, MP4 oder WebM verwenden.");

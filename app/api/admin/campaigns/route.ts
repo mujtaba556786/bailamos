@@ -1,10 +1,10 @@
-import { requireAdmin } from '../../../../lib/admin-auth.ts';
+import { requireTab } from '../../../../lib/admin-auth.ts';
 import { env } from 'cloudflare:workers';
 import { bookingResponse,readBody } from '../../../../lib/booking-http.ts';
 import { BookingError } from '../../../../lib/booking-policy.ts';
 import { listCampaigns,saveCampaign } from '../../../../lib/marketing-campaign.ts';
 async function db(request:Request){
- await requireAdmin(request);
+ await requireTab(request, 'studio');
  if(!env.DB)throw new BookingError(503,'STORAGE_UNAVAILABLE','Kampagnen können gerade nicht gespeichert werden.');
  return env.DB;
 }

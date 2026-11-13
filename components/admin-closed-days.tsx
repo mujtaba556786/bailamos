@@ -23,8 +23,8 @@ export function AdminClosedDays({ adminKey }: { adminKey: string }) {
 
   async function load() {
     try {
-      const result = await request("/api/admin/operations");
-      setConfig(result.config);
+      const result = await request("/api/admin/closed-days");
+      setConfig({ restaurant: { reservation: { blockedDates: result.blockedDates } } } as Config);
       setVersion(result.version);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Einstellungen konnten nicht geladen werden.");
@@ -39,9 +39,8 @@ export function AdminClosedDays({ adminKey }: { adminKey: string }) {
     setError("");
     setNotice("");
     try {
-      const body = { ...config, restaurant: { ...config.restaurant, reservation: { ...config.restaurant.reservation, blockedDates: next } } };
-      const result = await request("/api/admin/operations", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ config: body, version }) });
-      setConfig(result.config);
+      const result = await request("/api/admin/closed-days", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ blockedDates: next, version }) });
+      setConfig({ restaurant: { reservation: { blockedDates: result.blockedDates } } } as Config);
       setVersion(result.version);
       setNotice("Gespeichert. Online-Buchungen sind an den gesperrten Tagen geschlossen.");
     } catch (cause) {

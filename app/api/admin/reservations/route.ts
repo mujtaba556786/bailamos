@@ -1,4 +1,4 @@
-import { requireAdmin } from '../../../../lib/admin-auth.ts';
+import { requireTab } from '../../../../lib/admin-auth.ts';
 import { env } from 'cloudflare:workers';
 import { changeStatus } from '../../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../../lib/booking-http.ts';
@@ -6,7 +6,7 @@ import { BookingError, addDays, berlinDate, validDate } from '../../../../lib/bo
 import { getOperations } from '../../../../lib/operations-config.ts';
 import { sendReservationMail } from '../../../../lib/reservation-mail.ts';
 async function database(request: Request) {
-  await requireAdmin(request);
+  await requireTab(request, 'reservations', 'statistics');
   if (!env.DB) throw new Error('Missing DB');
   return env.DB;
 }
