@@ -1,9 +1,10 @@
-// Limits how often an admin action (publish, upload) may run per visitor per hour.
+// Limits how often an action (admin publish/upload, public online booking) may run per visitor per hour.
 // Like the login limiter, it fails open: if the table is missing, the action still works.
 import { BookingError } from "./booking-policy.ts";
 import { digest } from "./booking-service.ts";
 
-export const ADMIN_LIMITS = { upload: 60, publish: 120 } as const;
+// booking: each new online booking sends emails and a Telegram alert, so a script must not be able to flood them.
+export const ADMIN_LIMITS = { upload: 60, publish: 120, booking: 8 } as const;
 export type AdminAction = keyof typeof ADMIN_LIMITS;
 const HOUR = 3600;
 
@@ -23,6 +24,11 @@ export async function adminRateLimit(db: D1Database | undefined, request: Reques
     return;
   }
   if (count > ADMIN_LIMITS[action]) {
-    throw new BookingError(429, "TOO_MANY_REQUESTS", action === "upload" ? "Zu viele Uploads in kurzer Zeit. Bitte in einer Stunde erneut versuchen." : "Zu viele Veröffentlichungen in kurzer Zeit. Bitte später erneut versuchen.");
+    const messages: Record<AdminAction, string> = {
+      upload: "Zu viele Uploads in kurzer Zeit. Bitte in einer Stunde erneut versuchen.",
+      publish: "Zu viele Veröffentlichungen in kurzer Zeit. Bitte später erneut versuchen.",
+      booking: "Zu viele Reservierungen in kurzer Zeit. Bitte rufen Sie uns an. / Too many reservations in a short time. Please call us.",
+    };
+    throw new BookingError(429, "TOO_MANY_REQUESTS", messages[action]);
   }
 }

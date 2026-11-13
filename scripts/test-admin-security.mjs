@@ -91,6 +91,14 @@ test("adminRateLimit publish message and missing IP header", async () => {
   await assert.rejects(adminRateLimit(db, new Request("https://x/"), "publish", now), /Veröffentlichungen/);
 });
 
+test("online bookings are limited per visitor per hour with a bilingual message", async () => {
+  const db = await migratedDb();
+  const now = Date.UTC(2026, 10, 14, 9);
+  for (let i = 0; i < ADMIN_LIMITS.booking; i++) await adminRateLimit(db, req("4.4.4.4"), "booking", now);
+  await assert.rejects(adminRateLimit(db, req("4.4.4.4"), "booking", now), (error) => error.status === 429 && /Reservierungen/.test(error.message) && /reservations/.test(error.message));
+  await adminRateLimit(db, req("5.5.5.5"), "booking", now);
+});
+
 test("adminRateLimit fails open without a database or table", async () => {
   await adminRateLimit(undefined, req("3.3.3.3"), "upload");
   const broken = { prepare() { return { bind() { return { run: async () => { throw new Error("no such table"); }, first: async () => { throw new Error("no such table"); } }; } }; } };
