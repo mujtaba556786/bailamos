@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { areaServedJsonLd } from "./service-areas.ts";
 import type { MenuContent } from "./menu-content.ts";
 import { getSiteUrl, absoluteMediaUrl } from "./site-url";
 import { localized, type Locale } from "./i18n";
@@ -121,7 +122,8 @@ export function dishMetadata(dish: MenuContent["dishes"][number], locale: Locale
 const schemaDayNames: Record<string, string> = { monday: "Monday", tuesday: "Tuesday", wednesday: "Wednesday", thursday: "Thursday", friday: "Friday", saturday: "Saturday", sunday: "Sunday" };
 
 // Restaurant entity. Hours come from the operations config (no invented hours); the address is split into parts.
-export function restaurantJsonLd(restaurant: { name: string; legalName: string; contact: { address: string; phone: string; email: string }; openingHours: Record<string, string> }, sameAs: string[]) {
+export function restaurantJsonLd(restaurant: { name: string; legalName: string; contact: { address: string; phone: string; email: string }; openingHours: Record<string, string> }, sameAs: string[], serviceAreas: readonly string[] = []) {
+  const areaServed = areaServedJsonLd(serviceAreas);
   const [street = "", postal = "", ...rest] = restaurant.contact.address.split(",").map((part) => part.trim());
   const postalMatch = postal.match(/^(\d{5})\s+(.*)$/);
   const postalCode = postalMatch?.[1];
@@ -145,6 +147,7 @@ export function restaurantJsonLd(restaurant: { name: string; legalName: string; 
       addressLocality: locality,
       addressCountry: "DE",
     },
+    ...(areaServed.length ? { areaServed } : {}),
     servesCuisine: ["Mexican"],
     inLanguage: ["de", "en"],
     acceptsReservations: true,

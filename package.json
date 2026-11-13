@@ -16,7 +16,8 @@
     "test:content-admin": "node --test --experimental-test-coverage --test-coverage-include=lib/content-admin.ts scripts/test-content-admin.mjs",
     "test:admin-security": "node --test --experimental-test-coverage --test-coverage-include=lib/media-upload.ts --test-coverage-include=lib/admin-rate-limit.ts scripts/test-admin-security.mjs",
     "test:booking-rules": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-rules.ts --test-coverage-include=lib/admin-tabs.ts --test-coverage-include=lib/operations-config.ts scripts/test-booking-rules.mjs",
-    "test:cancel-tokens": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-service.ts scripts/test-cancel-tokens.mjs"
+    "test:cancel-tokens": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-service.ts scripts/test-cancel-tokens.mjs",
+    "test:seo": "node --test --experimental-test-coverage --test-coverage-include=lib/service-areas.ts --test-coverage-include=lib/json-ld.ts --test-coverage-include=lib/seo-content.ts scripts/test-seo.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

@@ -29,7 +29,7 @@ const weekdays=[["monday","Mo","Mon"],["tuesday","Di","Tue"],["wednesday","Mi","
 
 export async function HomeContent({locale}:{locale:Locale}) {
   const L=(de:string,en:string)=>locale==="en"?en:de;
-  const [{content:savedMarketing},{content:menu},{config:operations}]=await Promise.all([getMarketingContent(env.DB),getMenuContent(env.DB),getOperations(env.DB)]),restaurant=operations.restaurant;
+  const [{content:savedMarketing},{content:menu},{config:operations},{content:seo}]=await Promise.all([getMarketingContent(env.DB),getMenuContent(env.DB),getOperations(env.DB),getSeoContent(env.DB)]),restaurant=operations.restaurant;
   const today=berlinDate();
   // Draft events can have no date; only published, upcoming events belong on public pages.
   const marketing={...savedMarketing,events:savedMarketing.events.filter(event=>event.published&&event.date>=today).sort((a,b)=>a.date.localeCompare(b.date))};
@@ -54,7 +54,7 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
   ];
 
   return <><main className="overflow-hidden bg-[#09130f] text-[#f5e8d3]">
-    <StructuredData data={restaurantJsonLd(restaurant, visibleSocialLinks(marketing.social).map(([,url])=>url))}/>
+    <StructuredData data={restaurantJsonLd(restaurant, visibleSocialLinks(marketing.social).map(([,url])=>url), seo.serviceAreas)}/>
     <SiteHeader active="Start" locale={locale}/>
 
     <HomeCarousel slides={slides} labels={{previous:L("Vorheriges Highlight","Previous highlight"),next:L("Nächstes Highlight","Next highlight"),pause:L("Automatisches Weiterblättern anhalten","Pause slideshow"),play:L("Automatisches Weiterblättern starten","Play slideshow"),region:L("Neuigkeiten bei Bailamos","News at Bailamos"),slide:L("von","of")}}/>
