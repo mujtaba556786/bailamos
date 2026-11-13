@@ -1,7 +1,7 @@
 "use client";
 // Left pane of the Speisekarte admin: search, category chips and the dish list grouped by category.
-import { useMemo, useState } from "react";
-import { ChevronDown, Loader2, Plus, Search, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, ChevronLeft, ChevronRight, Loader2, Plus, Search, X } from "lucide-react";
 import type { MenuContent } from "../../lib/menu-content";
 import { dishBadges, dishCountByCategory, formatPrice, groupDishes, type MenuDish } from "../../lib/menu-admin";
 
@@ -46,7 +46,7 @@ export function DishList({ menu, language, selected, onSelect, onAdd, published,
             <Plus size={18} />
           </button>
         </div>
-        <div role="group" aria-label="Nach Kategorie filtern" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <ChipScroller>
           <Chip active={!filter.length} onClick={() => setFilter([])}>
             Alle <span className="opacity-60">{menu.dishes.length}</span>
           </Chip>
@@ -55,7 +55,7 @@ export function DishList({ menu, language, selected, onSelect, onAdd, published,
               {category.name[language] || category.name.de} <span className="opacity-60">{counts[category.id] ?? 0}</span>
             </Chip>
           ))}
-        </div>
+        </ChipScroller>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain" aria-live="polite">
@@ -171,4 +171,57 @@ const badgeTones = {
 
 function Badge({ tone, children }: { tone: keyof typeof badgeTones; children: React.ReactNode }) {
   return <span className={`shrink-0 rounded-full px-1.5 py-px text-[11px] font-semibold ${badgeTones[tone]}`}>{children}</span>;
+}
+
+// Horizontal chip row. A normal mouse wheel scrolls it sideways, and arrow buttons plus a fade appear
+// while more chips are hidden, because the scrollbar itself is hidden.
+function ChipScroller({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [edges, setEdges] = useState({ left: false, right: false });
+
+  useEffect(() => {
+    const row = ref.current;
+    if (!row) return;
+    const update = () => setEdges({ left: row.scrollLeft > 2, right: row.scrollLeft + row.clientWidth < row.scrollWidth - 2 });
+    // Turn vertical wheel movement into sideways scrolling, only while the row can still move that way,
+    // so the page scrolls normally once the end is reached.
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+      const max = row.scrollWidth - row.clientWidth;
+      if (max <= 0 || (event.deltaY < 0 && row.scrollLeft <= 0) || (event.deltaY > 0 && row.scrollLeft >= max)) return;
+      event.preventDefault();
+      row.scrollLeft += event.deltaY;
+    };
+    update();
+    row.addEventListener("scroll", update, { passive: true });
+    row.addEventListener("wheel", onWheel, { passive: false });
+    const observer = new ResizeObserver(update);
+    observer.observe(row);
+    for (const child of Array.from(row.children)) observer.observe(child);
+    return () => { row.removeEventListener("scroll", update); row.removeEventListener("wheel", onWheel); observer.disconnect(); };
+  }, [children]);
+
+  const page = (direction: 1 | -1) => ref.current?.scrollBy({ left: direction * ref.current.clientWidth * 0.7, behavior: "smooth" });
+
+  return (
+    <div className="relative -mx-4">
+      <div ref={ref} role="group" aria-label="Nach Kategorie filtern" className="flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {children}
+      </div>
+      {edges.left && (
+        <div className="pointer-events-none absolute inset-y-0 left-0 flex w-14 items-center bg-gradient-to-r from-white via-white/90 to-transparent pb-1 pl-1">
+          <button type="button" tabIndex={-1} aria-hidden="true" onClick={() => page(-1)} className="pointer-events-auto grid h-8 w-8 place-items-center rounded-full border border-[#10261e]/15 bg-white text-[#10261e]/70 shadow-sm hover:text-[#10261e]">
+            <ChevronLeft size={16} />
+          </button>
+        </div>
+      )}
+      {edges.right && (
+        <div className="pointer-events-none absolute inset-y-0 right-0 flex w-14 items-center justify-end bg-gradient-to-l from-white via-white/90 to-transparent pb-1 pr-1">
+          <button type="button" tabIndex={-1} aria-hidden="true" onClick={() => page(1)} className="pointer-events-auto grid h-8 w-8 place-items-center rounded-full border border-[#10261e]/15 bg-white text-[#10261e]/70 shadow-sm hover:text-[#10261e]">
+            <ChevronRight size={16} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
