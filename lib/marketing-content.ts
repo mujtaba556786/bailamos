@@ -3,7 +3,7 @@ import { BookingError } from "./booking-policy.ts";
 import { validateOpening, openingDraft, validDate, type Opening } from './opening.ts';
 
 type Pair={de:string;en:string};
-export type MarketingContent={opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};youtube:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;teaser:Pair;showOnHome:boolean;date:string;time:string;image:string;featured:boolean;published:boolean}>};
+export type MarketingContent={storyTiles:Array<{id:string;image:string;title:Pair;text:Pair;show:boolean}>;favourites:{enabled:boolean;eyebrow:Pair;heading:Pair;dishIds:string[]};opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};youtube:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;teaser:Pair;showOnHome:boolean;date:string;time:string;image:string;featured:boolean;published:boolean}>};
 const pair=(value:any,label:string,max:number,fallback="")=>typeof value==="string"?{de:text(value,label,max),en:text(fallback||value,`Englisch: ${label}`,max)}:{de:text(value?.de,label,max),en:text(value?.en||value?.de||fallback,`Englisch: ${label}`,max)};
 const text = (value: unknown, label: string, max: number) => {
   if (typeof value !== "string") throw new BookingError(400,"INVALID_CONTENT",`${label} fehlt.`);
@@ -23,6 +23,16 @@ const slug = (value: unknown) => {
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(clean))throw new BookingError(400,"INVALID_CONTENT","Die Event-ID darf nur Kleinbuchstaben, Zahlen und Bindestriche enthalten.");
   return clean;
 };
+// Photo tiles of the homepage story section. The defaults are the tiles the site showed before they became editable.
+const defaultStoryTiles=[
+  {id:"warmth",image:"/samples/interior-evening.webp",title:{de:"Wärme, die man sieht.",en:"Warmth you can see."},text:{de:"Jeder Platz hat seinen eigenen Charakter.",en:"Every seat has its own character."},show:true},
+  {id:"terrace",image:"/samples/terrace-lights.webp",title:{de:"Abends draußen.",en:"Evenings outside."},text:{de:"",en:""},show:true},
+  {id:"day",image:"/gallery-ai/gallery-ai-07.jpg",title:{de:"Bailamos am Tag.",en:"Bailamos by day."},text:{de:"",en:""},show:true},
+  {id:"evening",image:"/gallery-ai/gallery-ai-08-evening.jpg",title:{de:"Bailamos am Abend.",en:"Bailamos by evening."},text:{de:"",en:""},show:true},
+];
+function storyTilesOf(value:any){const list=Array.isArray(value)?value:defaultStoryTiles;return list.slice(0,6).map((tile:any,index:number)=>({id:String(tile?.id||`tile-${index}`).replace(/[^a-zA-Z0-9-]/g,"-").slice(0,40),image:url(tile?.image||"/table-terrace.webp","Kachelbild"),title:pair(tile?.title,"Kachel-Titel",80,"Title"),text:{de:typeof tile?.text?.de==="string"&&tile.text.de.trim()?text(tile.text.de,"Kachel-Text (DE)",160):"",en:typeof tile?.text?.en==="string"&&tile.text.en.trim()?text(tile.text.en,"Kachel-Text (EN)",160):""},show:tile?.show!==false}))}
+// "Unsere Lieblinge" on the homepage: heading text and up to three chosen dishes (empty = use the featured dishes).
+function favouritesOf(value:any){return {enabled:value?.enabled!==false,eyebrow:pair(value?.eyebrow||"Aus unserer Küche","Kleine Überschrift",60,"From our kitchen"),heading:pair(value?.heading||"Unsere Lieblinge.","Überschrift",60,"House favourites."),dishIds:Array.isArray(value?.dishIds)?value.dishIds.map((id:unknown)=>String(id)).slice(0,3):[]}}
 export function validateMarketingContent(value: unknown): MarketingContent {
   if(!value||typeof value!=="object"||Array.isArray(value))throw new BookingError(400,"INVALID_CONTENT","Ungültige Inhalte.");
   const v=value as Record<string,any>, social=v.social||{}, media=v.demoMedia||{};
@@ -36,6 +46,8 @@ export function validateMarketingContent(value: unknown): MarketingContent {
   });
   if(v.opening===undefined&&!ids.has('bailamos-opening')&&events.length<50)events.unshift(openingDraft());
   return {
+    storyTiles:storyTilesOf(v.storyTiles),
+    favourites:favouritesOf(v.favourites),
     opening:validateOpening(v.opening),
     announcement:{enabled:v.announcement?.enabled===true,de:text(v.announcement?.de||"Keine Ankündigung","Ankündigung",180),en:text(v.announcement?.en||v.announcement?.de||"No announcement","Englische Ankündigung",180),link:text(v.announcement?.link||"/events","Ankündigungslink",300)},
     hero:{type:"image",image:text(v.hero?.image||"/table-terrace.webp","Hero-Bild",1000),video:null,poster:text(v.hero?.poster||v.hero?.image||"/table-terrace.webp","Hero-Poster",1000)},

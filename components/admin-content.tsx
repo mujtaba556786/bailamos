@@ -7,6 +7,11 @@ import {AdminOpening} from './admin-opening';
 export function AdminContent({adminKey}:{adminKey:string}){
   const [content,setContent]=useState<MarketingContent|null>(null),[version,setVersion]=useState(0),[language,setLanguage]=useState<"de"|"en">("de"),[aiConfigured,setAiConfigured]=useState(false),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[uploading,setUploading]=useState(false),[translating,setTranslating]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
   async function request(url:string,options:RequestInit={}):Promise<any>{const response=await fetch(url,{...options,headers:{...options.headers,"x-admin-key":adminKey}}),result=await response.json() as any;if(!response.ok)throw new Error(result.error||"Änderung fehlgeschlagen.");return result}
+  async function uploadStoryImage(index:number,file:File){setUploading(true);setError("");try{const result=await request("/api/admin/media",{method:"POST",headers:{"content-type":file.type},body:file});if(result.kind!=="image")throw new Error("Bitte ein Bild (JPG, PNG oder WebP) wählen.");change(copy=>{copy.storyTiles[index].image=result.url});setNotice("Bild hochgeladen. Bitte jetzt Änderungen veröffentlichen.")}catch(cause){setError(cause instanceof Error?cause.message:"Upload fehlgeschlagen.")}finally{setUploading(false)}}
+  function moveStoryTile(index:number,direction:number){change(copy=>{const target=index+direction;if(target<0||target>=copy.storyTiles.length)return;[copy.storyTiles[index],copy.storyTiles[target]]=[copy.storyTiles[target],copy.storyTiles[index]]})}
+  const [menuDishes,setMenuDishes]=useState<Array<{id:string;name:{de:string;en:string};available:boolean}>>([]);
+  async function loadDishes(){try{const response=await fetch("/api/admin/menu",{headers:{"x-admin-key":adminKey}});const result=await response.json() as {dishes:Array<{id:string;name:{de:string;en:string};available:boolean}>};if(response.ok)setMenuDishes(result.dishes)}catch{}}
+  useEffect(()=>{void loadDishes()},[]);
   async function load(){setLoading(true);setError("");try{const result=await request("/api/admin/content");setContent(result.content);setVersion(result.version);setAiConfigured(result.aiConfigured===true)}catch(cause){setError(cause instanceof Error?cause.message:"Inhalte konnten nicht geladen werden.")}finally{setLoading(false)}}
   useEffect(()=>{void load()},[]);
   function change(mutator:(copy:MarketingContent)=>void){if(!content)return;const copy=structuredClone(content);mutator(copy);setContent(copy);setNotice("")}
@@ -17,6 +22,36 @@ export function AdminContent({adminKey}:{adminKey:string}){
   if(loading)return <div className="grid min-h-[480px] place-items-center"><Loader2 className="animate-spin text-[#b8782e]" size={32}/></div>;
   if(!content)return <div className="mx-auto max-w-xl p-10 text-center"><p>{error||"Keine Inhalte verfügbar."}</p><button onClick={load} className="mt-4 text-[#a52520] underline">Erneut versuchen</button></div>;
   return <div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
+    <section className="mb-8 rounded-[2rem] bg-white p-5 shadow-sm sm:p-7">
+      <div><h2 className="font-display text-3xl">Startseite · Fotokacheln</h2><p className="mt-1 text-sm text-[#10261e]/55">Die Bildkacheln im Abschnitt „Wärme, die man sieht“ und darunter. Die ersten zwei stehen nebeneinander, die weiteren darunter. Reihenfolge mit den Pfeilen ändern.</p></div>
+      {content&&<div className="mt-6 grid gap-5">{content.storyTiles.map((tile,index)=><article key={tile.id+index} className="grid gap-4 rounded-2xl border border-[#10261e]/10 p-4 sm:grid-cols-[180px_1fr]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#10261e]/5">{tile.image&&<img src={tile.image} alt="" className="h-full w-full object-cover"/>}</div>
+        <div className="grid gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-sm"><strong>Kachel {index+1}</strong>
+            <label className="flex items-center gap-2"><input type="checkbox" checked={tile.show} onChange={e=>change(copy=>copy.storyTiles[index].show=e.target.checked)} className="h-5 w-5"/>Anzeigen</label>
+            <button type="button" onClick={()=>moveStoryTile(index,-1)} disabled={index===0} className="rounded-full border px-3 py-1 disabled:opacity-40">↑</button>
+            <button type="button" onClick={()=>moveStoryTile(index,1)} disabled={index===content.storyTiles.length-1} className="rounded-full border px-3 py-1 disabled:opacity-40">↓</button>
+          </div>
+          <label className="grid gap-1 text-sm">Titel · {language.toUpperCase()}<input value={tile.title[language]} maxLength={80} onChange={e=>change(copy=>copy.storyTiles[index].title[language]=e.target.value)} className="min-h-11 rounded-xl border px-3 text-base"/></label>
+          <label className="grid gap-1 text-sm">Kurztext (optional) · {language.toUpperCase()}<input value={tile.text[language]} maxLength={160} onChange={e=>change(copy=>copy.storyTiles[index].text[language]=e.target.value)} className="min-h-11 rounded-xl border px-3 text-base"/></label>
+          <label className="grid gap-1 text-sm">Bild ersetzen<input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploading} onChange={e=>{const file=e.target.files?.[0];if(file)void uploadStoryImage(index,file);e.target.value=""}} className="min-h-11 rounded-xl border px-3 py-2 text-base"/></label>
+        </div>
+      </article>)}</div>}
+    </section>
+    <section className="mb-8 rounded-[2rem] bg-white p-5 shadow-sm sm:p-7">
+      <div className="flex items-center justify-between gap-4"><div><h2 className="font-display text-3xl">Startseite · Unsere Lieblinge</h2><p className="mt-1 text-sm text-[#10261e]/55">Überschrift und bis zu drei Gerichte für den Abschnitt auf der Startseite. Ohne Auswahl werden die Gerichte mit „Neu auf der Karte“ aus der Speisekarte gezeigt.</p></div></div>
+      {content&&<div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <label className="flex items-center gap-3 text-sm sm:col-span-2"><input type="checkbox" checked={content.favourites.enabled} onChange={e=>change(copy=>copy.favourites.enabled=e.target.checked)} className="h-5 w-5"/>Abschnitt auf der Startseite zeigen</label>
+        <label className="grid gap-1 text-sm">Kleine Überschrift · {language.toUpperCase()}<input value={content.favourites.eyebrow[language]} onChange={e=>change(copy=>copy.favourites.eyebrow[language]=e.target.value)} className="min-h-11 rounded-xl border px-3 text-base"/></label>
+        <label className="grid gap-1 text-sm">Überschrift · {language.toUpperCase()}<input value={content.favourites.heading[language]} onChange={e=>change(copy=>copy.favourites.heading[language]=e.target.value)} className="min-h-11 rounded-xl border px-3 text-base"/></label>
+        {[0,1,2].map(slot=><label key={slot} className="grid gap-1 text-sm">Gericht {slot+1}
+          <select value={content.favourites.dishIds[slot]??""} onChange={e=>change(copy=>{const ids=[...copy.favourites.dishIds];if(e.target.value)ids[slot]=e.target.value;else ids.splice(slot,1);copy.favourites.dishIds=ids.filter(Boolean).slice(0,3)})} className="min-h-11 rounded-xl border px-3 text-base">
+            <option value="">— keine Auswahl —</option>
+            {menuDishes.map(dish=><option key={dish.id} value={dish.id}>{dish.name[language]}{dish.available?"":" (nicht verfügbar)"}</option>)}
+          </select>
+        </label>)}
+      </div>}
+    </section>
     <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end"><div><p className="eyebrow">Website verwalten</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Content & Marketing</h1><p className="mt-2 text-base text-[#10261e]/55">Deutsch pflegen, Englisch prüfen und gemeinsam veröffentlichen.</p></div><div className="flex flex-wrap gap-3"><div className="flex rounded-full border bg-white p-1">{(["de","en"] as const).map(code=><button key={code} onClick={()=>setLanguage(code)} className={`rounded-full px-4 py-2 text-sm font-semibold ${language===code?"bg-[#10261e] text-white":""}`}>{code.toUpperCase()}</button>)}</div><button disabled={translating||!aiConfigured} onClick={generateEnglish} className="button-secondary disabled:opacity-45" title={aiConfigured?"":"OPENAI_API_KEY noch nicht eingerichtet"}>{translating?<Loader2 className="animate-spin" size={18}/>:<Languages size={18}/>}Englisch generieren</button><button disabled={saving} onClick={save} className="button-primary"><Save size={18}/>{saving?"Wird veröffentlicht…":"Beide Sprachen veröffentlichen"}</button></div></div>
     {(error||notice)&&<p role={error?"alert":"status"} className={`mt-6 rounded-xl p-4 ${error?"bg-red-50 text-red-700":"bg-emerald-50 text-emerald-800"}`}>{error||notice}</p>}
     <AdminOpening value={content.opening} onChange={opening=>change(copy=>{copy.opening=opening})} adminKey={adminKey} language={language}/>

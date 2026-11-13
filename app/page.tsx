@@ -31,6 +31,12 @@ export async function HomeContent({locale}:{locale:Locale}) {
   // Short text for the carousel: the admin teaser, or the first sentence of the event text. Full details stay on the events page.
 const carouselText=(event:{teaser?:{de:string;en:string};summary:{de:string;en:string}},locale:Locale)=>{const teaser=(event.teaser?.[locale]||"").trim();if(teaser)return teaser;const first=localized(event.summary,locale).split(/(?<=[.!?])\s/)[0];return first.length>140?first.slice(0,137)+"…":first};
 const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
+  // Admin choice first (Website-Inhalte); if none is chosen, the dishes marked as featured in the menu.
+  const storyTiles=marketing.storyTiles.filter(tile=>tile.show);
+  const storyRow1=storyTiles.slice(0,2);
+  const storyRow2=storyTiles.slice(2);
+  const favouritesCfg=marketing.favourites;
+  const chosenFavourites=favouritesCfg.dishIds.length?favouritesCfg.dishIds.map(id=>menu.dishes.find(dish=>dish.id===id)).filter((dish):dish is NonNullable<typeof dish>=>Boolean(dish&&dish.available)):signature;
   const price=(value:number)=>new Intl.NumberFormat(locale==="en"?"en-GB":"de-DE",{style:"currency",currency:"EUR"}).format(value);
   const eventDate=(date:string,time:string)=>`${new Date(date).toLocaleDateString(locale==="en"?"en-GB":"de-DE",{weekday:"short",day:"2-digit",month:"long"})} · ${time}${locale==="de"?" Uhr":""}`;
 
@@ -54,18 +60,16 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
         <p className="max-w-2xl text-lg leading-8 text-[#10261e]/65">{L("Unsere Küche verbindet das Vertraute mit dem Unerwarteten. Warme Musik, klare Drinks und Tische, die zum Bleiben einladen.","Our kitchen brings the familiar together with the unexpected. Warm music, confident drinks and tables made for staying.")}</p>
       </div>
       <div className="mx-auto mt-14 grid max-w-7xl gap-4 md:grid-cols-[1.25fr_.75fr]">
-        <div className="relative aspect-[16/10] overflow-hidden rounded-[2rem]"><Image src="/samples/interior-evening.webp" fill sizes="(min-width:768px) 62vw, 100vw" alt={L("Gastraum bei Kerzenlicht","Dining room by candlelight")} className="object-cover"/><div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 p-7 text-white"><p className="font-display text-3xl">{L("Wärme, die man sieht.","Warmth you can see.")}</p><p className="mt-1 text-sm text-white/70">{L("Jeder Platz hat seinen eigenen Charakter.","Every seat has its own character.")}</p></div></div>
-        <div className="relative min-h-72 overflow-hidden rounded-[2rem]"><Image src="/samples/terrace-lights.webp" fill sizes="(min-width:768px) 38vw, 100vw" alt={L("Terrasse mit Lichterketten am Abend","Terrace with string lights in the evening")} className="object-cover"/><div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 p-7 text-white"><p className="font-display text-3xl">{L("Abends draußen.","Evenings outside.")}</p></div></div>
+        {storyRow1.map((tile,index)=><figure key={tile.id} className={`relative m-0 overflow-hidden rounded-[2rem] ${index===0?"aspect-[16/10]":"min-h-72"}`}><Image src={tile.image} fill sizes={index===0?"(min-width:768px) 62vw, 100vw":"(min-width:768px) 38vw, 100vw"} alt={localized(tile.title,locale)} className="object-cover"/><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 p-7 text-white"><span className="font-display text-3xl">{localized(tile.title,locale)}</span>{localized(tile.text,locale)&&<span className="mt-1 block text-sm text-white/70">{localized(tile.text,locale)}</span>}</figcaption></figure>)}
       </div>
-      <div className="mx-auto mt-4 grid max-w-7xl gap-4 md:grid-cols-2">
-        <figure className="relative m-0 aspect-[4/3] overflow-hidden rounded-[2rem]"><Image src="/gallery-ai/gallery-ai-07.jpg" fill sizes="(min-width:768px) 50vw, 100vw" alt={L("Bailamos Waldcafé von außen am Tag (KI-generiert)","Bailamos Waldcafé from the outside in daylight (AI-generated)")} className="object-cover"/><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 p-7 text-white"><span className="font-display text-3xl">{L("Bailamos am Tag.","Bailamos by day.")}</span></figcaption></figure>
-        <figure className="relative m-0 aspect-[4/3] overflow-hidden rounded-[2rem]"><Image src="/gallery-ai/gallery-ai-08-evening.jpg" fill sizes="(min-width:768px) 50vw, 100vw" alt={L("Bailamos Waldcafé von außen am Abend (KI-generiert)","Bailamos Waldcafé from the outside in the evening (AI-generated)")} className="object-cover"/><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 p-7 text-white"><span className="font-display text-3xl">{L("Bailamos am Abend.","Bailamos by evening.")}</span></figcaption></figure>
-      </div>
-    </section>
+      {storyRow2.length>0&&<div className="mx-auto mt-4 grid max-w-7xl gap-4 md:grid-cols-2">
+        {storyRow2.map(tile=><figure key={tile.id} className="relative m-0 aspect-[4/3] overflow-hidden rounded-[2rem]"><Image src={tile.image} fill sizes="(min-width:768px) 50vw, 100vw" alt={localized(tile.title,locale)} className="object-cover"/><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 p-7 text-white"><span className="font-display text-3xl">{localized(tile.title,locale)}</span>{localized(tile.text,locale)&&<span className="mt-1 block text-sm text-white/70">{localized(tile.text,locale)}</span>}</figcaption></figure>)}
+      </div>}
+</section>
 
-    {signature.length>0&&<section className="bg-[#10261e] px-5 py-24 sm:px-10"><div className="mx-auto max-w-7xl">
-      <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="eyebrow">{L("Aus unserer Küche","From our kitchen")}</p><h2 className="font-display mt-3 text-5xl">{L("Unsere Lieblinge.","House favourites.")}</h2></div><a href={withLocale("/menu",locale)} className="button-glass">{L("Ganze Speisekarte","Full menu")} <ArrowRight size={17}/></a></div>
-      <div className="mt-10 grid gap-6 md:grid-cols-3">{signature.slice(0,3).map(dish=><a href={withLocale("/menu",locale)} key={dish.id} className="group block">
+    {favouritesCfg.enabled&&chosenFavourites.length>0&&<section className="bg-[#10261e] px-5 py-24 sm:px-10"><div className="mx-auto max-w-7xl">
+      <div className="flex flex-wrap items-end justify-between gap-5"><div><p className="eyebrow">{localized(favouritesCfg.eyebrow,locale)}</p><h2 className="font-display mt-3 text-4xl sm:text-5xl">{localized(favouritesCfg.heading,locale)}</h2></div><a href={withLocale("/menu",locale)} className="button-glass">{L("Ganze Speisekarte","Full menu")} <ArrowRight size={17}/></a></div>
+      <div className="mt-10 grid gap-6 md:grid-cols-3">{chosenFavourites.slice(0,3).map(dish=><a href={withLocale("/menu",locale)} key={dish.id} className="group block">
         <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem]"><Image src={dish.image} alt={localized(dish.name,locale)} fill sizes="(min-width:768px) 33vw, 100vw" className="object-cover transition duration-700 group-hover:scale-105"/><div className="absolute inset-0 bg-gradient-to-t from-[#09130f]/85 via-transparent to-transparent"/>{dish.spicy>0&&<span className="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-[#09130f]/60 px-3 py-1 text-xs font-semibold text-[#efc67e] backdrop-blur" aria-label={L(`Schärfe ${dish.spicy} von 3`,`Spice level ${dish.spicy} of 3`)}>{Array.from({length:dish.spicy},(_,i)=><Flame key={i} size={13}/>)}</span>}<div className="absolute inset-x-0 bottom-0 p-6"><div className="flex items-end justify-between gap-4"><h3 className="font-display text-3xl leading-none">{localized(dish.name,locale)}</h3><span className="shrink-0 font-semibold text-[#efc67e]">{price(dish.price)}</span></div></div></div>
         <p className="mt-4 text-sm leading-6 text-white/60">{localized(dish.description,locale)}</p>
       </a>)}</div>
