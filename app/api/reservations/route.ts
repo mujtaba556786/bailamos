@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { createBooking, digest } from '../../../lib/booking-service.ts';
 import { bookingResponse, readBody } from '../../../lib/booking-http.ts';
+import { groupNoteText } from '../../../lib/booking-rules.ts';
 import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests, parseBooking, seatsFit } from '../../../lib/booking-policy.ts';
 import { sendReservationMail } from '../../../lib/reservation-mail.ts';
 import { sendTelegramAlert } from '../../../lib/telegram-alert.ts';
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
     const {config}=await getOperations(env.DB),q = new URL(request.url).searchParams;
     const date = q.get('date') || '', time = q.get('time') || '', guests = Number(q.get('guests'));
     validateGuests(guests,config);
-    if(!time)return {times:serviceTimes(date,new Date(),config),maxGuests:onlineMaxGuests(config),horizonDays:config.booking.horizonDays,guestLimit:config.restaurant.reservation.guestSelectLimit,largeGroupNote:config.restaurant.reservation.largeGroupNote};
+    if(!time)return {times:serviceTimes(date,new Date(),config),maxGuests:onlineMaxGuests(config),horizonDays:config.booking.horizonDays,guestLimit:config.restaurant.reservation.guestSelectLimit,largeGroupNote:{de:groupNoteText(config.restaurant.reservation.largeGroupNote.de,onlineMaxGuests(config)),en:groupNoteText(config.restaurant.reservation.largeGroupNote.en,onlineMaxGuests(config))}};
     const interval = slot(date,time,new Date(),config);
     const rows = await env.DB.prepare(`SELECT DISTINCT table_id FROM reservations WHERE status IN ('pending','confirmed','arrived','seated') AND ((starts_at IS NOT NULL AND starts_at < ? AND ends_at > ?) OR (starts_at IS NULL AND julianday(date || ' ' || time) < julianday(? || ' ' || ?) + ? / 1440.0 AND julianday(? || ' ' || ?) < julianday(date || ' ' || time) + duration_minutes / 1440.0))`).bind(interval.endsAt,interval.startsAt,date,time,(interval.endsAt-interval.startsAt)/60,date,time).all<{table_id:string}>();
     const busy = new Set(rows.results.map(r=>r.table_id));
