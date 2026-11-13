@@ -12,3 +12,6 @@ export const ADMIN_TAB_LABELS: Record<AdminTab, string> = {
   seo: "SEO & AI",
 };
 export const STAFF_DEFAULT_TABS: AdminTab[] = ["reservations"];
+
+// Features that are built but not ready for staff yet. Hidden tabs stay hidden in the navigation.
+export const ADMIN_FEATURES = { marketingStudio: false };

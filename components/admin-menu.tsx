@@ -209,7 +209,7 @@ export function AdminMenu({ adminKey }: { adminKey: string }) {
               <button key={code} onClick={() => setLanguage(code)} aria-pressed={language === code} className={`rounded-full px-4 py-2 text-sm font-semibold ${language === code ? "bg-[#10261e] text-white" : ""}`}>{code.toUpperCase()}</button>
             ))}
           </div>
-          <button disabled={translating || !aiConfigured} onClick={generateEnglish} className="button-secondary disabled:opacity-45" title={aiConfigured ? "" : "OPENAI_API_KEY noch nicht eingerichtet"}>
+          <button disabled={translating || !aiConfigured} onClick={generateEnglish} className="button-secondary disabled:opacity-45" title={aiConfigured ? "Englische Texte automatisch erstellen" : "Automatische Übersetzung nicht verfügbar"}>
             {translating ? <Loader2 className="animate-spin" size={18} /> : <Languages size={18} />}Englisch generieren
           </button>
           <button disabled={saving} onClick={save} className="button-primary">
