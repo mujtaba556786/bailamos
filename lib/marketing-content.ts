@@ -3,7 +3,7 @@ import { BookingError } from "./booking-policy.ts";
 import { validateOpening, openingDraft, validDate, type Opening } from './opening.ts';
 
 type Pair={de:string;en:string};
-export type MarketingContent={opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};youtube:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;date:string;time:string;image:string;featured:boolean;published:boolean}>};
+export type MarketingContent={opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};youtube:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;teaser:Pair;showOnHome:boolean;date:string;time:string;image:string;featured:boolean;published:boolean}>};
 const pair=(value:any,label:string,max:number,fallback="")=>typeof value==="string"?{de:text(value,label,max),en:text(fallback||value,`Englisch: ${label}`,max)}:{de:text(value?.de,label,max),en:text(value?.en||value?.de||fallback,`Englisch: ${label}`,max)};
 const text = (value: unknown, label: string, max: number) => {
   if (typeof value !== "string") throw new BookingError(400,"INVALID_CONTENT",`${label} fehlt.`);
@@ -32,7 +32,7 @@ export function validateMarketingContent(value: unknown): MarketingContent {
     const id=slug(event.id);if(ids.has(id))throw new BookingError(400,"DUPLICATE_EVENT","Event-IDs müssen eindeutig sein.");ids.add(id);
     const date=event.date===''&&!event.published?'':text(event.date,"Event-Datum",10),time=event.time===''&&!event.published?'':text(event.time,"Event-Uhrzeit",5);
     if((date&&!validDate(date))||(time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)))throw new BookingError(400,"INVALID_CONTENT","Bitte Datum und Uhrzeit des Events prüfen.");
-    return {id,title:{de:text(event.title?.de,"Event-Titel",120),en:text(event.title?.en||event.title?.de,"Englischer Event-Titel",120)},summary:{de:text(event.summary?.de,"Event-Beschreibung",1200),en:text(event.summary?.en||event.summary?.de,"Englische Event-Beschreibung",1200)},date,time,image:url(event.image,"Event-Bild"),featured:event.featured===true,published:event.published===true};
+    const teaser=(value:unknown,label:string)=>typeof value==="string"&&value.trim()?text(value,label,140):"";return {id,title:{de:text(event.title?.de,"Event-Titel",120),en:text(event.title?.en||event.title?.de,"Englischer Event-Titel",120)},summary:{de:text(event.summary?.de,"Event-Beschreibung",1200),en:text(event.summary?.en||event.summary?.de,"Englische Event-Beschreibung",1200)},teaser:{de:teaser(event.teaser?.de,"Kurztext (DE)"),en:teaser(event.teaser?.en,"Kurztext (EN)")},showOnHome:event.showOnHome!==false,date,time,image:url(event.image,"Event-Bild"),featured:event.featured===true,published:event.published===true};
   });
   if(v.opening===undefined&&!ids.has('bailamos-opening')&&events.length<50)events.unshift(openingDraft());
   return {
