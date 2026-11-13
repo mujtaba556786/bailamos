@@ -1,7 +1,7 @@
 // Unit tests for the Speisekarte admin helpers. Run: npm run test:menu-admin
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { normalizeSearch, dishMatches, groupDishes, dishCountByCategory, moveItem, categoryOrderChanged, canDeleteCategory, formatPrice } from "../lib/menu-admin.ts";
+import { normalizeSearch, dishMatches, groupDishes, dishCountByCategory, moveItem, categoryOrderChanged, canDeleteCategory, formatPrice, dishBadges, withAvailability } from "../lib/menu-admin.ts";
 
 const dish = (id, categoryId, de, descDe = "", en = de, descEn = descDe) => ({ id, categoryId, name: { de, en }, description: { de: descDe, en: descEn }, price: 5, image: "/x.jpg", featured: false, available: true, spicy: 0, allergens: [] });
 const menu = () => ({
@@ -77,4 +77,37 @@ test("canDeleteCategory blocks non-empty and last categories and reports the dis
 test("formatPrice uses a comma and the euro sign", () => {
   assert.equal(formatPrice(5.9), "5,90 €");
   assert.equal(formatPrice(12), "12,00 €");
+});
+
+test("dishBadges: draft when changed or unpublished", () => {
+  const published = menu().dishes[1];
+  assert.equal(dishBadges(published, published).draft, false);
+  assert.equal(dishBadges({ ...published, price: 6 }, published).draft, true);
+  assert.equal(dishBadges(published, undefined).draft, true);
+});
+
+test("dishBadges: EN fehlt when English is empty or still German", () => {
+  const [pollo, veggie] = menu().dishes;
+  assert.equal(dishBadges(veggie, veggie).enMissing, false);
+  assert.equal(dishBadges(pollo, pollo).enMissing, true); // description.en copied from German
+  assert.equal(dishBadges({ ...veggie, name: { de: "Taco", en: " " } }, veggie).enMissing, true);
+  assert.equal(dishBadges({ ...veggie, description: { de: "x", en: "" } }, veggie).enMissing, true);
+  // Same name in both languages is normal (e.g. "Horchata") and is not flagged.
+  const horchata = menu().dishes[2];
+  assert.equal(dishBadges(horchata, horchata).enMissing, false);
+});
+
+test("dishBadges: vegan replaces vegetarisch", () => {
+  const base = menu().dishes[1];
+  assert.deepEqual([dishBadges({ ...base, vegetarian: true }, base).vegetarian, dishBadges({ ...base, vegetarian: true }, base).vegan], [true, false]);
+  const vegan = dishBadges({ ...base, vegetarian: true, vegan: true }, base);
+  assert.deepEqual([vegan.vegetarian, vegan.vegan], [false, true]);
+});
+
+test("withAvailability changes one dish without touching the original", () => {
+  const original = menu();
+  const next = withAvailability(original, "horchata", false);
+  assert.equal(next.dishes[2].available, false);
+  assert.equal(original.dishes[2].available, true);
+  assert.equal(next.dishes[0], original.dishes[0]);
 });

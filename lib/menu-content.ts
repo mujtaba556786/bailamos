@@ -16,3 +16,17 @@ export function validateMenu(value:unknown):MenuContent{
 }
 export async function getMenuContent(db?:D1Database):Promise<{content:MenuContent;version:number;source:"saved"|"default"}>{if(!db)return{content:defaults,version:0,source:"default"};try{const row=await db.prepare("SELECT content_json,version FROM menu_content WHERE id='primary'").first<{content_json:string;version:number}>();if(!row)return{content:defaults,version:0,source:"default"};return{content:validateMenu(JSON.parse(row.content_json)),version:row.version,source:"saved"}}catch(error){console.error("Menu content unavailable",error);return{content:defaults,version:0,source:"default"}}}
 export async function saveMenuContent(db:D1Database,value:unknown,expectedVersion:number){const content=validateMenu(value),stamp=new Date().toISOString();if(expectedVersion===0){try{await db.prepare("INSERT INTO menu_content (id,content_json,version,updated_at) VALUES ('primary',?,1,?)").bind(JSON.stringify(content),stamp).run();return{content,version:1}}catch(error){if(!String(error).includes("UNIQUE"))throw error}}const result=await db.prepare("UPDATE menu_content SET content_json=?,version=version+1,updated_at=? WHERE id='primary' AND version=?").bind(JSON.stringify(content),stamp,expectedVersion).run();if(!result.meta.changes)throw new BookingError(409,"STALE_MENU","Die Speisekarte wurde inzwischen geändert. Bitte laden Sie sie neu.");return{content,version:expectedVersion+1}}
+// Changes only one dish's availability on the latest saved menu, so a "sold out" tap never publishes other unsaved edits.
+// Retries a few times if another save lands at the same moment. previousVersion lets the editor notice saves made elsewhere.
+export async function setDishAvailability(db:D1Database,dishId:unknown,available:unknown){
+ if(typeof dishId!=="string"||!dishId||dishId.length>80)throw new BookingError(400,"INVALID_DISH","Ungültiges Gericht.");
+ if(typeof available!=="boolean")throw new BookingError(400,"INVALID_AVAILABILITY","Ungültiger Verfügbarkeitswert.");
+ for(let attempt=0;attempt<3;attempt++){
+  const current=await getMenuContent(db),content=structuredClone(current.content),dish=content.dishes.find(item=>item.id===dishId);
+  if(!dish)throw new BookingError(404,"DISH_NOT_FOUND","Dieses Gericht ist noch nicht veröffentlicht. Bitte zuerst die Speisekarte veröffentlichen.");
+  dish.available=available;
+  try{const saved=await saveMenuContent(db,content,current.version);return{dishId,available,version:saved.version,previousVersion:current.version}}
+  catch(error){if(!(error instanceof BookingError&&error.code==="STALE_MENU"))throw error}
+ }
+ throw new BookingError(409,"STALE_MENU","Die Speisekarte wurde gerade geändert. Bitte erneut versuchen.");
+}

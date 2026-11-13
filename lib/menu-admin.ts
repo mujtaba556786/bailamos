@@ -63,3 +63,26 @@ export function canDeleteCategory(menu: MenuContent, id: string): CategoryDelete
 export function formatPrice(price: number) {
   return `${price.toFixed(2).replace(".", ",")} €`;
 }
+
+export type DishBadges = { draft: boolean; enMissing: boolean; vegetarian: boolean; vegan: boolean };
+
+// Badges for one row of the dish list.
+// draft: the dish differs from the published menu, or is not published yet.
+// enMissing: no English name, or the English description is empty or still the German text
+// (the Excel import copies German into English when the English column is empty).
+// vegan: read defensively, because the field arrives with the editor update.
+export function dishBadges(dish: MenuDish, published: MenuDish | undefined): DishBadges {
+  const same = (a: string | undefined, b: string | undefined) => (a ?? "").trim() === (b ?? "").trim();
+  const vegan = (dish as MenuDish & { vegan?: boolean }).vegan === true;
+  return {
+    draft: !published || JSON.stringify(published) !== JSON.stringify(dish),
+    enMissing: !dish.name.en?.trim() || !dish.description.en?.trim() || same(dish.description.en, dish.description.de),
+    vegetarian: dish.vegetarian === true && !vegan,
+    vegan,
+  };
+}
+
+// Sets one dish's availability in a menu copy. Used for the instant update and for undoing it if saving fails.
+export function withAvailability(menu: MenuContent, dishId: string, available: boolean): MenuContent {
+  return { ...menu, dishes: menu.dishes.map((dish) => (dish.id === dishId ? { ...dish, available } : dish)) };
+}

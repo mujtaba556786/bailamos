@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Languages, Loader2, Save, UtensilsCrossed } from "lucide-react";
 import type { MenuContent } from "../lib/menu-content";
-import { moveItem } from "../lib/menu-admin";
+import { moveItem, withAvailability } from "../lib/menu-admin";
 import { AdminMenuImport } from "./admin-menu-import";
 import { CategoryManager } from "./admin-menu/category-manager";
 import { DishEditor } from "./admin-menu/dish-editor";
@@ -36,6 +36,7 @@ export function AdminMenu({ adminKey }: { adminKey: string }) {
   const [translating, setTranslating] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [toggling, setToggling] = useState<string[]>([]);
   const desktop = useDesktop();
   const mobileEditor = !desktop && editorOpen;
 
@@ -84,6 +85,32 @@ export function AdminMenu({ adminKey }: { adminKey: string }) {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Speisekarte konnte nicht gespeichert werden.");
     } finally { setSaving(false); }
+  }
+
+  // One-tap availability: update the list at once, save only this dish, undo if saving fails.
+  // A dish that is not published yet only changes in the draft.
+  async function toggleAvailable(id: string, available: boolean) {
+    if (!menu) return;
+    const name = menu.dishes.find((item) => item.id === id)?.name.de ?? "Gericht";
+    setError(""); setNotice("");
+    setMenu((current) => current && withAvailability(current, id, available));
+    if (!saved?.dishes.some((item) => item.id === id)) {
+      setNotice(`„${name}“ im Entwurf geändert. Das Gericht ist noch nicht veröffentlicht.`);
+      return;
+    }
+    setToggling((list) => [...list, id]);
+    try {
+      const result = await request("/api/admin/menu", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ dishId: id, available }) });
+      setSaved((current) => current && withAvailability(current, id, available));
+      // Only move to the new version if nobody else saved in between; otherwise a later full save must still warn.
+      setVersion((current) => (result.previousVersion === current ? result.version : current));
+      setNotice(`„${name}“ ist jetzt ${available ? "verfügbar" : "als ausverkauft markiert"}.`);
+    } catch (cause) {
+      setMenu((current) => current && withAvailability(current, id, !available));
+      setError(`„${name}“ konnte nicht gespeichert werden: ${cause instanceof Error ? cause.message : "Unbekannter Fehler."}`);
+    } finally {
+      setToggling((list) => list.filter((value) => value !== id));
+    }
   }
 
   async function generateEnglish() {
@@ -199,7 +226,7 @@ export function AdminMenu({ adminKey }: { adminKey: string }) {
 
       <section className="mt-6 overflow-hidden rounded-[2rem] bg-white shadow-sm lg:grid lg:grid-cols-[380px_minmax(0,1fr)] lg:items-start lg:overflow-visible">
         <div className="lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] lg:overflow-hidden lg:rounded-l-[2rem] lg:border-r lg:border-[#10261e]/10">
-          <DishList menu={menu} language={language} selected={editorOpen || desktop ? selected : ""} onSelect={selectDish} onAdd={addDish} />
+          <DishList menu={menu} language={language} selected={editorOpen || desktop ? selected : ""} onSelect={selectDish} onAdd={addDish} published={saved} toggling={toggling} onToggleAvailable={toggleAvailable} />
         </div>
         <div
           role={mobileEditor ? "dialog" : undefined}
