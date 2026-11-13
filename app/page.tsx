@@ -28,7 +28,9 @@ export async function HomeContent({locale}:{locale:Locale}) {
   const today=berlinDate();
   // Draft events can have no date; only published, upcoming events belong on public pages.
   const marketing={...savedMarketing,events:savedMarketing.events.filter(event=>event.published&&event.date>=today).sort((a,b)=>a.date.localeCompare(b.date))};
-  const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
+  // Short text for the carousel: the admin teaser, or the first sentence of the event text. Full details stay on the events page.
+const carouselText=(event:{teaser?:{de:string;en:string};summary:{de:string;en:string}},locale:Locale)=>{const teaser=(event.teaser?.[locale]||"").trim();if(teaser)return teaser;const first=localized(event.summary,locale).split(/(?<=[.!?])\s/)[0];return first.length>140?first.slice(0,137)+"…":first};
+const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
   const price=(value:number)=>new Intl.NumberFormat(locale==="en"?"en-GB":"de-DE",{style:"currency",currency:"EUR"}).format(value);
   const eventDate=(date:string,time:string)=>`${new Date(date).toLocaleDateString(locale==="en"?"en-GB":"de-DE",{weekday:"short",day:"2-digit",month:"long"})} · ${time}${locale==="de"?" Uhr":""}`;
 
@@ -36,7 +38,7 @@ export async function HomeContent({locale}:{locale:Locale}) {
   const slides:HighlightSlide[]=[
     {id:"welcome",kind:"news",label:L("Willkommen","Welcome"),title:L("Eine Nacht, die bleibt.","A night to remember."),text:L("Feuer, frische Aromen und Cocktails mit Charakter. Für lange Gespräche, große Momente und alles dazwischen.","Fire, fresh flavours and cocktails with character. For long conversations, big moments and everything in between."),image:"/restaurant/bar-interior.jpg",href:"#reservieren",cta:L("Tisch reservieren","Reserve a table")},
     ...(savedMarketing.announcement.enabled?[{id:"announcement",kind:"news" as const,label:L("Neu","New"),title:locale==="en"?savedMarketing.announcement.en:savedMarketing.announcement.de,text:"",image:"/restaurant/terrace-exterior.jpg",href:withLocale(savedMarketing.announcement.link||"/events",locale),cta:L("Mehr erfahren","Learn more")}]:[]),
-    ...marketing.events.slice(0,3).map(event=>({id:`event-${event.id}`,kind:"event" as const,label:L("Neues Event","New event"),meta:eventDate(event.date,event.time),title:localized(event.title,locale),text:localized(event.summary,locale),image:event.image,href:withLocale("/events",locale),cta:L("Zum Event","See the event")})),
+    ...marketing.events.filter(event=>event.showOnHome!==false).slice(0,3).map(event=>({id:`event-${event.id}`,kind:"event" as const,label:L("Neues Event","New event"),meta:eventDate(event.date,event.time),title:localized(event.title,locale),text:carouselText(event,locale),image:event.image,href:withLocale("/events",locale),cta:L("Zum Event","See the event")})),
     ...signature.slice(0,3).map(dish=>({id:`dish-${dish.id}`,kind:"dish" as const,label:L("Neu auf der Karte","New on the menu"),meta:price(dish.price),title:localized(dish.name,locale),text:localized(dish.description,locale),image:dish.image,href:withLocale("/menu",locale),cta:L("Zur Speisekarte","See the menu")})),
   ];
 
