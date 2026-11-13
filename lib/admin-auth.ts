@@ -2,7 +2,7 @@ import { env } from 'cloudflare:workers';
 import { BookingError } from './booking-policy.ts';
 import { digest } from './booking-service.ts';
 import { getOperations } from './operations-config.ts';
-import { ADMIN_TABS, type AdminTab } from './admin-tabs.ts';
+import { ADMIN_TABS, keyMayOpen, type AdminTab } from './admin-tabs.ts';
 
 // Every admin API route checks the x-admin-key header through this file.
 // Two keys exist: the admin key (everything) and the staff key (only the tabs the admin allows).
@@ -53,9 +53,9 @@ export async function requireAdmin(request: Request) {
 
 // The admin key passes everything; the staff key passes only the tabs ticked in Tische & Einstellungen.
 export async function requireTab(request: Request, ...tabs: AdminTab[]) {
-  if ((await resolveRole(request)) === 'admin') return;
-  const allowed = await staffTabs();
-  if (!tabs.some((tab) => allowed.includes(tab))) throw new BookingError(403, 'FORBIDDEN', 'Dieser Bereich ist für Mitarbeiter nicht freigegeben.');
+  const role = await resolveRole(request);
+  if (role === 'admin') return;
+  if (!keyMayOpen(role, await staffTabs(), tabs)) throw new BookingError(403, 'FORBIDDEN', 'Dieser Bereich ist für Mitarbeiter nicht freigegeben.');
 }
 
 // Used by the admin page to show only the tabs this key may open.

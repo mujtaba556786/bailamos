@@ -26,12 +26,13 @@
     "maximumGuests": 10,
     "guestSelectLimit": 6,
     "largeGroupNote": {
-      "de": "Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 8609300.",
-      "en": "For groups of more than 6 people, please email us at info@bailamos-waldcafe.de or call us on +49 173 8609300."
+      "de": "Für Gruppen über {max} Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 8609300.",
+      "en": "For groups of more than {max} people, please email us at info@bailamos-waldcafe.de or call us on +49 173 8609300."
     },
     "blockedDates": [
       "2026-12-31"
-    ]
+    ],
+    "blockedReasons": {}
   },
   "features": {
     "panorama": false,

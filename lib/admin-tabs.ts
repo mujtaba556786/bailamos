@@ -15,3 +15,9 @@ export const STAFF_DEFAULT_TABS: AdminTab[] = ["reservations"];
 
 // Features that are built but not ready for staff yet. Hidden tabs stay hidden in the navigation.
 export const ADMIN_FEATURES = { marketingStudio: false };
+
+// Server-side rule used by every admin API route: the admin key opens everything,
+// a staff key only opens a route if one of the route's areas is in the list the admin ticked.
+export function keyMayOpen(role: "admin" | "staff", staffTabs: readonly string[], routeTabs: readonly AdminTab[]) {
+  return role === "admin" || routeTabs.some((tab) => staffTabs.includes(tab));
+}
