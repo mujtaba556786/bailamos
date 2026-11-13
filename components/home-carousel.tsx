@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { heroTitleClass } from "../lib/hero-title";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 
@@ -79,7 +80,7 @@ export function HomeCarousel({ slides, labels }: { slides: HighlightSlide[]; lab
                 <div className={`max-w-2xl transition duration-1000 ${active ? "translate-y-0 opacity-100 delay-300" : "translate-y-6 opacity-0"}`}>
                   <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[.7rem] font-bold uppercase tracking-[.2em] ${slide.kind === "event" ? "bg-[#a52520] text-white" : slide.kind === "dish" ? "bg-[#efc67e] text-[#10261e]" : "bg-[#f5e8d3] text-[#10261e]"}`}>{slide.label}</span>
                   {slide.meta && <p className="mt-5 text-sm font-semibold uppercase tracking-[.18em] text-[#efc67e]">{slide.meta}</p>}
-                  <h2 className="font-display mt-4 text-[clamp(2.8rem,6.4vw,6.4rem)] leading-[.86] tracking-[-.04em] text-[#f5e8d3]">{slide.title}</h2>
+                  <h2 className={`font-display mt-4 ${heroTitleClass(slide.title)} tracking-[-.04em] text-[#f5e8d3] [text-shadow:0_2px_24px_rgba(0,0,0,.45)]`}>{slide.title}</h2>
                   {slide.text && <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">{slide.text}</p>}
                   <a href={slide.href} tabIndex={active ? 0 : -1} className="button-primary mt-8">{slide.cta} <ArrowRight size={18} /></a>
                 </div>
