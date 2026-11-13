@@ -15,7 +15,8 @@
     "test:menu-admin": "node --test --experimental-test-coverage --test-coverage-include=lib/menu-admin.ts scripts/test-menu-admin.mjs",
     "test:content-admin": "node --test --experimental-test-coverage --test-coverage-include=lib/content-admin.ts scripts/test-content-admin.mjs",
     "test:admin-security": "node --test --experimental-test-coverage --test-coverage-include=lib/media-upload.ts --test-coverage-include=lib/admin-rate-limit.ts scripts/test-admin-security.mjs",
-    "test:booking-rules": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-rules.ts --test-coverage-include=lib/admin-tabs.ts --test-coverage-include=lib/operations-config.ts scripts/test-booking-rules.mjs"
+    "test:booking-rules": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-rules.ts --test-coverage-include=lib/admin-tabs.ts --test-coverage-include=lib/operations-config.ts scripts/test-booking-rules.mjs",
+    "test:cancel-tokens": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-service.ts scripts/test-cancel-tokens.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
@@ -24,7 +25,7 @@
     "radix-ui": "^1.6.7",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "xlsx": "^0.18.5"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
