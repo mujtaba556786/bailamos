@@ -238,3 +238,18 @@ test("publishBlockers: invalid social links block publishing", () => {
   content.social.instagram.url = "https://www.tiktok.com/@x";
   assert.deepEqual(publishBlockers(content), [{ section: "social", text: "Instagram: Link prüfen" }]);
 });
+
+test("publishBlockers: a photo tile needs a German title", () => {
+  const content = base();
+  content.events = []; content.demoMedia.gallery = []; content.demoMedia.videos = [];
+  content.storyTiles = [{ ...content.storyTiles[0], title: { de: "", en: "" } }, content.storyTiles[1]];
+  assert.deepEqual(publishBlockers(content), [{ section: "startseite", text: "Fotokachel 1: Titel fehlt" }]);
+  content.storyTiles = [];
+  assert.deepEqual(publishBlockers(content), []);
+});
+
+test("an empty tile list is valid and stays empty on the server", () => {
+  const content = base();
+  content.storyTiles = [];
+  assert.deepEqual(validateMarketingContent(content).storyTiles, []);
+});

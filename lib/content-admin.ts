@@ -161,7 +161,8 @@ export function publishBlockers(content: MarketingContent): PublishBlocker[] {
     const problem = socialUrlError(platform.id, content.social[platform.id].url);
     return problem ? [{ section: "social" as const, text: `${platform.label}: Link prüfen` }] : [];
   });
-  return [...events, ...images, ...videos, ...social];
+  const tiles = content.storyTiles.flatMap((tile, index) => (tile.title.de.trim() ? [] : [{ section: "startseite" as const, text: `Fotokachel ${index + 1}: Titel fehlt` }]));
+  return [...tiles, ...events, ...images, ...videos, ...social];
 }
 
 // ---------- "Unsere Lieblinge" dish picker ----------
