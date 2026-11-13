@@ -9,15 +9,19 @@ const securityHeaders={
   'Referrer-Policy':'strict-origin-when-cross-origin',
   'Permissions-Policy':'camera=(), microphone=(), geolocation=(), payment=()',
   'Strict-Transport-Security':'max-age=31536000; includeSubDomains',
-  // Report-only: violations are logged in the browser console, nothing is blocked yet.
-  // 'unsafe-inline' is needed for the framework's inline scripts; it is tightened later with nonces.
-  'Content-Security-Policy-Report-Only':[
+  // Enforced since 13 Nov 2026 (a scan of every page, with and without analytics consent, found no violations on the live site).
+  // Scripts: only this site and Google Tag Manager. 'unsafe-inline' is still needed for the framework's inline scripts;
+  // nonces would remove it later. Images and videos may come from any https address, because the admin accepts
+  // external image and video links; that does not allow running code.
+  'Content-Security-Policy':[
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    "img-src 'self' data: blob: https:",
+    "media-src 'self' blob: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://www.googletagmanager.com",
+    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://www.googletagmanager.com https://*.googletagmanager.com",
+    "frame-src https://www.googletagmanager.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -28,6 +32,8 @@ const securityHeaders={
 export async function middleware(request:NextRequest){
   const response=await routeRequest(request);
   for(const [name,value] of Object.entries(securityHeaders))response.headers.set(name,value);
+  // Only over https: on a local http preview this would rewrite every file to https and nothing would load.
+  if(request.nextUrl.protocol==='https:')response.headers.set('Content-Security-Policy',`${securityHeaders['Content-Security-Policy']}; upgrade-insecure-requests`);
   // Administration, booking management and API responses must never appear in search results.
   if(isPrivatePath(request))response.headers.set('X-Robots-Tag','noindex, nofollow');
   return response;

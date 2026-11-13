@@ -1,4 +1,4 @@
-import { BookingError, parseBooking, slot, bookableTablesFor, seatsFit } from './booking-policy.ts';
+import { BookingError, parseBooking, slot, bookableTablesFor, seatsFit, berlinDate } from './booking-policy.ts';
 import type { OperationsConfig } from './operations-config.ts';
 // No 0/O or 1/I/L, so a code read out over the phone is hard to mistype.
 const SHORT_CODE_ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
@@ -76,11 +76,19 @@ export async function changeStatus(db: D1Database,id: string,status: string,vers
   await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING`).bind(`${id}:${version+1}`,id,String(row.status),status,actor,reason,version+1,new Date().toISOString()).run();
   return {ok:true,status,version:version+1};
 }
-export async function getManagedBooking(db: D1Database,id: string,token: string) {
+// Checks the personal link (id + token). New tokens are stored only as a SHA-256 hash.
+// Reservations imported from the old system may still hold the plain token: those links keep working only for
+// bookings that are still ahead, and the first use replaces the stored token with its hash.
+export async function getManagedBooking(db: D1Database,id: string,token: string,now=new Date()) {
   if (!token || token.length > 128 || token.startsWith('sha256:')) throw new BookingError(404,'NOT_FOUND','Reservierung nicht gefunden.');
-  const row = await db.prepare('SELECT short_code,status,version FROM reservations WHERE id = ? AND (cancel_token = ? OR cancel_token = ?)').bind(id,`sha256:${await digest(token)}`,token).first<Row>();
+  const hashed = `sha256:${await digest(token)}`;
+  const row = await db.prepare('SELECT short_code,status,version,date,cancel_token FROM reservations WHERE id = ? AND (cancel_token = ? OR cancel_token = ?)').bind(id,hashed,token).first<Row>();
   if (!row) throw new BookingError(404,'NOT_FOUND','Reservierung nicht gefunden.');
-  return row;
+  if (row.cancel_token !== hashed) {
+    if (String(row.date) < berlinDate(now)) throw new BookingError(404,'NOT_FOUND','Reservierung nicht gefunden.');
+    await db.prepare('UPDATE reservations SET cancel_token = ? WHERE id = ? AND cancel_token = ?').bind(hashed,id,token).run();
+  }
+  return { short_code: row.short_code, status: row.status, version: row.version } as Row;
 }
 export async function cancelBooking(db: D1Database,id: string,token: string) {
   const row = await getManagedBooking(db,id,token);
