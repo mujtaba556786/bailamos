@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { ArrowRight, Flame, Leaf } from "lucide-react";
 import { SiteHeader } from "./site-header";
 import { StructuredData } from "./structured-data";
@@ -7,6 +6,8 @@ import type { MenuContent } from "../lib/menu-content.ts";
 import { localized, withLocale, type Locale } from "../lib/i18n";
 import { dishBreadcrumbs, dishJsonLd, dishPath } from "../lib/seo";
 
+// Plain <a> links on purpose: vinext's <Link> throws on click ("e is not a function"), so the buttons did nothing.
+// The rest of the site uses plain links too; a full page load is fine here.
 type Dish = MenuContent["dishes"][number];
 type Category = MenuContent["categories"][number];
 
@@ -34,13 +35,13 @@ export function DishPage({ dish, category, related, locale }: { dish: Dish; cate
           <div className="max-w-xl">
             <nav aria-label="Breadcrumb" className="text-sm text-white/60">
               <ol className="flex flex-wrap gap-2">
-                <li><Link href={withLocale("/", locale)} className="hover:text-white">Bailamos Waldcafé</Link> ›</li>
-                <li><Link href={menuPath} className="hover:text-white">{L("Speisekarte", "Menu")}</Link> ›</li>
+                <li><a href={withLocale("/", locale)} className="hover:text-white">Bailamos Waldcafé</a> ›</li>
+                <li><a href={menuPath} className="hover:text-white">{L("Speisekarte", "Menu")}</a> ›</li>
                 <li aria-current="page" className="text-white/85">{name}</li>
               </ol>
             </nav>
             <p className="eyebrow mt-8">
-              <Link href={`${menuPath}#${dish.categoryId}`} className="hover:underline">{categoryName}</Link>
+              <a href={`${menuPath}#${dish.categoryId}`} className="hover:underline">{categoryName}</a>
             </p>
             <h1 className="font-display mt-4 text-6xl">{name}</h1>
             <p className="mt-5 text-2xl text-[#d6a45f]">{price}</p>
@@ -74,10 +75,10 @@ export function DishPage({ dish, category, related, locale }: { dish: Dish; cate
                 <ul className="mt-5 grid gap-3">
                   {related.map((item) => (
                     <li key={item.id}>
-                      <Link href={dishPath(item.id, locale)} className="flex justify-between gap-4 rounded-xl border border-white/10 px-4 py-3 hover:border-[#c68a3b]/60">
+                      <a href={dishPath(item.id, locale)} className="flex justify-between gap-4 rounded-xl border border-white/10 px-4 py-3 hover:border-[#c68a3b]/60">
                         <span>{localized(item.name, locale)}</span>
                         <span className="text-[#d6a45f]">€ {item.price.toFixed(2).replace(".", ",")}</span>
-                      </Link>
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -90,10 +91,10 @@ export function DishPage({ dish, category, related, locale }: { dish: Dish; cate
                 {L("Das Gericht wird nicht vorbestellt. Wir reservieren ausschließlich Ihren Tisch.", "The dish is not pre-ordered; we reserve your table only.")}
               </p>
               <div className="mt-6 flex flex-wrap gap-4">
-                <Link href={menuPath} className="button-secondary">{L("Zur Speisekarte", "Back to menu")}</Link>
-                <Link href={withLocale("/reservieren", locale)} className="button-primary">
+                <a href={menuPath} className="button-secondary">{L("Zur Speisekarte", "Back to menu")}</a>
+                <a href={withLocale("/reservieren", locale)} className="button-primary">
                   {L("Tisch reservieren", "Reserve a table")} <ArrowRight size={17} />
-                </Link>
+                </a>
               </div>
             </div>
           </div>
