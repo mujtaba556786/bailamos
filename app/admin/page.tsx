@@ -13,6 +13,9 @@ import { AdminOperations } from "../../components/admin-operations";
 import { AdminClosedDays } from "../../components/admin-closed-days";
 import { AdminSeo } from "../../components/admin-seo";
 import { AdminMarketingStudio } from "../../components/admin-marketing-studio";
+import { AdminConfirmDialog } from "../../components/admin-confirm-dialog";
+import { AdminSiteStatus } from "../../components/admin-site-status";
+import { ADMIN_FEATURES, ADMIN_TAB_LABELS } from "../../lib/admin-tabs";
 
 type Status = "pending"|"confirmed"|"declined"|"cancelled"|"arrived"|"seated"|"completed"|"no_show";
 type Reservation = {
@@ -49,10 +52,13 @@ export default function Admin(){
   const [access,setAccess]=useState<{tabs:string[]}>({tabs:[]});
   useEffect(()=>{if(!key)return;void (async()=>{try{const response=await fetch("/api/admin/me",{headers:{"x-admin-key":key}});const result=await response.json() as {tabs:string[]};if(response.ok)setAccess({tabs:result.tabs})}catch{}})()},[key]);
   const [view,setView]=useState<"reservations"|"statistics"|"newsletter"|"content"|"menu"|"operations"|"seo"|"studio">("reservations");
+  // Website-Inhalte reports unsaved changes, so switching admin tabs can ask first instead of losing them.
+  const [contentDirty,setContentDirty]=useState(false),[pendingView,setPendingView]=useState<typeof view|null>(null);
+  const openView=(next:typeof view)=>{if(view==="content"&&contentDirty&&next!=="content"){setPendingView(next);return}setView(next)};
   // Optional filters for the reservation list: an empty range means the single day above.
   const [rangeFrom,setRangeFrom]=useState(""),[rangeTo,setRangeTo]=useState(""),[statusFilter,setStatusFilter]=useState("");
 
-  useEffect(()=>{const saved=sessionStorage.getItem("bailamos-admin-key");if(saved){setKey(saved)}const requested=new URLSearchParams(window.location.search).get("view");if(requested==="studio")setView("studio")},[]);
+  useEffect(()=>{const saved=sessionStorage.getItem("bailamos-admin-key");if(saved){setKey(saved)}const requested=new URLSearchParams(window.location.search).get("view");if(requested==="studio"&&ADMIN_FEATURES.marketingStudio)setView("studio")},[]);
 
   const api=useCallback(async(url:string,options:RequestInit={})=>{
     const response=await fetch(url,{...options,headers:{...options.headers,"x-admin-key":key||draftKey}});
@@ -126,9 +132,11 @@ export default function Admin(){
 
   return <main className="min-h-screen bg-[#f4f0e8] text-[#10261e]">
     <header className="border-b border-[#10261e]/10 bg-[#0b1712] px-4 py-4 text-[#f5e8d3] sm:px-8">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-5"><a href="/" className="flex items-center gap-3"><Image src="/bailamos-logo.jpg" width={48} height={48} alt="Bailamos" className="h-11 w-11 rounded-full object-cover"/><div><p className="font-display text-xl">BAILAMOS</p><p className="text-xs text-white/45">Reservierungen</p></div></a><button onClick={()=>{sessionStorage.removeItem("bailamos-admin-key");setKey("");setReservations([])}} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-4 text-sm text-white/70 hover:bg-white/10"><LogOut size={17}/> <span className="hidden sm:inline">Abmelden</span></button></div>
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-5"><a href="/" className="flex items-center gap-3"><Image src="/bailamos-logo.jpg" width={48} height={48} alt="Bailamos" className="h-11 w-11 rounded-full object-cover"/><div><p className="font-display text-xl">BAILAMOS</p><p className="text-xs text-white/45">{ADMIN_TAB_LABELS[view]}</p></div></a><button onClick={()=>{sessionStorage.removeItem("bailamos-admin-key");setKey("");setReservations([])}} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-4 text-sm text-white/70 hover:bg-white/10"><LogOut size={17}/> <span className="hidden sm:inline">Abmelden</span></button></div>
     </header>
-    <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2">{[["reservations","Reservierungen"],["statistics","Statistik"],["newsletter","E-Mail"],["content","Website-Inhalte"],["studio","Marketing Studio (bald)"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].filter(([id])=>access.tabs.includes(id)).map(([id,label])=><button key={id} disabled={id==="studio"} onClick={()=>setView(id as typeof view)} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${id==="studio"?"cursor-not-allowed text-[#10261e]/30":view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
+    <AdminSiteStatus adminKey={key}/>
+    <nav aria-label="Verwaltungsbereiche" className="border-b border-[#10261e]/10 bg-white px-4 sm:px-8"><div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">{[["reservations","Reservierungen"],["statistics","Statistik"],["newsletter","E-Mail"],["content","Website-Inhalte"],["studio","Marketing Studio"],["menu","Speisekarte"],["operations","Tische & Einstellungen"],["seo","SEO & AI"]].filter(([id])=>access.tabs.includes(id)&&(id!=="studio"||ADMIN_FEATURES.marketingStudio)).map(([id,label])=><button key={id} onClick={()=>openView(id as typeof view)} aria-current={view===id?"page":undefined} className={`min-h-11 whitespace-nowrap rounded-full px-5 text-sm font-semibold ${view===id?"bg-[#10261e] text-white":"text-[#10261e]/60 hover:bg-[#f4f0e8]"}`}>{label}</button>)}</div></nav>
+    <AdminConfirmDialog open={pendingView!==null} title="Ungespeicherte Änderungen" confirmLabel="Trotzdem wechseln" cancelLabel="Hier bleiben" danger onConfirm={()=>{if(pendingView)setView(pendingView);setPendingView(null);setContentDirty(false)}} onCancel={()=>setPendingView(null)}><p>In „Website-Inhalte“ gibt es noch nicht veröffentlichte Änderungen. Beim Wechseln gehen sie verloren.</p></AdminConfirmDialog>
     {view==="reservations"?<div className="mx-auto max-w-7xl px-4 py-7 sm:px-8 lg:py-10">
       <AdminClosedDays adminKey={key}/>
       <section className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p className="eyebrow">Restaurantbetrieb</p><h1 className="font-display mt-2 text-4xl sm:text-5xl">Reservierungen</h1><p className="mt-2 text-base text-[#10261e]/55">{localDate(date)}</p></div><div className="flex flex-wrap items-center gap-2"><button onClick={()=>{setDate(berlinDate());setSelected(null)}} disabled={date===berlinDate()} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-sm font-semibold hover:bg-[#fff8ec] disabled:opacity-40">Heute</button><button onClick={()=>shiftDate(-1)} aria-label="Einen Tag zurück" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><ChevronLeft size={18}/></button><label className="grid text-sm"><span className="sr-only">Datum</span><input type="date" value={date} onChange={e=>{setDate(e.target.value);setSelected(null)}} className="min-h-12 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base"/></label><button onClick={()=>shiftDate(1)} aria-label="Einen Tag weiter" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><ChevronRight size={18}/></button><button onClick={()=>load()} aria-label="Aktualisieren" className="grid h-12 w-12 place-items-center rounded-xl border border-[#10261e]/15 bg-white hover:bg-[#fff8ec]"><RefreshCw size={18} className={loading?"animate-spin":""}/></button></div></section>
@@ -164,6 +172,6 @@ export default function Admin(){
           </article>}
         </div>
       </section>
-    </div>:view==="statistics"?<AdminStatistics adminKey={key}/>:view==="newsletter"?<AdminNewsletter adminKey={key}/>:view==="content"?<AdminContent adminKey={key}/>:view==="studio"?<AdminMarketingStudio adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
+    </div>:view==="statistics"?<AdminStatistics adminKey={key}/>:view==="newsletter"?<AdminNewsletter adminKey={key}/>:view==="content"?<AdminContent adminKey={key} onDirtyChange={setContentDirty}/>:view==="studio"?<AdminMarketingStudio adminKey={key}/>:view==="menu"?<AdminMenu adminKey={key}/>:view==="operations"?<AdminOperations adminKey={key}/>:<AdminSeo adminKey={key}/>}
   </main>;
 }

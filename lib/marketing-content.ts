@@ -1,6 +1,7 @@
 import defaults from "../data/marketing.json" with { type: "json" };
 import { BookingError } from "./booking-policy.ts";
-import { validateOpening, openingDraft, validDate, type Opening } from './opening.ts';
+import { SOCIAL_PLATFORMS, socialUrlError } from "./social-links.ts";
+import { validateOpening, openingDraft, validDate, openingActive, revealDate, type Opening } from './opening.ts';
 
 type Pair={de:string;en:string};
 export type MarketingContent={storyTiles:Array<{id:string;image:string;title:Pair;text:Pair;show:boolean}>;favourites:{enabled:boolean;eyebrow:Pair;heading:Pair;dishIds:string[]};opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};youtube:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;teaser:Pair;showOnHome:boolean;date:string;time:string;image:string;featured:boolean;published:boolean}>};
@@ -62,8 +63,27 @@ export async function getMarketingContent(db?:D1Database):Promise<{content:Marke
 }
 export async function saveMarketingContent(db:D1Database,value:unknown,expectedVersion:number){
   const content=validateMarketingContent(value),stamp=new Date().toISOString();
+  for(const platform of SOCIAL_PLATFORMS){const problem=socialUrlError(platform.id,content.social[platform.id].url);if(problem)throw new BookingError(400,"INVALID_SOCIAL_URL",`${platform.label}: ${problem}`)}
   if(expectedVersion===0){try{await db.prepare("INSERT INTO marketing_content (id,content_json,version,updated_at) VALUES ('primary',?,1,?)").bind(JSON.stringify(content),stamp).run();return {content,version:1}}catch(error){if(!String(error).includes("UNIQUE"))throw error;}}
   const result=await db.prepare("UPDATE marketing_content SET content_json = ?,version = version + 1,updated_at = ? WHERE id = 'primary' AND version = ?").bind(JSON.stringify(content),stamp,expectedVersion).run();
   if(!result.meta.changes)throw new BookingError(409,"STALE_CONTENT","Die Inhalte wurden inzwischen geändert. Bitte laden Sie sie neu.");
   return {content,version:expectedVersion+1};
+}
+// Site lock status for the admin banner. "locked" follows the same rule as the middleware,
+// including "two calendar days before the opening date" when automatic release is on.
+export function siteStatus(content:MarketingContent,now=new Date()){
+  const {enabled,autoReveal,openingDate}=content.opening;
+  return {locked:openingActive(content.opening,now),enabled,autoReveal,openingDate,revealDate:autoReveal?revealDate(openingDate):''};
+}
+// Locks or releases the site by changing only opening.enabled on the saved content,
+// so unpublished edits in other sections are never published along with it. Retries if another save lands first.
+export async function setSiteLock(db:D1Database,enabled:unknown){
+  if(typeof enabled!=="boolean")throw new BookingError(400,"INVALID_LOCK","Ungültiger Sperrstatus.");
+  for(let attempt=0;attempt<3;attempt++){
+    const current=await getMarketingContent(db),content=structuredClone(current.content);
+    content.opening.enabled=enabled;
+    try{const saved=await saveMarketingContent(db,content,current.version);return{...siteStatus(saved.content),version:saved.version,previousVersion:current.version}}
+    catch(error){if(!(error instanceof BookingError&&error.code==="STALE_CONTENT"))throw error}
+  }
+  throw new BookingError(409,"STALE_CONTENT","Die Inhalte wurden gerade geändert. Bitte erneut versuchen.");
 }
