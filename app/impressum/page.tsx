@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
+import { localeAlternates } from '../../lib/seo';
 import { Footer } from '../../components/footer';
 
-export const metadata = {
-  title: 'Impressum – Bailamos Waldcafé',
+export const metadata: Metadata = {
+  title: 'Impressum',
+  alternates: localeAlternates('/impressum', '/en/impressum', 'de'),
   description: 'Rechtliche Informationen und Kontaktdaten von Bailamos Waldcafé',
 };
 

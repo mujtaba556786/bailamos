@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
+import { localeAlternates } from '../../../lib/seo';
 import { Footer } from '../../../components/footer';
 
-export const metadata = {
-  title: 'Terms & Conditions – Bailamos Waldcafé',
+export const metadata: Metadata = {
+  title: 'Terms & Conditions',
+  alternates: localeAlternates('/agb', '/en/agb', 'en'),
   description: 'Terms and conditions of Bailamos Waldcafé',
 };
 

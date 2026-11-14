@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
+import { localeAlternates } from '../../../lib/seo';
 import { Footer } from '../../../components/footer';
 
-export const metadata = {
-  title: 'Privacy Policy – Bailamos Waldcafé',
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  alternates: localeAlternates('/datenschutz', '/en/datenschutz', 'en'),
   description: 'Privacy policy of Bailamos Waldcafé',
 };
 

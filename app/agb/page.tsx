@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
+import { localeAlternates } from '../../lib/seo';
 import { Footer } from '../../components/footer';
 
-export const metadata = {
-  title: 'AGB – Bailamos Waldcafé',
+export const metadata: Metadata = {
+  title: 'AGB',
+  alternates: localeAlternates('/agb', '/en/agb', 'de'),
   description: 'Allgemeine Geschäftsbedingungen von Bailamos Waldcafé',
 };
 
