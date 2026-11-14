@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
+import { localeAlternates } from '../../../lib/seo';
 import { Footer } from '../../../components/footer';
 
-export const metadata = {
-  title: 'Legal Notice – Bailamos Waldcafé',
+export const metadata: Metadata = {
+  title: 'Legal Notice',
+  alternates: localeAlternates('/impressum', '/en/impressum', 'en'),
   description: 'Legal information and contact details of Bailamos Waldcafé',
 };
 

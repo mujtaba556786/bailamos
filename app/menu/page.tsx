@@ -7,12 +7,12 @@ import { Footer } from "../../components/footer";
 import type { Metadata } from "next";
 import { StructuredData } from "../../components/structured-data";
 import { localeAlternates, menuJsonLd } from "../../lib/seo";
-import { getSeoContent } from "../../lib/seo-content.ts";
+import { getSeoContent } from "../../lib/seo-content.ts";import {brandTitle} from "../../lib/page-title";
 import { getMarketingContent } from "../../lib/marketing-content.ts";
 import { berlinDate } from "../../lib/booking-policy.ts";
 import { localized,withLocale,type Locale } from "../../lib/i18n";
 
-export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB),page=content.pages.menu;return{title:page.title.de,description:page.description.de,alternates:localeAlternates("/menu","/en/menu","de"),openGraph:{title:page.title.de,description:page.description.de,url:"/menu",locale:"de_DE",alternateLocale:["en_GB"],siteName:"Bailamos Waldcafé"}}}
+export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB),page=content.pages.menu,title=brandTitle(page.title.de);return{title:{absolute:title},description:page.description.de,alternates:localeAlternates("/menu","/en/menu","de"),openGraph:{title,description:page.description.de,url:"/menu",locale:"de_DE",alternateLocale:["en_GB"],siteName:"Bailamos Waldcafé"}}}
 
 export async function MenuContent({locale}:{locale:Locale}){
   const copy=locale==="en"?{eyebrow:"Tradition. Refinement. Mexico at heart.",title:"Menu",intro:"Classic flavours, a modern touch and ingredients treated with respect.",dishes:"dishes",unavailable:"Unavailable today",details:"Details",cta:"Found your favourite?",reserve:"Reserve a table"}:{eyebrow:"Tradition. Raffinesse. Mexiko im Herzen.",title:"Speisekarte",intro:"Klassische Aromen, moderne Handschrift und Zutaten, die wir mit Respekt behandeln.",dishes:"Gerichte",unavailable:"Heute nicht verfügbar",details:"Details",cta:"Ihr Liebling schon gefunden?",reserve:"Tisch reservieren"};

@@ -22,8 +22,10 @@ import type {Metadata} from "next";
 import {getSeoContent} from "../lib/seo-content.ts";
 import {restaurantJsonLd} from "../lib/seo";
 import {localeAlternates} from "../lib/seo";
+import {faqJsonLd,homeFaq} from "../lib/guest-info";
+import {brandTitle} from "../lib/page-title";
 
-export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB),page=content.pages.home;return{title:page.title.de,description:page.description.de,keywords:content.keywords.de.split(",").map(x=>x.trim()),alternates:localeAlternates("/","/en","de"),openGraph:{title:page.title.de,description:page.description.de,url:"/",locale:"de_DE",alternateLocale:["en_GB"],siteName:"Bailamos Waldcafé",images:[{url:"/restaurant/terrace-exterior.jpg",alt:"Bailamos Waldcafé Terrasse"}]}}}
+export async function generateMetadata():Promise<Metadata>{const {content}=await getSeoContent(env.DB),page=content.pages.home,title=brandTitle(page.title.de);return{title:{absolute:title},description:page.description.de,keywords:content.keywords.de.split(",").map(x=>x.trim()),alternates:localeAlternates("/","/en","de"),openGraph:{title,description:page.description.de,url:"/",locale:"de_DE",alternateLocale:["en_GB"],siteName:"Bailamos Waldcafé",images:[{url:"/restaurant/terrace-exterior.jpg",alt:"Bailamos Waldcafé Terrasse"}]}}}
 
 const weekdays=[["monday","Mo","Mon"],["tuesday","Di","Tue"],["wednesday","Mi","Wed"],["thursday","Do","Thu"],["friday","Fr","Fri"],["saturday","Sa","Sat"],["sunday","So","Sun"]] as const;
 
@@ -31,6 +33,7 @@ export async function HomeContent({locale}:{locale:Locale}) {
   const L=(de:string,en:string)=>locale==="en"?en:de;
   const [{content:savedMarketing},{content:menu},{config:operations},{content:seo}]=await Promise.all([getMarketingContent(env.DB),getMenuContent(env.DB),getOperations(env.DB),getSeoContent(env.DB)]),restaurant=operations.restaurant;
   const today=berlinDate();
+  const faq=homeFaq(restaurant,locale);
   // Draft events can have no date; only published, upcoming events belong on public pages.
   const marketing={...savedMarketing,events:savedMarketing.events.filter(event=>event.published&&event.date>=today).sort((a,b)=>a.date.localeCompare(b.date))};
   // Short text for the carousel: the admin teaser, or the first sentence of the event text. Full details stay on the events page.
@@ -55,13 +58,14 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
 
   return <><main className="overflow-hidden bg-[#09130f] text-[#f5e8d3]">
     <StructuredData data={restaurantJsonLd(restaurant, visibleSocialLinks(marketing.social).map(([,url])=>url), seo.serviceAreas)}/>
+    <StructuredData data={faqJsonLd(faq)}/>
     <SiteHeader active="Start" locale={locale}/>
 
     <HomeCarousel slides={slides} labels={{previous:L("Vorheriges Highlight","Previous highlight"),next:L("Nächstes Highlight","Next highlight"),pause:L("Automatisches Weiterblättern anhalten","Pause slideshow"),play:L("Automatisches Weiterblättern starten","Play slideshow"),region:L("Neuigkeiten bei Bailamos","News at Bailamos"),slide:L("von","of")}}/>
 
     <section id="story" className="relative scroll-mt-24 bg-[#f4ead8] px-5 py-24 text-[#10261e] sm:px-10 lg:py-32">
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[.95fr_1.05fr] lg:items-end">
-        <div><p className="eyebrow">{L("Mexikanisches Restaurant & Cocktailbar in Brandenburg an der Havel","Mexican restaurant & cocktail bar in Brandenburg an der Havel")}</p><h1 className="font-display mt-4 max-w-xl text-5xl leading-[.92] sm:text-7xl">{L("Willkommen bei Bailamos.","Welcome to Bailamos.")}</h1></div>
+        <div><p className="eyebrow">{L("Restaurant & Cocktailbar","Restaurant & cocktail bar")}</p>{/* The H1 names what and where for search engines; the big line stays the welcome. */}<h1 className="font-display mt-4 max-w-xl"><span className="block text-5xl leading-[.92] sm:text-7xl">{L("Willkommen bei Bailamos.","Welcome to Bailamos.")}</span><span className="mt-4 block text-2xl leading-tight text-[#10261e]/75 sm:text-3xl">{L("Mexikanisches Restaurant in Brandenburg an der Havel","Mexican restaurant in Brandenburg an der Havel")}</span></h1></div>
         <p className="max-w-2xl text-lg leading-8 text-[#10261e]/65">{L("Unsere Küche verbindet das Vertraute mit dem Unerwarteten. Warme Musik, klare Drinks und Tische, die zum Bleiben einladen.","Our kitchen brings the familiar together with the unexpected. Warm music, confident drinks and tables made for staying.")}</p>
       </div>
       <div className="mx-auto mt-14 grid max-w-7xl gap-4 md:grid-cols-[1.25fr_.75fr]">
@@ -99,6 +103,11 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
         </form>
       </div>
     </section>
+
+    <section id="faq" aria-labelledby="faq-title" className="scroll-mt-24 bg-[#09130f] px-5 pt-20 sm:px-10"><div className="mx-auto max-w-3xl">
+      <p className="eyebrow">{L("Gut zu wissen","Good to know")}</p><h2 id="faq-title" className="font-display mt-3 text-4xl sm:text-5xl">{L("Häufige Fragen","Frequently asked questions")}</h2>
+      <dl className="mt-8 divide-y divide-[#c68a3b]/20 border-y border-[#c68a3b]/20">{faq.map((item,index)=><div key={item.question} className="py-6"><dt className="text-lg font-semibold text-[#f5e8d3]">{item.question}</dt><dd className="mt-2 leading-7 text-white/65">{item.answer}{index===0&&<> <a href={withLocale("/reservieren",locale)} className="text-[#efc67e] underline underline-offset-4">{L("Zur Reservierung","Go to reservations")}</a></>}</dd></div>)}</dl>
+    </div></section>
 
     <section id="contact" className="bg-[#09130f] px-5 py-16 sm:px-10"><div className="mx-auto grid max-w-7xl gap-8 border-y border-[#c68a3b]/25 py-12 md:grid-cols-3"><div><p className="eyebrow">{restaurant.name}</p><p className="font-display mt-3 flex gap-2 text-3xl"><MapPin size={22} className="mt-1 shrink-0 text-[#efc67e]"/>{restaurant.contact.address}</p></div><div><p className="eyebrow">{L("Öffnungszeiten","Opening hours")}</p><div className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 text-sm leading-7 text-white/65">{weekdays.map(([key,de,en])=>{const hours=restaurant.openingHours[key];return <Fragment key={key}><span>{L(de,en)}</span><span>{hours==="closed"?L("geschlossen","closed"):hours.replace("-","–")+L(" Uhr","")}</span></Fragment>})}</div></div><div><p className="eyebrow">{L("Reservierungen","Reservations")}</p><p className="mt-3 leading-7 text-white/65">{restaurant.contact.phone}<br/>{restaurant.contact.email}</p></div></div></section>
   </main>

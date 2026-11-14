@@ -1,7 +1,10 @@
+import type { Metadata } from 'next';
+import { localeAlternates } from '../../lib/seo';
 import { Footer } from '../../components/footer';
 
-export const metadata = {
-  title: 'Datenschutz – Bailamos Waldcafé',
+export const metadata: Metadata = {
+  title: 'Datenschutz',
+  alternates: localeAlternates('/datenschutz', '/en/datenschutz', 'de'),
   description: 'Datenschutzerklärung von Bailamos Waldcafé',
 };
 
