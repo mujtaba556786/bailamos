@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, ExternalLink, Eye, Languages, Loader2, RotateCcw, Send } from "lucide-react";
 import type { MarketingContent } from "../lib/marketing-content";
-import { type PickerCategory, type PickerDish, CONTENT_SECTIONS, changeSummary, contentChanges, missingEnglish, publishBlockers, sectionFromSearch, totalChanges, type ContentSection } from "../lib/content-admin";
+import { type PickerCategory, type PickerDish, CONTENT_SECTIONS, applyHeroTranslations, heroTranslationJobs, changeSummary, contentChanges, missingEnglish, publishBlockers, sectionFromSearch, totalChanges, type ContentSection } from "../lib/content-admin";
 import { AdminConfirmDialog } from "./admin-confirm-dialog";
 import { AdminOpening } from "./admin-opening";
 import { CONTENT_PUBLISHED, SITE_LOCK_CHANGED, type SiteLockResult } from "./admin-site-status";
@@ -160,13 +160,16 @@ export function AdminContent({ adminKey, onDirtyChange }: { adminKey: string; on
     if (!content) return;
     setTranslating(true); setError("");
     try {
-      const texts = [...content.events.flatMap((x) => [x.title.de, x.summary.de]), ...content.demoMedia.gallery.map((x) => x.label.de), ...content.demoMedia.videos.map((x) => x.title.de)];
+      // Carousel texts only where English is missing, so English written by hand stays.
+      const heroJobs = heroTranslationJobs(content);
+      const texts = [...content.events.flatMap((x) => [x.title.de, x.summary.de]), ...content.demoMedia.gallery.map((x) => x.label.de), ...content.demoMedia.videos.map((x) => x.title.de), ...heroJobs.map((job) => job.text)];
       const result = await request("/api/admin/translate", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ texts }) });
       let cursor = 0;
       change((copy) => {
         for (const event of copy.events) { event.title.en = result.translations[cursor++]; event.summary.en = result.translations[cursor++]; }
         for (const item of copy.demoMedia.gallery) item.label.en = result.translations[cursor++];
         for (const item of copy.demoMedia.videos) item.title.en = result.translations[cursor++];
+        applyHeroTranslations(copy, heroJobs, result.translations.slice(cursor));
       });
       setLanguage("en");
       setNotice("Englischer Entwurf erstellt. Bitte prüfen und veröffentlichen.");
