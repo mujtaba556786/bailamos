@@ -5,5 +5,5 @@ export type SectionProps = {
   language: "de" | "en";
   change: (mutator: (copy: MarketingContent) => void) => void;
   uploading: boolean;
-  uploadMedia: (file: File, expect?: "image") => Promise<{ url: string; kind: "image" | "video" } | null>;
+  uploadMedia: (file: File, expect?: "image", purpose?: "hero") => Promise<{ url: string; kind: "image" | "video" } | null>;
 };

@@ -29,7 +29,7 @@ test("changes are counted in the right sub-tab", () => {
   draft.favourites.dishIds = ["x"];
   draft.opening.enabled = !draft.opening.enabled;
   draft.social.tiktok.handle = "@neu";
-  assert.deepEqual(contentChanges(saved, draft), { startseite: 3, events: 0, medien: 0, social: 1, eroeffnung: 1 });
+  assert.deepEqual(contentChanges(saved, draft), { startseite: 3, karussell: 0, events: 0, medien: 0, social: 1, eroeffnung: 1 });
 });
 
 test("events: new, edited, removed and reordered are each counted", () => {
@@ -62,7 +62,7 @@ test("gallery and videos count under Galerie & Videos", () => {
 test("publishing sends every section: all sub-tabs map to fields of one document", () => {
   // The save bar publishes the whole content document. Every sub-tab must be backed by part of it.
   const content = base();
-  const covered = { startseite: [content.announcement, content.storyTiles, content.favourites], events: [content.events], medien: [content.demoMedia], social: [content.social], eroeffnung: [content.opening] };
+  const covered = { startseite: [content.announcement, content.storyTiles, content.favourites], karussell: [content.heroCarousel], events: [content.events], medien: [content.demoMedia], social: [content.social], eroeffnung: [content.opening] };
   for (const section of CONTENT_SECTIONS) assert.ok(covered[section.id].every((part) => part !== undefined), section.id);
   // And a change in any sub-tab survives server validation of the full document.
   const draft = structuredClone(content);

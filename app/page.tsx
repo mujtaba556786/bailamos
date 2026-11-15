@@ -9,6 +9,7 @@ import { berlinDate } from "../lib/booking-policy";
 import { SiteHeader } from "../components/site-header";
 import { StructuredData } from "../components/structured-data";
 import { HomeCarousel, type HighlightSlide } from "../components/home-carousel";
+import { WELCOME_SLIDE, visibleHeroSlides, type HeroSlide } from "../lib/hero-slides";
 import { Footer } from "../components/footer";
 import { NewsletterSignup } from "../components/newsletter-signup";
 import { SocialLink } from "../components/social-link";
@@ -48,13 +49,18 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
   const price=(value:number)=>new Intl.NumberFormat(locale==="en"?"en-GB":"de-DE",{style:"currency",currency:"EUR"}).format(value);
   const eventDate=(date:string,time:string)=>`${new Date(date).toLocaleDateString(locale==="en"?"en-GB":"de-DE",{weekday:"short",day:"2-digit",month:"long"})} · ${time}${locale==="de"?" Uhr":""}`;
 
-  // Carousel order: welcome, announcement, upcoming events, then signature dishes.
+  // Carousel order: own slides (admin "Startseite-Karussell", active and inside their dates), announcement,
+  // upcoming events and signature dishes (each switchable there). With nothing to show, the welcome slide stays.
+  const hero=savedMarketing.heroCarousel;
+  const slideOf=(slide:HeroSlide):HighlightSlide=>({id:`hero-${slide.id}`,kind:"news",label:localized(slide.badge,locale),title:localized(slide.headline,locale),text:localized(slide.subline,locale),image:slide.image,alt:localized(slide.alt,locale),href:slide.ctaHref.startsWith("/")&&!/^\/en(\/|$)/.test(slide.ctaHref)?withLocale(slide.ctaHref,locale):slide.ctaHref,cta:localized(slide.ctaLabel,locale)});
+  const ownSlides=visibleHeroSlides(hero.slides,today).map(slideOf);
   const slides:HighlightSlide[]=[
-    {id:"welcome",kind:"news",label:L("Willkommen","Welcome"),title:L("Eine Nacht, die bleibt.","A night to remember."),text:L("Feuer, frische Aromen und Cocktails mit Charakter. Für lange Gespräche, große Momente und alles dazwischen.","Fire, fresh flavours and cocktails with character. For long conversations, big moments and everything in between."),image:"/restaurant/bar-interior.jpg",href:"#reservieren",cta:L("Tisch reservieren","Reserve a table")},
+    ...ownSlides,
     ...(savedMarketing.announcement.enabled?[{id:"announcement",kind:"news" as const,label:L("Neu","New"),title:locale==="en"?savedMarketing.announcement.en:savedMarketing.announcement.de,text:"",image:"/restaurant/terrace-exterior.jpg",href:withLocale(savedMarketing.announcement.link||"/events",locale),cta:L("Mehr erfahren","Learn more")}]:[]),
-    ...marketing.events.filter(event=>event.showOnHome!==false).slice(0,3).map(event=>({id:`event-${event.id}`,kind:"event" as const,label:L("Neues Event","New event"),meta:eventDate(event.date,event.time),title:localized(event.title,locale),text:carouselText(event,locale),image:event.image,href:withLocale("/events",locale),cta:L("Zum Event","See the event")})),
-    ...signature.slice(0,3).map(dish=>({id:`dish-${dish.id}`,kind:"dish" as const,label:L("Neu auf der Karte","New on the menu"),meta:price(dish.price),title:localized(dish.name,locale),text:localized(dish.description,locale),image:dish.image,href:withLocale("/menu",locale),cta:L("Zur Speisekarte","See the menu")})),
+    ...(hero.showEvents?marketing.events:[]).filter(event=>event.showOnHome!==false).slice(0,3).map(event=>({id:`event-${event.id}`,kind:"event" as const,label:L("Neues Event","New event"),meta:eventDate(event.date,event.time),title:localized(event.title,locale),text:carouselText(event,locale),image:event.image,href:withLocale("/events",locale),cta:L("Zum Event","See the event")})),
+    ...(hero.showDishes?signature:[]).slice(0,3).map(dish=>({id:`dish-${dish.id}`,kind:"dish" as const,label:L("Neu auf der Karte","New on the menu"),meta:price(dish.price),title:localized(dish.name,locale),text:localized(dish.description,locale),image:dish.image,href:withLocale("/menu",locale),cta:L("Zur Speisekarte","See the menu")})),
   ];
+  if(!slides.length)slides.push(slideOf(WELCOME_SLIDE));
 
   return <><main className="overflow-hidden bg-[#09130f] text-[#f5e8d3]">
     <StructuredData data={restaurantJsonLd(restaurant, visibleSocialLinks(marketing.social).map(([,url])=>url), seo.serviceAreas)}/>
