@@ -34,18 +34,38 @@ export function bookingSteps(locale: Locale) {
       ];
 }
 
-export function homeFaq(restaurant: Restaurant, locale: Locale) {
-  const phone = displayPhone(restaurant.contact.phone), email = restaurant.contact.email;
+// Homepage FAQ. One array: add a question by adding an entry. `parts` is the visible answer (text and tappable links),
+// `answer` the same text as plain words for the FAQPage structured data, `actions` optional buttons under the answer.
+export type FaqLink = { href: string; label: string };
+export type FaqPart = string | FaqLink;
+export type FaqAction = FaqLink & { kind: "primary" | "secondary" };
+export type FaqItem = { question: string; parts: FaqPart[]; answer: string; actions: FaqAction[] };
+
+const faqItem = (question: string, parts: FaqPart[], actions: FaqAction[] = []): FaqItem => ({
+  question, parts, actions, answer: parts.map((part) => (typeof part === "string" ? part : part.label)).join(""),
+});
+
+export function homeFaq(restaurant: Restaurant, locale: Locale): FaqItem[] {
+  const phoneLabel = displayPhone(restaurant.contact.phone), email = restaurant.contact.email;
+  const phone: FaqLink = { href: `tel:${restaurant.contact.phone.replace(/\s+/g, "")}`, label: phoneLabel };
+  const mail: FaqLink = { href: `mailto:${email}`, label: email };
+  const groupSize = restaurant.reservation.guestSelectLimit, hours = openingHoursSentence(restaurant.openingHours, locale);
   return locale === "en"
     ? [
-        { question: "How do I book a table?", answer: `Online on our reservation page: choose the date, time and number of guests, then enter your contact details. The restaurant confirms your request. You can also book by phone on ${phone} or by email at ${email}.` },
-        { question: "Can I book for a larger group?", answer: groupRule(restaurant, "en") },
-        { question: "What are your opening hours?", answer: openingHoursSentence(restaurant.openingHours, "en") },
+        faqItem("How do I book a table?", ["Book online in under a minute: pick date, time and party size, then add your contact details. We'll confirm your request."], [
+          { kind: "primary", href: "/en/reservieren", label: "Reserve a table" },
+          { kind: "secondary", href: phone.href, label: `Call ${phoneLabel}` },
+        ]),
+        faqItem("Can I book for a larger group?", [`Yes — for groups of more than ${groupSize}, contact us directly so we can prepare the right table: `, mail, " or ", phone, "."]),
+        faqItem("What are your opening hours?", [hours]),
       ]
     : [
-        { question: "Wie kann ich einen Tisch reservieren?", answer: `Online auf unserer Reservierungsseite: Datum, Uhrzeit und Gästezahl wählen, dann Ihre Kontaktdaten angeben. Das Restaurant bestätigt Ihre Anfrage. Sie können auch telefonisch unter ${phone} oder per E-Mail an ${email} reservieren.` },
-        { question: "Kann ich für eine größere Gruppe reservieren?", answer: groupRule(restaurant, "de") },
-        { question: "Wann haben Sie geöffnet?", answer: `Unsere Öffnungszeiten: ${openingHoursSentence(restaurant.openingHours, "de")}` },
+        faqItem("Wie kann ich einen Tisch reservieren?", ["Online in weniger als einer Minute: Datum, Uhrzeit und Personenzahl wählen, dann Ihre Kontaktdaten angeben. Wir bestätigen Ihre Anfrage."], [
+          { kind: "primary", href: "/reservieren", label: "Tisch reservieren" },
+          { kind: "secondary", href: phone.href, label: `Anrufen: ${phoneLabel}` },
+        ]),
+        faqItem("Kann ich für eine größere Gruppe reservieren?", [`Ja – für Gruppen über ${groupSize} Personen kontaktieren Sie uns bitte direkt, damit wir den passenden Tisch vorbereiten können: `, mail, " oder ", phone, "."]),
+        faqItem("Wann haben Sie geöffnet?", [hours]),
       ];
 }
 

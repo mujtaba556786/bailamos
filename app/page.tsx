@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Fragment } from "react";
 import { env } from "cloudflare:workers";
-import { ArrowRight, CalendarDays, Clock3, Flame, MapPin, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, Clock3, Flame, MapPin, Phone, Plus, Users } from "lucide-react";
 import { getMarketingContent } from "../lib/marketing-content.ts";
 import { getMenuContent } from "../lib/menu-content.ts";
 import { getOperations } from "../lib/operations-config.ts";
@@ -110,9 +110,15 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
       </div>
     </section>
 
-    <section id="faq" aria-labelledby="faq-title" className="scroll-mt-24 bg-[#09130f] px-5 pt-20 sm:px-10"><div className="mx-auto max-w-3xl">
+    {/* FAQ: native <details> accordion (keyboard and screen reader friendly, no JavaScript). Items come from homeFaq(). */}
+    <section id="faq" aria-labelledby="faq-title" className="scroll-mt-24 bg-[#09130f] px-5 py-20 sm:px-10"><div className="mx-auto max-w-3xl">
       <p className="eyebrow">{L("Gut zu wissen","Good to know")}</p><h2 id="faq-title" className="font-display mt-3 text-4xl sm:text-5xl">{L("Häufige Fragen","Frequently asked questions")}</h2>
-      <dl className="mt-8 divide-y divide-[#c68a3b]/20 border-y border-[#c68a3b]/20">{faq.map((item,index)=><div key={item.question} className="py-6"><dt className="text-lg font-semibold text-[#f5e8d3]">{item.question}</dt><dd className="mt-2 leading-7 text-white/65">{item.answer}{index===0&&<> <a href={withLocale("/reservieren",locale)} className="text-[#efc67e] underline underline-offset-4">{L("Zur Reservierung","Go to reservations")}</a></>}</dd></div>)}</dl>
+      <div className="mt-8 grid gap-3">{faq.map((item,index)=><details key={item.question} open={index===0} className="group rounded-2xl border border-[#c68a3b]/20 bg-white/[0.03] px-5 transition-colors open:border-[#c68a3b]/40 sm:px-6">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 rounded-lg py-5 text-lg font-semibold text-[#f5e8d3] outline-none focus-visible:ring-2 focus-visible:ring-[#efc67e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#09130f] [&::-webkit-details-marker]:hidden">{item.question}<span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-[#c68a3b]/40 text-[#efc67e] transition-transform duration-200 group-open:rotate-45"><Plus size={16}/></span></summary>
+        <div className="pb-6 leading-7 text-white/70"><p>{item.parts.map((part,partIndex)=>typeof part==="string"?<Fragment key={partIndex}>{part}</Fragment>:<a key={partIndex} href={part.href} className="py-[11px] text-[#efc67e] underline underline-offset-4 hover:text-[#f5e8d3]">{part.label}</a>)}</p>
+          {item.actions.length>0&&<div className="mt-5 flex flex-wrap gap-3">{item.actions.map(action=><a key={action.href} href={action.href} className={action.kind==="primary"?"inline-flex min-h-11 items-center gap-2 rounded-full bg-[#a8262a] px-5 text-sm font-semibold text-white transition hover:bg-[#bf3029]":"inline-flex min-h-11 items-center gap-2 rounded-full border border-[#c68a3b]/50 px-5 text-sm font-semibold text-[#efc67e] transition hover:bg-[#c68a3b]/10"}>{action.kind==="primary"?<>{action.label} <ArrowRight size={16} aria-hidden="true"/></>:<><Phone size={15} aria-hidden="true"/>{action.label}</>}</a>)}</div>}
+        </div>
+      </details>)}</div>
     </div></section>
 
     <section id="contact" className="bg-[#09130f] px-5 py-16 sm:px-10"><div className="mx-auto grid max-w-7xl gap-8 border-y border-[#c68a3b]/25 py-12 md:grid-cols-3"><div><p className="eyebrow">{restaurant.name}</p><p className="font-display mt-3 flex gap-2 text-3xl"><MapPin size={22} className="mt-1 shrink-0 text-[#efc67e]"/>{restaurant.contact.address}</p></div><div><p className="eyebrow">{L("Öffnungszeiten","Opening hours")}</p><div className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 text-sm leading-7 text-white/65">{weekdays.map(([key,de,en])=>{const hours=restaurant.openingHours[key];return <Fragment key={key}><span>{L(de,en)}</span><span>{hours==="closed"?L("geschlossen","closed"):hours.replace("-","–")+L(" Uhr","")}</span></Fragment>})}</div></div><div><p className="eyebrow">{L("Reservierungen","Reservations")}</p><p className="mt-3 leading-7 text-white/65">{restaurant.contact.phone}<br/>{restaurant.contact.email}</p></div></div></section>

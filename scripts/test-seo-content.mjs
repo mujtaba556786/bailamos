@@ -32,19 +32,32 @@ test("opening hours are grouped from the data file", () => {
   ]);
   assert.equal(openingHoursSentence(restaurantData.openingHours, "en"), "Mon closed, Tue–Thu 17:00–23:00, Fri–Sat 17:00–01:00, Sun 17:00–22:00.");
   const daily = Object.fromEntries(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((d) => [d, "12:00-22:00"]));
-  assert.equal(openingHoursSentence(daily, "de"), "Mo–So 12:00–22:00 Uhr.");
+  assert.equal(openingHoursSentence(daily, "de"), "Täglich 12:00–22:00 Uhr.");
+  assert.equal(openingHoursSentence(daily, "en"), "Every day, 12:00–22:00.");
+  assert.equal(openingHoursSentence({ ...daily, monday: "closed", tuesday: "closed", wednesday: "closed", thursday: "closed", friday: "closed", saturday: "closed", sunday: "closed" }, "de"), "Mo–So geschlossen.");
 });
 
 test("FAQ and group rule use only the configured facts", () => {
   const r = defaultOperations.restaurant;
   assert.equal(displayPhone("+491738609300"), "+49 173 8609300");
   assert.equal(groupRule(r, "de"), "Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 8609300.");
-  const faq = homeFaq(r, "en");
+  const faq = homeFaq(r, "en"), de = homeFaq(r, "de");
   assert.equal(faq.length, 3);
-  assert.match(faq[0].answer, /\+49 173 8609300/);
-  assert.match(faq[0].answer, /info@bailamos-waldcafe\.de/);
+  assert.equal(de.length, 3);
+  assert.equal(faq[0].answer, "Book online in under a minute: pick date, time and party size, then add your contact details. We'll confirm your request.");
+  assert.deepEqual(faq[0].actions, [
+    { kind: "primary", href: "/en/reservieren", label: "Reserve a table" },
+    { kind: "secondary", href: "tel:+491738609300", label: "Call +49 173 8609300" },
+  ]);
+  assert.equal(de[0].actions[0].href, "/reservieren");
+  assert.equal(de[0].actions[1].label, "Anrufen: +49 173 8609300");
+  // Group answer: plain text for the structured data, tappable email and phone in the visible answer.
+  assert.equal(faq[1].answer, "Yes — for groups of more than 6, contact us directly so we can prepare the right table: info@bailamos-waldcafe.de or +49 173 8609300.");
+  assert.deepEqual(faq[1].parts.filter((part) => typeof part !== "string"), [{ href: "mailto:info@bailamos-waldcafe.de", label: "info@bailamos-waldcafe.de" }, { href: "tel:+491738609300", label: "+49 173 8609300" }]);
+  assert.match(de[1].answer, /^Ja – für Gruppen über 6 Personen kontaktieren Sie uns bitte direkt/);
   assert.equal(faq[2].answer, openingHoursSentence(r.openingHours, "en"));
-  for (const item of [...faq, ...homeFaq(r, "de")]) assert.doesNotMatch(item.answer, /€|EUR|Bewertung|review|\d\.\d Sterne|stars/i);
+  assert.equal(de[2].answer, openingHoursSentence(r.openingHours, "de"));
+  for (const item of [...faq, ...de]) assert.doesNotMatch(item.answer, /€|EUR|Bewertung|review|\d\.\d Sterne|stars/i);
   assert.equal(bookingSteps("de").length, 3);
   assert.match(bookingSteps("en")[2], /restaurant accepts/);
   const ld = faqJsonLd(faq);
