@@ -30,6 +30,9 @@ export function groupedOpeningHours(openingHours: Record<string, string>, locale
   return rows;
 }
 
+// "Täglich 12:00–22:00 Uhr." / "Every day, 12:00–22:00." when all seven days match, otherwise the grouped list.
 export function openingHoursSentence(openingHours: Record<string, string>, locale: Locale) {
-  return groupedOpeningHours(openingHours, locale).map((row) => `${row.days} ${row.hours}`).join(", ") + ".";
+  const rows = groupedOpeningHours(openingHours, locale);
+  if (rows.length === 1 && openingHours.monday !== "closed") return locale === "en" ? `Every day, ${rows[0].hours}.` : `Täglich ${rows[0].hours}.`;
+  return rows.map((row) => `${row.days} ${row.hours}`).join(", ") + ".";
 }
