@@ -7,7 +7,7 @@ import {
   stampHeroSlides, visibleHeroSlides, heroSlideState, newHeroSlide, duplicateHeroSlide, moveHeroSlide, heroSlideId,
 } from "../lib/hero-slides.ts";
 import { validateMarketingContent } from "../lib/marketing-content.ts";
-import { contentChanges, missingEnglish, publishBlockers, CONTENT_SECTIONS } from "../lib/content-admin.ts";
+import { contentChanges, missingEnglish, publishBlockers, CONTENT_SECTIONS, heroTranslationJobs, applyHeroTranslations } from "../lib/content-admin.ts";
 import { detectMediaType, uploadPolicy, HERO_UPLOAD_TYPES, MAX_HERO_UPLOAD_BYTES } from "../lib/media-upload.ts";
 import defaults from "../data/marketing.json" with { type: "json" };
 
@@ -155,4 +155,25 @@ test("hero uploads: photos incl. AVIF, 5 MB, no video or SVG; AVIF is not mistak
   assert.equal(general.folder, "marketing");
   assert.ok(!("image/avif" in general.types));
   assert.equal(uploadPolicy("something-else").maxBytes, general.maxBytes);
+});
+
+test("Englisch generieren: only carousel texts without English, written back by slide", () => {
+  const content = validateMarketingContent(defaults);
+  content.heroCarousel.slides = [
+    slide({ id: "done" }),
+    slide({ id: "todo", badge: { de: "Neu", en: "" }, headline: { de: "Silvester", en: "Silvester" }, subline: { de: "", en: "" }, ctaLabel: { de: "Mehr", en: "More" }, alt: { de: "Feuerwerk", en: "" } }),
+  ];
+  const jobs = heroTranslationJobs(content);
+  assert.deepEqual(jobs.map((job) => `${job.slideId}.${job.field}:${job.text}`), ["todo.badge:Neu", "todo.headline:Silvester", "todo.alt:Feuerwerk"]);
+  const removed = structuredClone(content);
+  applyHeroTranslations(content, jobs, ["New", "New Year's Eve", " "]);
+  const todo = content.heroCarousel.slides[1];
+  assert.equal(todo.badge.en, "New");
+  assert.equal(todo.headline.en, "New Year's Eve");
+  assert.equal(todo.alt.en, "", "empty translation leaves the field alone");
+  assert.equal(todo.ctaLabel.en, "More", "hand-written English stays");
+  assert.deepEqual(content.heroCarousel.slides[0], slide({ id: "done" }));
+  removed.heroCarousel.slides = [];
+  applyHeroTranslations(removed, jobs, ["a", "b", "c"]);
+  assert.deepEqual(removed.heroCarousel.slides, []);
 });

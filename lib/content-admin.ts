@@ -216,3 +216,20 @@ export function titleWarning(label: Pair) {
   if (/^(img|dsc|dscn|pxl|screenshot|whatsapp|signal)\b.*\d/i.test(de) || /^(photo|foto|bild|image)[-_ ]?\d/i.test(de) || /^[\w-]*\d{4,}[\w-]*$/.test(de)) return "Titel wie Dateiname";
   return "";
 }
+
+// ---------- "Englisch generieren" for the homepage carousel ----------
+// Carousel texts whose English is missing (empty or still the German text). Filled-in English is never overwritten.
+export const HERO_TRANSLATED_FIELDS = ["badge", "headline", "subline", "ctaLabel", "alt"] as const;
+export type HeroTranslationJob = { slideId: string; field: (typeof HERO_TRANSLATED_FIELDS)[number]; text: string };
+export function heroTranslationJobs(content: MarketingContent): HeroTranslationJob[] {
+  return content.heroCarousel.slides.flatMap((slide) =>
+    HERO_TRANSLATED_FIELDS.filter((field) => englishMissing(slide[field])).map((field) => ({ slideId: slide.id, field, text: slide[field].de.trim() })),
+  );
+}
+// Writes the translations back in the same order; slides deleted meanwhile are skipped.
+export function applyHeroTranslations(content: MarketingContent, jobs: HeroTranslationJob[], translations: string[]) {
+  jobs.forEach((job, index) => {
+    const slide = content.heroCarousel.slides.find((item) => item.id === job.slideId), text = translations[index]?.trim();
+    if (slide && text) slide[job.field].en = text;
+  });
+}
