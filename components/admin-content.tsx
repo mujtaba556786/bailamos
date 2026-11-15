@@ -11,6 +11,7 @@ import { CONTENT_PUBLISHED, SITE_LOCK_CHANGED, type SiteLockResult } from "./adm
 import { openingActive } from "../lib/opening";
 import { EventsSection } from "./admin-content/events";
 import { HomeSection } from "./admin-content/home";
+import { HeroSlidesSection } from "./admin-content/hero-slides";
 import { MediaSection } from "./admin-content/media";
 import { SocialSection } from "./admin-content/social";
 
@@ -120,10 +121,12 @@ export function AdminContent({ adminKey, onDirtyChange }: { adminKey: string; on
     setNotice("");
   }
 
-  async function uploadMedia(file: File, expect?: "image") {
+  // purpose "hero": carousel images (JPG, PNG, WebP or AVIF, at most 5 MB); the server checks the same rules.
+  async function uploadMedia(file: File, expect?: "image", purpose?: "hero") {
     setUploading(true); setError("");
     try {
-      const result = await request("/api/admin/media", { method: "POST", headers: { "content-type": file.type }, body: file });
+      if (purpose === "hero" && file.size > 5 * 1024 * 1024) throw new Error("Das Bild darf höchstens 5 MB groß sein.");
+      const result = await request(purpose === "hero" ? "/api/admin/media?purpose=hero" : "/api/admin/media", { method: "POST", headers: { "content-type": file.type }, body: file });
       if (expect === "image" && result.kind !== "image") throw new Error("Bitte ein Bild (JPG, PNG oder WebP) wählen.");
       setNotice("Datei hochgeladen. Zum Übernehmen auf die Website bitte veröffentlichen.");
       return { url: result.url as string, kind: result.kind as "image" | "video" };
@@ -235,6 +238,7 @@ export function AdminContent({ adminKey, onDirtyChange }: { adminKey: string; on
 
       <div id="content-panel" role="tabpanel" aria-labelledby={`tab-${section}`} className="mt-5 pb-8">
         {section === "startseite" && <HomeSection {...props} menuDishes={menuDishes} menuCategories={menuCategories} />}
+        {section === "karussell" && <HeroSlidesSection {...props} />}
         {section === "events" && <EventsSection {...props} savedIds={savedIds} />}
         {section === "medien" && <MediaSection {...props} />}
         {section === "social" && <SocialSection {...props} />}

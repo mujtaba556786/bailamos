@@ -3,7 +3,17 @@
 
 export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 export const UPLOAD_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "video/mp4": "mp4", "video/webm": "webm" } as const;
-export type UploadType = keyof typeof UPLOAD_TYPES;
+// Homepage carousel images ("?purpose=hero"): photos only, AVIF allowed, at most 5 MB.
+export const HERO_UPLOAD_TYPES = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/avif": "avif" } as const;
+export const MAX_HERO_UPLOAD_BYTES = 5 * 1024 * 1024;
+export type UploadType = keyof typeof UPLOAD_TYPES | keyof typeof HERO_UPLOAD_TYPES;
+
+// What one upload request may contain. Unknown purposes get the general rules.
+export function uploadPolicy(purpose: string | null) {
+  return purpose === "hero"
+    ? { types: HERO_UPLOAD_TYPES as Record<string, string>, maxBytes: MAX_HERO_UPLOAD_BYTES, typeText: "JPG, PNG, WebP oder AVIF", sizeText: "5 MB", folder: "marketing/hero" }
+    : { types: UPLOAD_TYPES as Record<string, string>, maxBytes: MAX_UPLOAD_BYTES, typeText: "JPG, PNG, WebP, MP4 oder WebM", sizeText: "50 MB", folder: "marketing" };
+}
 
 const startsWith = (bytes: Uint8Array, signature: number[], offset = 0) => signature.every((value, index) => bytes[offset + index] === value);
 const ascii = (bytes: Uint8Array, text: string, offset: number) => startsWith(bytes, [...text].map((char) => char.charCodeAt(0)), offset);
@@ -13,6 +23,8 @@ export function detectMediaType(bytes: Uint8Array): UploadType | null {
   if (startsWith(bytes, [0xff, 0xd8, 0xff])) return "image/jpeg";
   if (startsWith(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return "image/png";
   if (ascii(bytes, "RIFF", 0) && ascii(bytes, "WEBP", 8)) return "image/webp";
+  // AVIF is an ISO media file like MP4; its brand ("avif" / "avis") right after "ftyp" tells them apart.
+  if (ascii(bytes, "ftyp", 4) && (ascii(bytes, "avif", 8) || ascii(bytes, "avis", 8))) return "image/avif";
   if (ascii(bytes, "ftyp", 4)) return "video/mp4";
   if (startsWith(bytes, [0x1a, 0x45, 0xdf, 0xa3])) return "video/webm";
   return null;

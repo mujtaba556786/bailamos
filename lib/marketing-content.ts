@@ -2,9 +2,10 @@ import defaults from "../data/marketing.json" with { type: "json" };
 import { BookingError } from "./booking-policy.ts";
 import { SOCIAL_PLATFORMS, socialUrlError } from "./social-links.ts";
 import { validateOpening, openingDraft, validDate, openingActive, revealDate, type Opening } from './opening.ts';
+import { validateHeroCarousel, stampHeroSlides, type HeroCarousel } from './hero-slides.ts';
 
 type Pair={de:string;en:string};
-export type MarketingContent={storyTiles:Array<{id:string;image:string;title:Pair;text:Pair;show:boolean}>;favourites:{enabled:boolean;eyebrow:Pair;heading:Pair;dishIds:string[]};opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};youtube:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;teaser:Pair;showOnHome:boolean;date:string;time:string;image:string;featured:boolean;published:boolean}>};
+export type MarketingContent={storyTiles:Array<{id:string;image:string;title:Pair;text:Pair;show:boolean}>;favourites:{enabled:boolean;eyebrow:Pair;heading:Pair;dishIds:string[]};opening:Opening;announcement:{enabled:boolean;de:string;en:string;link:string};heroCarousel:HeroCarousel;hero:{type:"image";image:string;video:null;poster:string};demoMedia:{notice:Pair;videos:Array<{title:Pair;source:string;url:string;poster:string}>;gallery:Array<{label:Pair;source:string;url:string;image:string}>};social:{instagram:{url:string;handle:string};facebook:{url:string;handle:string};youtube:{url:string;handle:string};tiktok:{url:string;handle:string}};events:Array<{id:string;title:Pair;summary:Pair;teaser:Pair;showOnHome:boolean;date:string;time:string;image:string;featured:boolean;published:boolean}>};
 const pair=(value:any,label:string,max:number,fallback="")=>typeof value==="string"?{de:text(value,label,max),en:text(fallback||value,`Englisch: ${label}`,max)}:{de:text(value?.de,label,max),en:text(value?.en||value?.de||fallback,`Englisch: ${label}`,max)};
 const text = (value: unknown, label: string, max: number) => {
   if (typeof value !== "string") throw new BookingError(400,"INVALID_CONTENT",`${label} fehlt.`);
@@ -51,6 +52,7 @@ export function validateMarketingContent(value: unknown): MarketingContent {
     favourites:favouritesOf(v.favourites),
     opening:validateOpening(v.opening),
     announcement:{enabled:v.announcement?.enabled===true,de:text(v.announcement?.de||"Keine Ankündigung","Ankündigung",180),en:text(v.announcement?.en||v.announcement?.de||"No announcement","Englische Ankündigung",180),link:text(v.announcement?.link||"/events","Ankündigungslink",300)},
+    heroCarousel:validateHeroCarousel(v.heroCarousel),
     hero:{type:"image",image:text(v.hero?.image||"/table-terrace.webp","Hero-Bild",1000),video:null,poster:text(v.hero?.poster||v.hero?.image||"/table-terrace.webp","Hero-Poster",1000)},
     demoMedia:{notice:pair(media.notice||"Eigene Medien von Bailamos.","Medienhinweis",300,"Bailamos media."),videos:media.videos.map((item:Record<string,any>)=>({title:pair(item.title,"Videotitel",120),source:text(item.source||"Bailamos","Videoquelle",80),url:url(item.url,"Video-Link"),poster:url(item.poster,"Video-Poster")})),gallery:media.gallery.map((item:Record<string,any>)=>({label:pair(item.label,"Bildtitel",100),source:text(item.source||"Bailamos","Bildquelle",80),url:url(item.url||item.image,"Bild-Link"),image:url(item.image,"Bildadresse")}))},
     social:{instagram:{url:url(social.instagram?.url||"#","Instagram-Link",true),handle:text(social.instagram?.handle||"@bailamos.waldcafe","Instagram-Name",80)},facebook:{url:url(social.facebook?.url||"#","Facebook-Link",true),handle:text(social.facebook?.handle||"Bailamos Waldcafé","Facebook-Name",80)},youtube:{url:url(social.youtube?.url||"https://www.youtube.com/channel/UCOix77VvOuExvfUWhey8sWw","YouTube-Link",true),handle:text(social.youtube?.handle||"Bailamos Waldcafé","YouTube-Name",80)},tiktok:{url:url(social.tiktok?.url||"https://www.tiktok.com/@bailamos.waldcafe","TikTok-Link",true),handle:text(social.tiktok?.handle||"@bailamos.waldcafe","TikTok-Name",80)}},events,
@@ -63,6 +65,11 @@ export async function getMarketingContent(db?:D1Database):Promise<{content:Marke
 }
 export async function saveMarketingContent(db:D1Database,value:unknown,expectedVersion:number){
   const content=validateMarketingContent(value),stamp=new Date().toISOString();
+  // Hero slide timestamps are set here, not by the browser: createdAt stays, updatedAt changes with the slide.
+  const previous=expectedVersion>0?await db.prepare("SELECT content_json FROM marketing_content WHERE id = 'primary'").first<{content_json:string}>().catch(()=>null):null;
+  let previousSlides:HeroCarousel["slides"]=[];
+  try{previousSlides=previous?validateHeroCarousel(JSON.parse(previous.content_json).heroCarousel).slides:[]}catch{previousSlides=[]}
+  content.heroCarousel.slides=stampHeroSlides(previousSlides,content.heroCarousel.slides,stamp);
   for(const platform of SOCIAL_PLATFORMS){const problem=socialUrlError(platform.id,content.social[platform.id].url);if(problem)throw new BookingError(400,"INVALID_SOCIAL_URL",`${platform.label}: ${problem}`)}
   if(expectedVersion===0){try{await db.prepare("INSERT INTO marketing_content (id,content_json,version,updated_at) VALUES ('primary',?,1,?)").bind(JSON.stringify(content),stamp).run();return {content,version:1}}catch(error){if(!String(error).includes("UNIQUE"))throw error;}}
   const result=await db.prepare("UPDATE marketing_content SET content_json = ?,version = version + 1,updated_at = ? WHERE id = 'primary' AND version = ?").bind(JSON.stringify(content),stamp,expectedVersion).run();

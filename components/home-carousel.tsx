@@ -8,13 +8,14 @@ import { ArrowRight, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react
 export type HighlightSlide = {
   id: string;
   kind: "news" | "event" | "dish";
-  label: string;
+  label: string; // empty: no badge
   title: string;
   text: string;
   meta?: string;
   image: string;
+  alt?: string; // image description; empty means decorative
   href: string;
-  cta: string;
+  cta: string; // empty: no button
 };
 
 const INTERVAL_MS = 6500;
@@ -23,11 +24,18 @@ export function HomeCarousel({ slides, labels }: { slides: HighlightSlide[]; lab
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  // Images load when their slide is shown or comes next; shown ones stay loaded for a smooth crossfade back.
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set([0, 1]));
   const touchStart = useRef<number | null>(null);
   const count = slides.length;
 
-  const go = useCallback((next: number) => setIndex(((next % count) + count) % count), [count]);
+  const go = useCallback((next: number) => {
+    const target = ((next % count) + count) % count;
+    setIndex(target);
+    setLoaded((current) => (current.has(target) && current.has((target + 1) % count) ? current : new Set([...current, target, (target + 1) % count])));
+  }, [count]);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -37,12 +45,24 @@ export function HomeCarousel({ slides, labels }: { slides: HighlightSlide[]; lab
     return () => query.removeEventListener("change", update);
   }, []);
 
-  // Autoplay stops for reduced motion, explicit pause, and while the visitor hovers or focuses the carousel.
-  const autoplay = count > 1 && !paused && !hovering && !reducedMotion;
+  // A hidden browser tab pauses the slideshow, so nobody comes back to a slide they never saw.
+  useEffect(() => {
+    const update = () => setHidden(document.visibilityState === "hidden");
+    update();
+    document.addEventListener("visibilitychange", update);
+    return () => document.removeEventListener("visibilitychange", update);
+  }, []);
+
+  // Autoplay stops for reduced motion, explicit pause, a hidden tab, and while the visitor hovers or focuses the carousel.
+  // A pause keeps the time already spent on the slide, so the progress bar continues instead of starting over.
+  const autoplay = count > 1 && !paused && !hovering && !hidden && !reducedMotion;
+  const remaining = useRef(INTERVAL_MS);
+  useEffect(() => { remaining.current = INTERVAL_MS; }, [index]);
   useEffect(() => {
     if (!autoplay) return;
-    const timer = window.setTimeout(() => go(index + 1), INTERVAL_MS);
-    return () => window.clearTimeout(timer);
+    const started = Date.now();
+    const timer = window.setTimeout(() => go(index + 1), remaining.current);
+    return () => { window.clearTimeout(timer); remaining.current = Math.max(0, remaining.current - (Date.now() - started)); };
   }, [autoplay, index, go]);
 
   if (!count) return null;
@@ -72,17 +92,17 @@ export function HomeCarousel({ slides, labels }: { slides: HighlightSlide[]; lab
               className={`absolute inset-0 transition-opacity duration-[1400ms] ease-out ${active ? "z-10 opacity-100" : "z-0 opacity-0"}`}
             >
               <div className={`absolute inset-0 ${active && !reducedMotion ? "carousel-kenburns" : ""}`}>
-                <Image src={slide.image} alt="" fill priority={position === 0} sizes="100vw" className="object-cover" />
+                {loaded.has(position) && <Image src={slide.image} alt={slide.alt || ""} fill priority={position === 0} loading={position === 0 ? undefined : "lazy"} sizes="100vw" className="object-cover" />}
               </div>
               <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,13,10,.9)_0%,rgba(5,13,10,.62)_42%,rgba(5,13,10,.1)_78%)]" />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#09130f] via-[#09130f]/40 to-transparent" />
               <div className="relative mx-auto flex h-full w-full max-w-[1440px] items-end px-5 pb-28 sm:px-10 lg:px-16 lg:pb-32">
                 <div className={`max-w-2xl transition duration-1000 ${active ? "translate-y-0 opacity-100 delay-300" : "translate-y-6 opacity-0"}`}>
-                  <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[.7rem] font-bold uppercase tracking-[.2em] ${slide.kind === "event" ? "bg-[#a52520] text-white" : slide.kind === "dish" ? "bg-[#efc67e] text-[#10261e]" : "bg-[#f5e8d3] text-[#10261e]"}`}>{slide.label}</span>
+                  {slide.label && <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[.7rem] font-bold uppercase tracking-[.2em] ${slide.kind === "event" ? "bg-[#a52520] text-white" : slide.kind === "dish" ? "bg-[#efc67e] text-[#10261e]" : "bg-[#f5e8d3] text-[#10261e]"}`}>{slide.label}</span>}
                   {slide.meta && <p className="mt-5 text-sm font-semibold uppercase tracking-[.18em] text-[#efc67e]">{slide.meta}</p>}
                   <h2 className={`font-display mt-4 ${heroTitleClass(slide.title)} tracking-[-.04em] text-[#f5e8d3] [text-shadow:0_2px_24px_rgba(0,0,0,.45)]`}>{slide.title}</h2>
                   {slide.text && <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">{slide.text}</p>}
-                  <a href={slide.href} tabIndex={active ? 0 : -1} className="button-primary mt-8">{slide.cta} <ArrowRight size={18} /></a>
+                  {slide.cta && slide.href && <a href={slide.href} tabIndex={active ? 0 : -1} className="button-primary mt-8">{slide.cta} <ArrowRight size={18} /></a>}
                 </div>
               </div>
             </article>
@@ -103,7 +123,7 @@ export function HomeCarousel({ slides, labels }: { slides: HighlightSlide[]; lab
                 className="group relative h-1.5 overflow-hidden rounded-full bg-white/25 transition-all"
                 style={{ width: position === index ? "2.75rem" : "1.1rem" }}
               >
-                {position === index && <span key={`${index}-${autoplay}`} className={`absolute inset-y-0 left-0 rounded-full bg-[#efc67e] ${autoplay ? "carousel-progress" : "w-full"}`} style={{ animationDuration: `${INTERVAL_MS}ms` }} />}
+                {position === index && <span key={index} className={`absolute inset-y-0 left-0 rounded-full bg-[#efc67e] ${reducedMotion ? "w-full" : "carousel-progress"}`} style={{ animationDuration: `${INTERVAL_MS}ms`, animationPlayState: autoplay ? "running" : "paused" }} />}
               </button>
             ))}
           </div>

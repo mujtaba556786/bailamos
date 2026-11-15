@@ -1,9 +1,11 @@
 // Helpers for the "Website-Inhalte" admin tab. No React here, so the logic can be tested on its own.
 import type { MarketingContent } from "./marketing-content.ts";
 import { SOCIAL_PLATFORMS, socialUrlError } from "./social-links.ts";
+import { heroSlideErrors } from "./hero-slides.ts";
 
 export const CONTENT_SECTIONS = [
   { id: "startseite", label: "Startseite", view: "/" },
+  { id: "karussell", label: "Startseite-Karussell", view: "/" },
   { id: "events", label: "Events", view: "/events" },
   { id: "medien", label: "Galerie & Videos", view: "/#atmosphere" },
   { id: "social", label: "Social Media", view: "/#atmosphere" },
@@ -37,13 +39,17 @@ export type SectionChanges = Record<ContentSection, number>;
 
 // Number of unpublished changes per sub-tab. Publishing always sends all sections together.
 export function contentChanges(saved: MarketingContent | null, draft: MarketingContent | null): SectionChanges {
-  const empty: SectionChanges = { startseite: 0, events: 0, medien: 0, social: 0, eroeffnung: 0 };
+  const empty: SectionChanges = { startseite: 0, karussell: 0, events: 0, medien: 0, social: 0, eroeffnung: 0 };
   if (!saved || !draft) return empty;
   return {
     startseite:
       (same(saved.announcement, draft.announcement) ? 0 : 1) +
       listChanges(saved.storyTiles, draft.storyTiles, (tile) => tile.id) +
       (same(saved.favourites, draft.favourites) ? 0 : 1),
+    karussell:
+      listChanges(saved.heroCarousel.slides, draft.heroCarousel.slides, (slide) => slide.id) +
+      (saved.heroCarousel.showEvents === draft.heroCarousel.showEvents ? 0 : 1) +
+      (saved.heroCarousel.showDishes === draft.heroCarousel.showDishes ? 0 : 1),
     events: listChanges(saved.events, draft.events, (event) => event.id),
     medien:
       listChanges(saved.demoMedia.gallery, draft.demoMedia.gallery, (item) => `bild:${item.image}`) +
@@ -68,7 +74,7 @@ export function englishMissing(pair: Pair | undefined) {
 
 // Where English is missing, per sub-tab, with a readable label for each field.
 export function missingEnglish(content: MarketingContent): Record<ContentSection, string[]> {
-  const result: Record<ContentSection, string[]> = { startseite: [], events: [], medien: [], social: [], eroeffnung: [] };
+  const result: Record<ContentSection, string[]> = { startseite: [], karussell: [], events: [], medien: [], social: [], eroeffnung: [] };
   const check = (section: ContentSection, label: string, pair: Pair | undefined) => { if (englishMissing(pair)) result[section].push(label); };
   if (content.announcement.enabled) check("startseite", "Ankündigung", content.announcement);
   content.storyTiles.forEach((tile, index) => {
@@ -77,6 +83,10 @@ export function missingEnglish(content: MarketingContent): Record<ContentSection
   });
   check("startseite", "Unsere Lieblinge: kleine Überschrift", content.favourites.eyebrow);
   check("startseite", "Unsere Lieblinge: Überschrift", content.favourites.heading);
+  content.heroCarousel.slides.forEach((slide, index) => {
+    const name = slide.headline.de.trim() || `Folie ${index + 1}`;
+    for (const [field, label] of [["headline", "Überschrift"], ["badge", "Kennzeichnung"], ["subline", "Text"], ["ctaLabel", "Button-Text"], ["alt", "Bildbeschreibung"]] as const) check("karussell", `${name}: ${label}`, slide[field]);
+  });
   for (const event of content.events) {
     const name = event.title.de || "Event ohne Titel";
     check("events", `${name}: Titel`, event.title);
@@ -161,8 +171,12 @@ export function publishBlockers(content: MarketingContent): PublishBlocker[] {
     const problem = socialUrlError(platform.id, content.social[platform.id].url);
     return problem ? [{ section: "social" as const, text: `${platform.label}: Link prüfen` }] : [];
   });
+  const slides = content.heroCarousel.slides.flatMap((slide, index) => {
+    const errors = Object.values(heroSlideErrors(slide)), name = slide.headline.de.trim() || `Folie ${index + 1}`;
+    return errors.length ? [{ section: "karussell" as const, text: `Karussell · ${name}: ${errors.map((text) => text.replace(/\.$/, "")).join(", ")}` }] : [];
+  });
   const tiles = content.storyTiles.flatMap((tile, index) => (tile.title.de.trim() ? [] : [{ section: "startseite" as const, text: `Fotokachel ${index + 1}: Titel fehlt` }]));
-  return [...tiles, ...events, ...images, ...videos, ...social];
+  return [...slides, ...tiles, ...events, ...images, ...videos, ...social];
 }
 
 // ---------- "Unsere Lieblinge" dish picker ----------
