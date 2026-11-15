@@ -5,7 +5,8 @@ import { CalendarX, Loader2, Plus, Trash2 } from "lucide-react";
 type Config = { restaurant: { reservation: { blockedDates: string[] } } } & Record<string, any>;
 
 // Close a whole day for online booking, or open it again. Saves the same operations settings as "Tische & Einstellungen".
-export function AdminClosedDays({ adminKey }: { adminKey: string }) {
+// embedded: shown inside the fold-out section of the reservations tab, which already has the frame and heading.
+export function AdminClosedDays({ adminKey, embedded = false }: { adminKey: string; embedded?: boolean }) {
   const [config, setConfig] = useState<Config | null>(null);
   const [version, setVersion] = useState(0);
   const [date, setDate] = useState("");
@@ -74,9 +75,9 @@ export function AdminClosedDays({ adminKey }: { adminKey: string }) {
   }
 
   return (
-    <section className="mb-8 rounded-[2rem] bg-white p-5 shadow-sm sm:p-7">
-      <div className="flex items-center gap-2"><CalendarX size={19} className="text-[#a52520]" /><h2 className="font-display text-3xl">Online-Buchungen sperren</h2></div>
-      <p className="mt-2 text-sm text-[#10261e]/60">Gesperrte Tage können online nicht gebucht werden. Bestehende Reservierungen bleiben bestehen.</p>
+    <section className={embedded ? "" : "mb-8 rounded-[2rem] bg-white p-5 shadow-sm sm:p-7"}>
+      {!embedded && <div className="flex items-center gap-2"><CalendarX size={19} className="text-[#a52520]" /><h2 className="font-display text-3xl">Online-Buchungen sperren</h2></div>}
+      <p className={embedded ? "text-sm text-[#10261e]/60" : "mt-2 text-sm text-[#10261e]/60"}>Gesperrte Tage können online nicht gebucht werden. Bestehende Reservierungen bleiben bestehen.</p>
 
       <div className="mt-5 flex flex-wrap items-end gap-3">
         <label className="grid gap-1 text-sm">Von
