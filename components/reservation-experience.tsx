@@ -7,6 +7,7 @@ import { SiteHeader } from "./site-header";
 import { NewsletterSignup } from "./newsletter-signup";
 import { addDays, berlinDate } from "../lib/booking-policy";
 import { withLocale,type Locale } from "../lib/i18n";
+import { firstBookableDay, isBeforeOpening, openingDayLabel } from "../lib/opening-state.ts";
 
 // Show 2026-10-30 as 30.10.2026 (de) or 10/30/2026 (en) for guests.
 function displayDate(value: string, locale: Locale) {
@@ -21,7 +22,9 @@ export function ReservationExperience({locale,children}:{locale:Locale;children?
   const L=(de:string,en:string)=>locale==="en"?en:de;
   const today = berlinDate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [date, setDate] = useState(today);
+  const firstDay = firstBookableDay(today);
+  const beforeOpening = isBeforeOpening(today);
+  const [date, setDate] = useState(firstDay);
   const [time, setTime] = useState("");
   const [guests, setGuests] = useState(2);
   const [nextFreeDate,setNextFreeDate]=useState("");
@@ -104,9 +107,10 @@ export function ReservationExperience({locale,children}:{locale:Locale;children?
           <div className="absolute inset-x-0 bottom-0 p-7 text-white sm:p-9"><p className="font-display text-3xl">{L("Mexikanischer Genuss,","Mexican flavours,")}<br />{L("für Sie reserviert.","reserved for you.")}</p><p className="mt-3 max-w-sm text-base text-white/70">{L("Wählen Sie Ihren Termin. Wir prüfen, ob er frei ist, und weisen Ihnen den passenden Tisch zu.","Choose your date and time. We check that it is free and assign the right table for you.")}</p></div>
         </div>
         <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-12">
+          {beforeOpening&&<p className="mb-4 rounded-xl bg-[#efc67e] px-4 py-3 text-sm font-semibold text-[#10261e]">{L(`Wir eröffnen am ${openingDayLabel("de")} – buchen Sie jetzt Ihren ersten Abend.`,`We open on ${openingDayLabel("en")} – book your first evening now.`)}</p>}
           <h2 className="font-display text-4xl">{L("Wann kommen Sie?","When are you coming?")}</h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
-            <label className="grid gap-2 text-base font-medium"><span className="flex items-center gap-2"><CalendarDays size={18} /> {L("Datum","Date")}</span><input value={date} min={today} max={addDays(today, horizonDays)} onChange={event => { setDate(event.target.value); setTime(""); setError(""); }} type="date" className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base" /></label>
+            <label className="grid gap-2 text-base font-medium"><span className="flex items-center gap-2"><CalendarDays size={18} /> {L("Datum","Date")}</span><input value={date} min={firstDay} max={addDays(today, horizonDays)} onChange={event => { setDate(event.target.value); setTime(""); setError(""); }} type="date" className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base" /></label>
             <label className="grid gap-2 text-base font-medium"><span className="flex items-center gap-2"><Clock3 size={18} /> {L("Uhrzeit","Time")}</span><select value={selectedTime} onChange={event => setTime(event.target.value)} className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base">{!times.length && <option value="">{L("Keine Termine verfügbar","No times available")}</option>}{times.map(value => <option key={value} value={value}>{value}{locale==="de"?" Uhr":""}</option>)}</select></label>
             <p className="rounded-xl bg-[#f4f0e8] p-4 text-sm leading-6 sm:col-span-2">{locale==="en"?groupNote.en:groupNote.de}</p>
             <label className="grid gap-2 text-base font-medium sm:col-span-2"><span className="flex items-center gap-2"><Users size={18} /> {L("Gäste","Guests")}</span><select value={guests} onChange={event => { setGuests(Number(event.target.value)); setError(""); }} className="min-h-14 rounded-xl border border-[#10261e]/15 bg-white px-4 text-base">{Array.from({ length: guestLimit }, (_, index) => index + 1).map(value => <option key={value} value={value}>{value} {value === 1 ? L("Person","person") : L("Personen","people")}</option>)}</select></label>

@@ -27,10 +27,11 @@ const slug = (value: unknown) => {
 };
 // Photo tiles of the homepage story section. The defaults are the tiles the site showed before they became editable.
 const defaultStoryTiles=[
-  {id:"warmth",image:"/samples/interior-evening.webp",title:{de:"Wärme, die man sieht.",en:"Warmth you can see."},text:{de:"Jeder Platz hat seinen eigenen Charakter.",en:"Every seat has its own character."},show:true},
+  {id:"warmth",image:"/samples/interior-evening.webp",title:{de:"Tacos, Fajitas, Nachos.",en:"Tacos, fajitas, nachos."},text:{de:"Klassiker der mexikanischen Küche, neu interpretiert.",en:"Classic Mexican cooking, reinterpreted."},show:true},
   {id:"terrace",image:"/samples/terrace-lights.webp",title:{de:"Abends draußen.",en:"Evenings outside."},text:{de:"",en:""},show:true},
-  {id:"day",image:"/gallery-ai/gallery-ai-07.jpg",title:{de:"Bailamos am Tag.",en:"Bailamos by day."},text:{de:"",en:""},show:true},
-  {id:"evening",image:"/gallery-ai/gallery-ai-08-evening.jpg",title:{de:"Bailamos am Abend.",en:"Bailamos by evening."},text:{de:"",en:""},show:true},
+  // The day and evening renders are AI images. They stay hidden until real photos replace them (no AI building images on the site).
+  {id:"day",image:"/gallery-ai/gallery-ai-07.jpg",title:{de:"Bailamos am Tag.",en:"Bailamos by day."},text:{de:"",en:""},show:false},
+  {id:"evening",image:"/gallery-ai/gallery-ai-08-evening.jpg",title:{de:"Bailamos am Abend.",en:"Bailamos by evening."},text:{de:"",en:""},show:false},
 ];
 function storyTilesOf(value:any){const list=Array.isArray(value)?value:defaultStoryTiles;return list.slice(0,6).map((tile:any,index:number)=>({id:String(tile?.id||`tile-${index}`).replace(/[^a-zA-Z0-9-]/g,"-").slice(0,40),image:url(tile?.image||"/table-terrace.webp","Kachelbild"),title:pair(tile?.title,"Kachel-Titel",80,"Title"),text:{de:typeof tile?.text?.de==="string"&&tile.text.de.trim()?text(tile.text.de,"Kachel-Text (DE)",160):"",en:typeof tile?.text?.en==="string"&&tile.text.en.trim()?text(tile.text.en,"Kachel-Text (EN)",160):""},show:tile?.show!==false}))}
 // "Unsere Lieblinge" on the homepage: heading text and up to three chosen dishes (empty = use the featured dishes).

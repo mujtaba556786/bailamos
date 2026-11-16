@@ -11,6 +11,7 @@ export type HeroSlide = {
   startsAt: string; // "" or YYYY-MM-DD (Berlin date), first day shown
   endsAt: string; // "" or YYYY-MM-DD, last day shown
   image: string;
+  hasBakedText: boolean; // true: the image already shows its words; the site then adds no overlay text
   alt: Pair;
   badge: Pair;
   headline: Pair;
@@ -34,6 +35,7 @@ export const WELCOME_SLIDE: HeroSlide = {
   startsAt: "",
   endsAt: "",
   image: "/restaurant/bar-interior.jpg",
+  hasBakedText: false,
   alt: { de: "Die Bar im Bailamos am Abend", en: "The bar at Bailamos in the evening" },
   badge: { de: "Willkommen", en: "Welcome" },
   headline: { de: "Eine Nacht, die bleibt.", en: "A night to remember." },
@@ -127,6 +129,7 @@ export function validateHeroSlide(value: unknown, index: number): HeroSlide {
     startsAt: plain(v.startsAt, `${name}: Startdatum`, 10),
     endsAt: plain(v.endsAt, `${name}: Enddatum`, 10),
     image: plain(v.image, `${name}: Bild`, HERO_LIMITS.image, true),
+    hasBakedText: v.hasBakedText === true,
     alt: pairOf(v.alt, `${name}: Bildbeschreibung`, HERO_LIMITS.alt),
     badge: pairOf(v.badge, `${name}: Kennzeichnung`, HERO_LIMITS.badge),
     headline: pairOf(v.headline, `${name}: Überschrift`, HERO_LIMITS.headline, true),
@@ -193,7 +196,7 @@ function germanDay(value: string) {
 
 // A new empty slide for the admin form; the image is added by upload before it can be published.
 export function newHeroSlide(id: string, order: number): HeroSlide {
-  return { id, order, active: true, startsAt: "", endsAt: "", image: "", alt: { de: "", en: "" }, badge: { de: "", en: "" }, headline: { de: "", en: "" }, subline: { de: "", en: "" }, ctaLabel: { de: "", en: "" }, ctaHref: "", createdAt: "", updatedAt: "" };
+  return { id, order, active: true, startsAt: "", endsAt: "", image: "", hasBakedText: false, alt: { de: "", en: "" }, badge: { de: "", en: "" }, headline: { de: "", en: "" }, subline: { de: "", en: "" }, ctaLabel: { de: "", en: "" }, ctaHref: "", createdAt: "", updatedAt: "" };
 }
 
 // A copy placed right after the original, switched off so it does not appear on the website by surprise.

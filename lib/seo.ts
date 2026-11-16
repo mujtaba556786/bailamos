@@ -3,6 +3,7 @@ import { areaServedJsonLd } from "./service-areas.ts";
 import type { MenuContent } from "./menu-content.ts";
 import { getSiteUrl, absoluteMediaUrl } from "./site-url";
 import { localized, type Locale } from "./i18n";
+import { OPENING_DATE } from "./opening-state.ts";
 
 // Stable schema.org @id values. They are the same on every page that describes the same entity,
 // so search engines and AI systems can merge the facts into one restaurant / one dish.
@@ -158,7 +159,7 @@ export function restaurantJsonLd(restaurant: { name: string; legalName: string; 
       .filter(([, hours]) => hours !== "closed")
       .map(([day, hours]) => {
         const [opens, closes] = hours.split("-");
-        return { "@type": "OpeningHoursSpecification", dayOfWeek: `https://schema.org/${schemaDayNames[day]}`, opens, closes };
+        return { "@type": "OpeningHoursSpecification", dayOfWeek: `https://schema.org/${schemaDayNames[day]}`, opens, closes, validFrom: OPENING_DATE };
       }),
     potentialAction: { "@type": "ReserveAction", target: getSiteUrl("/reservieren").toString() },
   };

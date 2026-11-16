@@ -4,6 +4,7 @@ import { SiteHeader } from "./site-header";
 import { StructuredData } from "./structured-data";
 import type { MenuContent } from "../lib/menu-content.ts";
 import { localized, withLocale, type Locale } from "../lib/i18n";
+import { formatPrice } from "../lib/price.ts";
 import { dishBreadcrumbs, dishJsonLd, dishPath } from "../lib/seo";
 
 // Plain <a> links on purpose: vinext's <Link> throws on click ("e is not a function"), so the buttons did nothing.
@@ -19,7 +20,7 @@ export function DishPage({ dish, category, related, locale }: { dish: Dish; cate
   const description = localized(dish.description, locale);
   const categoryName = category ? localized(category.name, locale) : L("Speisekarte", "Menu");
   const menuPath = withLocale("/menu", locale);
-  const price = `€ ${dish.price.toFixed(2).replace(".", ",")}`;
+  const price = formatPrice(dish.price, locale);
 
   return (
     <main className="min-h-screen bg-[#0b1712] text-[#f5e8d3]">
@@ -65,6 +66,11 @@ export function DishPage({ dish, category, related, locale }: { dish: Dish; cate
                 <span className="text-white/85">{dish.allergens.join(", ")}</span>
               </p>
             )}
+            {dish.allergens.length === 0 && (
+              <p className="mt-6 text-sm text-white/60">
+                {L("Allergene & Zusatzstoffe: Bitte fragen Sie unser Team.", "Allergens & additives: please ask our team.")}
+              </p>
+            )}
             <p className="mt-3 text-sm text-white/50">
               {L("Bei Allergien oder Unverträglichkeiten fragen Sie bitte unser Team, bevor Sie bestellen.", "If you have an allergy or intolerance, please ask our team before ordering.")}
             </p>
@@ -77,7 +83,7 @@ export function DishPage({ dish, category, related, locale }: { dish: Dish; cate
                     <li key={item.id}>
                       <a href={dishPath(item.id, locale)} className="flex justify-between gap-4 rounded-xl border border-white/10 px-4 py-3 hover:border-[#c68a3b]/60">
                         <span>{localized(item.name, locale)}</span>
-                        <span className="text-[#d6a45f]">€ {item.price.toFixed(2).replace(".", ",")}</span>
+                        <span className="text-[#d6a45f]">{formatPrice(item.price, locale)}</span>
                       </a>
                     </li>
                   ))}

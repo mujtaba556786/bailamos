@@ -4,6 +4,8 @@
 import type { OperationsConfig } from "./operations-config.ts";
 import { groupNoteText } from "./booking-rules.ts";
 import { openingHoursSentence } from "./opening-hours.ts";
+import { openingHoursPrefix } from "./opening-state.ts";
+import { berlinDate } from "./booking-policy.ts";
 import type { Locale } from "./i18n";
 
 type Restaurant = OperationsConfig["restaurant"];
@@ -45,11 +47,11 @@ const faqItem = (question: string, parts: FaqPart[], actions: FaqAction[] = []):
   question, parts, actions, answer: parts.map((part) => (typeof part === "string" ? part : part.label)).join(""),
 });
 
-export function homeFaq(restaurant: Restaurant, locale: Locale): FaqItem[] {
+export function homeFaq(restaurant: Restaurant, locale: Locale, today: string = berlinDate()): FaqItem[] {
   const phoneLabel = displayPhone(restaurant.contact.phone), email = restaurant.contact.email;
   const phone: FaqLink = { href: `tel:${restaurant.contact.phone.replace(/\s+/g, "")}`, label: phoneLabel };
   const mail: FaqLink = { href: `mailto:${email}`, label: email };
-  const groupSize = restaurant.reservation.guestSelectLimit, hours = openingHoursSentence(restaurant.openingHours, locale);
+  const groupSize = restaurant.reservation.guestSelectLimit, hours = openingHoursPrefix(today, locale) + openingHoursSentence(restaurant.openingHours, locale);
   return locale === "en"
     ? [
         faqItem("How do I book a table?", ["Book online in under a minute: pick date, time and party size, then add your contact details. We'll confirm your request."], [
