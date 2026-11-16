@@ -12,6 +12,7 @@ export type HighlightSlide = {
   title: string;
   text: string;
   meta?: string;
+  bakedText?: boolean; // true: the image already contains its text, so the overlay text is hidden
   image: string;
   alt?: string; // image description; empty means decorative
   href: string;
@@ -98,10 +99,11 @@ export function HomeCarousel({ slides, labels }: { slides: HighlightSlide[]; lab
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#09130f] via-[#09130f]/40 to-transparent" />
               <div className="relative mx-auto flex h-full w-full max-w-[1440px] items-end px-5 pb-28 sm:px-10 lg:px-16 lg:pb-32">
                 <div className={`max-w-2xl transition duration-1000 ${active ? "translate-y-0 opacity-100 delay-300" : "translate-y-6 opacity-0"}`}>
-                  {slide.label && <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[.7rem] font-bold uppercase tracking-[.2em] ${slide.kind === "event" ? "bg-[#a52520] text-white" : slide.kind === "dish" ? "bg-[#efc67e] text-[#10261e]" : "bg-[#f5e8d3] text-[#10261e]"}`}>{slide.label}</span>}
+                  {/* Baked-text slides: the image already carries its words, so only the button sits on top. */}
+                  {!slide.bakedText && <>{slide.label && <span className={`inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[.7rem] font-bold uppercase tracking-[.2em] ${slide.kind === "event" ? "bg-[#a52520] text-white" : slide.kind === "dish" ? "bg-[#efc67e] text-[#10261e]" : "bg-[#f5e8d3] text-[#10261e]"}`}>{slide.label}</span>}
                   {slide.meta && <p className="mt-5 text-sm font-semibold uppercase tracking-[.18em] text-[#efc67e]">{slide.meta}</p>}
                   <h2 className={`font-display mt-4 ${heroTitleClass(slide.title)} tracking-[-.04em] text-[#f5e8d3] [text-shadow:0_2px_24px_rgba(0,0,0,.45)]`}>{slide.title}</h2>
-                  {slide.text && <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">{slide.text}</p>}
+                  {slide.text && <p className="mt-6 max-w-xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">{slide.text}</p>}</>}
                   {slide.cta && slide.href && <a href={slide.href} tabIndex={active ? 0 : -1} className="button-primary mt-8">{slide.cta} <ArrowRight size={18} /></a>}
                 </div>
               </div>

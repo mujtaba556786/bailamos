@@ -19,6 +19,7 @@
     "test:cancel-tokens": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-service.ts scripts/test-cancel-tokens.mjs",
     "test:admin-reservations-ui": "node --test --experimental-test-coverage --test-coverage-include=lib/admin-reservation-ui.ts scripts/test-admin-reservation-ui.mjs",
     "test:hero": "node --test --experimental-test-coverage --test-coverage-include=lib/hero-slides.ts --test-coverage-include=lib/media-upload.ts scripts/test-hero-slides.mjs",
+    "test:opening-state": "node --test scripts/test-opening-state.mjs",
     "test:hero-routes": "node --test scripts/test-hero-routes.mjs",
     "test:seo": "node --test --experimental-test-coverage --test-coverage-include=lib/service-areas.ts --test-coverage-include=lib/json-ld.ts --test-coverage-include=lib/seo-content.ts --test-coverage-include=lib/page-title.ts --test-coverage-include=lib/opening-hours.ts --test-coverage-include=lib/guest-info.ts scripts/test-seo.mjs scripts/test-seo-content.mjs"
   },

@@ -1,6 +1,6 @@
 export function Footer({ lang = "de" }: { lang?: "de" | "en" }) {
   const isDe = lang === "de";
-  const tagline = isDe ? "Authentisch · Leidenschaftlich · Mexikanisch" : "Authentic · Passionate · Mexican";
+  const tagline = isDe ? "Mexikanische Küche · Cocktails · Waldcafé" : "Mexican kitchen · Cocktails · Waldcafé";
 
   return (
     <footer className="bg-[#09130f] px-5 py-12 sm:px-10">

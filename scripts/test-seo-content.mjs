@@ -41,7 +41,8 @@ test("FAQ and group rule use only the configured facts", () => {
   const r = defaultOperations.restaurant;
   assert.equal(displayPhone("+491738609300"), "+49 173 8609300");
   assert.equal(groupRule(r, "de"), "Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 8609300.");
-  const faq = homeFaq(r, "en"), de = homeFaq(r, "de");
+  // After the opening day, so the hours carry no "From 25 November:" prefix.
+  const faq = homeFaq(r, "en", "2026-12-03"), de = homeFaq(r, "de", "2026-12-03");
   assert.equal(faq.length, 3);
   assert.equal(de.length, 3);
   assert.equal(faq[0].answer, "Book online in under a minute: pick date, time and party size, then add your contact details. We'll confirm your request.");
@@ -56,6 +57,8 @@ test("FAQ and group rule use only the configured facts", () => {
   assert.deepEqual(faq[1].parts.filter((part) => typeof part !== "string"), [{ href: "mailto:info@bailamos-waldcafe.de", label: "info@bailamos-waldcafe.de" }, { href: "tel:+491738609300", label: "+49 173 8609300" }]);
   assert.match(de[1].answer, /^Ja – für Gruppen über 6 Personen kontaktieren Sie uns bitte direkt/);
   assert.equal(faq[2].answer, openingHoursSentence(r.openingHours, "en"));
+  // Before the opening day the hours get the prefix.
+  assert.equal(homeFaq(r, "en", "2026-11-16")[2].answer, "From 25 November: " + openingHoursSentence(r.openingHours, "en"));
   assert.equal(de[2].answer, openingHoursSentence(r.openingHours, "de"));
   for (const item of [...faq, ...de]) assert.doesNotMatch(item.answer, /€|EUR|Bewertung|review|\d\.\d Sterne|stars/i);
   assert.equal(bookingSteps("de").length, 3);
