@@ -64,8 +64,17 @@ export async function getMarketingContent(db?:D1Database):Promise<{content:Marke
   try{const row=await db.prepare("SELECT content_json,version FROM marketing_content WHERE id = 'primary'").first<{content_json:string;version:number}>();if(!row)return {content:validateMarketingContent(defaults),version:0,source:"default"};return {content:validateMarketingContent(JSON.parse(row.content_json)),version:row.version,source:"saved"};}
   catch(error){console.error("Marketing content unavailable",error);return {content:validateMarketingContent(defaults),version:0,source:"default"};}
 }
+// Placeholder wording must not reach the public site. Checked on save only, so a row saved before this rule still loads.
+const PLACEHOLDER_TEXT=/werden (nach Bestätigung )?ergänzt|wird (nach Bestätigung )?ergänzt|Termin, Uhrzeit und Programm|will be added once confirmed|to be confirmed|TODO/i;
+export function placeholderErrors(content:MarketingContent){
+  const found:string[]=[];
+  for(const event of content.events)for(const field of ['title','summary','teaser'] as const)for(const lang of ['de','en'] as const){const text=(event as any)[field]?.[lang]??'';if(text&&PLACEHOLDER_TEXT.test(text))found.push(`${event.title.de||event.id}: ${field} (${lang})`)}
+  return found;
+}
 export async function saveMarketingContent(db:D1Database,value:unknown,expectedVersion:number){
   const content=validateMarketingContent(value),stamp=new Date().toISOString();
+  const problems=placeholderErrors(content);
+  if(problems.length)throw new BookingError(400,"PLACEHOLDER_TEXT",`Bitte Platzhalter-Text ersetzen, bevor Sie speichern: ${problems.join("; ")}`);
   // Hero slide timestamps are set here, not by the browser: createdAt stays, updatedAt changes with the slide.
   const previous=expectedVersion>0?await db.prepare("SELECT content_json FROM marketing_content WHERE id = 'primary'").first<{content_json:string}>().catch(()=>null):null;
   let previousSlides:HeroCarousel["slides"]=[];
