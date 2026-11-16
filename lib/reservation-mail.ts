@@ -54,8 +54,8 @@ function divider(label: string) {
   return `<div style="margin:26px 0 4px;padding-top:18px;border-top:1px solid #eadfcb;color:${COLORS.gold};font-size:11px;letter-spacing:2px;text-transform:uppercase">${esc(label)}</div>`;
 }
 const requestCopy = {
-  de: { subject: 'Ihre Reservierungsanfrage bei Bailamos', title: 'Anfrage eingegangen', lead: 'Vielen Dank für Ihre Anfrage. Das Restaurant bestätigt Ihren Tisch in Kürze per E-Mail. Bis dahin ist die Anfrage noch nicht verbindlich.', cancel: 'Falls Sie nicht kommen können, stornieren Sie bitte hier:', button: 'Reservierung stornieren' },
-  en: { title: 'Request received', lead: 'Thank you for your request. The restaurant will confirm your table by email shortly. Until then the request is not yet binding.', cancel: 'If you cannot come, you can cancel here:', button: 'Cancel reservation' },
+  de: { subject: 'Ihre Reservierungsanfrage bei Bailamos', title: 'Anfrage eingegangen', lead: 'Vielen Dank für Ihre Anfrage. Das Restaurant bestätigt Ihre Reservierung in Kürze per E-Mail. Bis dahin ist die Anfrage noch nicht verbindlich.', cancel: 'Falls Sie nicht kommen können, stornieren Sie bitte hier:', button: 'Reservierung stornieren' },
+  en: { title: 'Request received', lead: 'Thank you for your request. The restaurant will confirm your reservation by email shortly. Until then the request is not yet binding.', cancel: 'If you cannot come, you can cancel here:', button: 'Cancel reservation' },
 };
 export function requestMessage(r: ReservationMailDetails): MailMessage {
   const cancel = r.cancelUrl || '';

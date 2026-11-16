@@ -94,7 +94,7 @@ export function DishPage({ dish, category, related, locale }: { dish: Dish; cate
             <div className="mt-12 border-t border-[#c68a3b]/30 pt-9">
               <h2 className="font-display text-3xl">{L("Dieses Gericht probieren?", "Want to try this dish?")}</h2>
               <p className="mt-2 text-white/55">
-                {L("Das Gericht wird nicht vorbestellt. Wir reservieren ausschließlich Ihren Tisch.", "The dish is not pre-ordered; we reserve your table only.")}
+                {L("Das Gericht wird nicht vorbestellt. Wir reservieren ausschließlich Ihren Termin.", "The dish is not pre-ordered; we reserve your booking only.")}
               </p>
               <div className="mt-6 flex flex-wrap gap-4">
                 <a href={menuPath} className="button-secondary">{L("Zur Speisekarte", "Back to menu")}</a>

@@ -27,7 +27,7 @@ export function bookingSteps(locale: Locale) {
     ? [
         "Choose the date, time and number of guests.",
         "Enter your name, phone number and email address.",
-        "You first receive a request confirmation. Your table is confirmed once the restaurant accepts the request. With your personal link you can manage or cancel the request later.",
+        "You first receive a request confirmation. Your reservation is confirmed once the restaurant accepts the request. With your personal link you can manage or cancel the request later.",
       ]
     : [
         "Datum, Uhrzeit und Anzahl der Gäste wählen.",
