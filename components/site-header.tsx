@@ -8,7 +8,7 @@ export function SiteHeader({ active, locale = "de" }: { active?: string; locale?
     ? { home: "Home", menu: "Menu", gallery: "Gallery", about: "About", events: "Events", contact: "Contact", reserve: "Reserve", nav: "Open navigation", menuButton: "Menu" }
     : { home: "Start", menu: "Speisekarte", gallery: "Galerie", about: "Über uns", events: "Events", contact: "Kontakt", reserve: "Reservieren", nav: "Navigation öffnen", menuButton: "Menü" };
   const p = (path: string) => en ? (path === "/" ? "/en" : `/en${path}`) : path;
-  const homeSection = (id: string) => `${p("/")}?v=8#${id}`;
+  const homeSection = (id: string) => `${p("/")}#${id}`;
   const links = [
     { href: p("/"), label: labels.home, key: "Start" },
     { href: p("/menu"), label: labels.menu, key: "Speisekarte" },
