@@ -12,13 +12,13 @@
     "whatsapp": "+491738609300"
   },
   "openingHours": {
-    "tuesday": "17:00-23:00",
-    "wednesday": "17:00-23:00",
-    "thursday": "17:00-23:00",
-    "friday": "17:00-01:00",
-    "saturday": "17:00-01:00",
-    "sunday": "17:00-22:00",
-    "monday": "closed"
+    "monday": "12:00-22:00",
+    "tuesday": "12:00-22:00",
+    "wednesday": "12:00-22:00",
+    "thursday": "12:00-22:00",
+    "friday": "12:00-22:00",
+    "saturday": "12:00-22:00",
+    "sunday": "12:00-22:00"
   },
   "reservation": {
     "durationMinutes": 120,

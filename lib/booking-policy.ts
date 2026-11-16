@@ -63,13 +63,17 @@ export function validateGuests(value: unknown,config?:OperationsConfig): asserts
   }
   if (value > maxOnline) throw new BookingError(422, "GROUP_REQUEST_REQUIRED", `Online können wir aktuell bis zu ${maxOnline} Personen reservieren. Für größere Gruppen stimmen Sie die Plätze bitte direkt mit dem Restaurant ab.`);
 }
+import { OPENING_DATE } from "./opening-state.ts";
+const FIRST_BOOKABLE_MINUTE_ON_OPENING_DAY = 17 * 60; // TODO: make this an admin setting
 const weekdays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
 export function serviceWindow(date: string,config?:OperationsConfig): [number, number] | null {
   const day = weekdays[new Date(`${date}T12:00:00Z`).getUTCDay()];
   const hours = policy(config).restaurant.openingHours[day];
   if (hours === "closed") return null;
   const [open, close] = hours.split("-").map(minuteOfDay);
-  return [open, close <= open ? close + 1440 : close];
+  // Opening day: bookings start at 17:00 (the opening event starts then too). Other days keep their hours.
+  const first = date === OPENING_DATE ? Math.max(open, FIRST_BOOKABLE_MINUTE_ON_OPENING_DAY) : open;
+  return [first, close <= open ? close + 1440 : close];
 }
 
 // Find all UTC instants matching the local wall time. Reject DST gaps/folds instead
