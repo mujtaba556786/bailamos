@@ -11,7 +11,7 @@ import { StructuredData } from "../components/structured-data";
 import { HomeCarousel, type HighlightSlide } from "../components/home-carousel";
 import { WELCOME_SLIDE, visibleHeroSlides, type HeroSlide } from "../lib/hero-slides";
 import { formatPrice } from "../lib/price.ts";
-import { isBeforeOpening } from "../lib/opening-state.ts";
+import { firstBookableDay, isBeforeOpening, openingDayLabel } from "../lib/opening-state.ts";
 import { Footer } from "../components/footer";
 import { NewsletterSignup } from "../components/newsletter-signup";
 import { SocialLink } from "../components/social-link";
@@ -105,9 +105,10 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(5,13,10,.94)_0%,rgba(5,13,10,.8)_45%,rgba(5,13,10,.45)_100%)]"/>
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1fr_.9fr] lg:items-center">
         <div><p className="eyebrow">{L("Online reservieren","Book online")}</p><h2 className="font-display mt-4 max-w-xl text-5xl leading-[.92] sm:text-7xl">{L("Tacos, Fajitas, Cocktails – Ihr Tisch am Waldrand.","Tacos, fajitas, cocktails – your table at the forest's edge.")}</h2><p className="mt-6 max-w-lg text-lg leading-8 text-white/70">{L("Wählen Sie Datum und Gästezahl und sehen Sie die freien Zeiten. Ihren Tisch weisen wir Ihnen im Restaurant zu.","Choose a date and party size to see the free times. We assign your table at the restaurant.")}</p><p className="mt-6 flex items-center gap-2 text-sm text-white/55"><Clock3 size={16} className="text-[#efc67e]"/>{L("Größere Gruppen bitte direkt anfragen.","Larger groups please contact us directly.")} {restaurant.contact.phone}</p></div>
+        {isBeforeOpening(today)&&<p className="mb-4 rounded-xl bg-[#efc67e] px-4 py-3 text-sm font-semibold text-[#10261e]">{L(`Wir eröffnen am ${openingDayLabel("de")} – buchen Sie jetzt Ihren ersten Abend.`,`We open on ${openingDayLabel("en")} – book your first evening now.`)}</p>}
         <form action={withLocale("/reservieren",locale)} method="get" className="rounded-[1.75rem] border border-white/15 bg-[#0a1812]/85 p-6 backdrop-blur-md sm:p-8">
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="grid gap-2 text-sm font-medium text-white/80"><span className="flex items-center gap-2"><CalendarDays size={16} className="text-[#efc67e]"/>{L("Datum","Date")}</span><input type="date" name="date" min={today} defaultValue={today} required className="min-h-13 rounded-xl border border-white/15 bg-white/5 px-4 text-base text-[#f5e8d3] [color-scheme:dark]"/></label>
+            <label className="grid gap-2 text-sm font-medium text-white/80"><span className="flex items-center gap-2"><CalendarDays size={16} className="text-[#efc67e]"/>{L("Datum","Date")}</span><input type="date" name="date" min={firstBookableDay(today)} defaultValue={firstBookableDay(today)} required className="min-h-13 rounded-xl border border-white/15 bg-white/5 px-4 text-base text-[#f5e8d3] [color-scheme:dark]"/></label>
             <label className="grid gap-2 text-sm font-medium text-white/80"><span className="flex items-center gap-2"><Users size={16} className="text-[#efc67e]"/>{L("Gäste","Guests")}</span><select name="guests" defaultValue="2" className="min-h-13 rounded-xl border border-white/15 bg-[#0a1812] px-4 text-base text-[#f5e8d3]">{/* Same limit as the booking form ("Größte Gruppe im Online-Formular" in the admin). */}{Array.from({length:restaurant.reservation.guestSelectLimit},(_,i)=>i+1).map(n=><option key={n} value={n}>{n} {n===1?L("Person","person"):L("Personen","people")}</option>)}</select></label>
           </div>
           <button type="submit" className="button-primary mt-7 w-full justify-between">{L("Verfügbarkeit prüfen","Check availability")} <ArrowRight size={18}/></button>
