@@ -78,8 +78,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4 text-gray-700">
           <h2 className="text-xl font-semibold">7. Liability</h2>
           <p>
-            We are not liable for loss, damage, or theft of personal items. Please take good care
-            of your valuables or give them to our staff.
+            We are not liable for loss, damage, or theft of personal items.
           </p>
         </section>
 

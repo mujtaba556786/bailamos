@@ -81,7 +81,6 @@ export default function AGB() {
           <h2 className="text-xl font-semibold">7. Haftung</h2>
           <p>
             Wir haften nicht für Verlust, Beschädigung oder Diebstahl von persönlichen Gegenständen.
-            Bitte bewahren Sie Ihre Wertsachen sorgfältig auf oder geben Sie diese an unseren Service.
           </p>
         </section>
 
