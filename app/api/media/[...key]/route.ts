@@ -15,7 +15,7 @@ export async function GET(request:Request,{params}:{params:Promise<{key:string[]
   headers.set("accept-ranges","bytes");headers.set("cache-control","public, max-age=86400");
   // R2 reports the byte range it sent when a Range header was given; otherwise the whole object.
   const range=(object as {range?:{offset?:number;length?:number;suffix?:number}}).range;
-  if(range&&object.size){
+  if(wantsRange&&range&&object.size){
     const start=range.suffix!==undefined?object.size-range.suffix:(range.offset??0);
     const length=range.suffix!==undefined?range.suffix:(range.length??object.size-start);
     const end=start+length-1;
