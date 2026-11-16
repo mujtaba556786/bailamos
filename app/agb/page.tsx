@@ -32,20 +32,8 @@ export default function AGB() {
           </p>
         </section>
 
-                <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">3. Tischdauer</h2>
-          <p>
-            Die maximale Tischnutzungsdauer beträgt:
-          </p>
-          <ul className="list-inside list-disc space-y-2">
-            <li>Freitag & Samstag: 2,5 Stunden</li>
-            <li>Montag bis Donnerstag: 3 Stunden</li>
-            <li>Sonntag: 2,5 Stunden</li>
-          </ul>
-        </section>
-
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">4. Zahlung</h2>
+          <h2 className="text-xl font-semibold">3. Zahlung</h2>
           <p>
             Die Bezahlung erfolgt direkt im Restaurant. Wir akzeptieren:
           </p>
@@ -56,7 +44,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">5. Allergien & Unverträglichkeiten</h2>
+          <h2 className="text-xl font-semibold">4. Allergien & Unverträglichkeiten</h2>
           <p>
             Bitte informieren Sie uns bei der Reservierung über bekannte Allergien und
             Unverträglichkeiten. Wir können nicht vollständig ausschließen, dass Allergene
@@ -65,7 +53,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">6. Hausordnung</h2>
+          <h2 className="text-xl font-semibold">5. Hausordnung</h2>
           <p>Wir behalten uns das Recht vor, den Eintritt zu verweigern bei:</p>
           <ul className="list-inside list-disc space-y-2">
             <li>Starker Alkoholeinfluss</li>
@@ -78,14 +66,14 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">7. Haftung</h2>
+          <h2 className="text-xl font-semibold">6. Haftung</h2>
           <p>
             Wir haften nicht für Verlust, Beschädigung oder Diebstahl von persönlichen Gegenständen.
           </p>
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">8. Fotografien & Videoaufnahmen</h2>
+          <h2 className="text-xl font-semibold">7. Fotografien & Videoaufnahmen</h2>
           <p>
             Fotografieren und Videoaufnahmen zu privaten Zwecken sind erlaubt. Kommerzielle Nutzung
             bedarf unserer ausdrücklichen Genehmigung.
@@ -93,7 +81,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">9. Änderung der AGB</h2>
+          <h2 className="text-xl font-semibold">8. Änderung der AGB</h2>
           <p>
             Wir behalten uns das Recht vor, diese AGB jederzeit zu ändern. Änderungen werden
             auf unserer Website veröffentlicht. Bei weiteren Reservierungen akzeptieren Sie die
@@ -102,7 +90,7 @@ export default function AGB() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">10. Schlussbestimmungen</h2>
+          <h2 className="text-xl font-semibold">9. Schlussbestimmungen</h2>
           <p>
             Es gilt deutsches Recht. Gerichtsstand ist Brandenburg an der Havel.
           </p>

@@ -31,20 +31,8 @@ export default function TermsAndConditions() {
           </p>
         </section>
 
-                <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">3. Table Duration</h2>
-          <p>
-            Maximum table use duration:
-          </p>
-          <ul className="list-inside list-disc space-y-2">
-            <li>Friday & Saturday: 2.5 hours</li>
-            <li>Monday to Thursday: 3 hours</li>
-            <li>Sunday: 2.5 hours</li>
-          </ul>
-        </section>
-
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">4. Payment</h2>
+          <h2 className="text-xl font-semibold">3. Payment</h2>
           <p>
             Payment is made directly at the restaurant. We accept:
           </p>
@@ -55,7 +43,7 @@ export default function TermsAndConditions() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">5. Allergies & Intolerances</h2>
+          <h2 className="text-xl font-semibold">4. Allergies & Intolerances</h2>
           <p>
             Please inform us of any known allergies and intolerances when making a reservation.
             We cannot completely exclude that allergens are present in our kitchen.
@@ -63,7 +51,7 @@ export default function TermsAndConditions() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">6. House Rules</h2>
+          <h2 className="text-xl font-semibold">5. House Rules</h2>
           <p>We reserve the right to refuse entry in case of:</p>
           <ul className="list-inside list-disc space-y-2">
             <li>Strong alcohol intoxication</li>
@@ -76,14 +64,14 @@ export default function TermsAndConditions() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">7. Liability</h2>
+          <h2 className="text-xl font-semibold">6. Liability</h2>
           <p>
             We are not liable for loss, damage, or theft of personal items.
           </p>
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">8. Photography & Video Recording</h2>
+          <h2 className="text-xl font-semibold">7. Photography & Video Recording</h2>
           <p>
             Photography and video recording for private purposes are permitted. Commercial use
             requires our express permission.
@@ -91,7 +79,7 @@ export default function TermsAndConditions() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">9. Changes to Terms & Conditions</h2>
+          <h2 className="text-xl font-semibold">8. Changes to Terms & Conditions</h2>
           <p>
             We reserve the right to change these terms and conditions at any time. Changes will
             be published on our website. By making further reservations, you accept the current version.
@@ -99,7 +87,7 @@ export default function TermsAndConditions() {
         </section>
 
         <section className="space-y-4 text-gray-700">
-          <h2 className="text-xl font-semibold">10. Final Provisions</h2>
+          <h2 className="text-xl font-semibold">9. Final Provisions</h2>
           <p>
             German law applies. The place of jurisdiction is Brandenburg an der Havel.
           </p>
