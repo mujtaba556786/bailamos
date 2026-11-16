@@ -70,7 +70,7 @@ const signature=menu.dishes.filter(dish=>dish.featured&&dish.available);
     <StructuredData data={restaurantJsonLd(restaurant, visibleSocialLinks(marketing.social).map(([,url])=>url), seo.serviceAreas)}/>
     <StructuredData data={faqJsonLd(faq)}/>
     <SiteHeader active="Start" locale={locale}/>
-    {SHOW_RENOVATION_NOTICE&&isBeforeOpening(today)&&<div role="note" className="bg-[#efc67e] px-5 py-3 text-center text-sm font-semibold leading-6 text-[#10261e] sm:px-10">{L("Wir bauen um – Eröffnung am 25. November. Die Bilder auf dieser Seite sind KI-generierte Vorschauen.","We are renovating – opening on 25 November. The images on this page are AI-generated previews.")}</div>}
+    {SHOW_RENOVATION_NOTICE&&isBeforeOpening(today)&&<div role="note" className="bg-[#efc67e] px-5 py-3 text-center text-sm font-semibold leading-6 text-[#10261e] sm:px-10">{L("Neueröffnung am 25. November! Bis dahin zeigen KI-Vorschauen, wie Bailamos aussehen wird.","Grand reopening on 25 November! Until then, AI previews show how Bailamos will look.")} <a href={withLocale("/reservieren",locale)} className="ml-1 whitespace-nowrap underline underline-offset-4">{L("Jetzt reservieren →","Book now →")}</a></div>}
 
     <HomeCarousel slides={slides} labels={{previous:L("Vorheriges Highlight","Previous highlight"),next:L("Nächstes Highlight","Next highlight"),pause:L("Automatisches Weiterblättern anhalten","Pause slideshow"),play:L("Automatisches Weiterblättern starten","Play slideshow"),region:L("Neuigkeiten bei Bailamos","News at Bailamos"),slide:L("von","of")}}/>
 
