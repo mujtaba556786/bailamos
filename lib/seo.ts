@@ -10,7 +10,7 @@ import { OPENING_DATE } from "./opening-state.ts";
 // Map position and map link. The coordinates come from the Google Maps listing; the owner should confirm them.
 // TODO(owner): confirm coordinates. priceRange is not set on purpose until the owner gives a price range.
 export const RESTAURANT_GEO = { latitude: 52.4283563, longitude: 12.496978 } as const;
-export const RESTAURANT_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Anton-Saefkow-Allee+2A,+14772+Brandenburg+an+der+Havel";
+export const RESTAURANT_MAP_URL = "https://www.google.com/maps/place/Bailamos+waldcafe,+Anton-Saefkow-Allee+2A,+14772+Brandenburg+an+der+Havel/data=!4m2!3m1!1s0x47a8c7c09f4c78a7:0x872b91c99ffea206";
 // Payment as stated in the terms (AGB): cash and card payment at the restaurant.
 export const RESTAURANT_PAYMENT = ["Cash", "EC card", "Credit card"];
 export const restaurantId = () => `${getSiteUrl("/").toString()}#restaurant`;

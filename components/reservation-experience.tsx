@@ -28,7 +28,7 @@ export function ReservationExperience({locale,children}:{locale:Locale;children?
   const [time, setTime] = useState("");
   const [guests, setGuests] = useState(2);
   const [nextFreeDate,setNextFreeDate]=useState("");
-  const [times,setTimes]=useState<string[]>([]),[maxGuests,setMaxGuests]=useState(4),[guestLimit,setGuestLimit]=useState(6),[groupNote,setGroupNote]=useState<{de:string;en:string}>({de:"Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 8609300.",en:"For groups of more than 6 people, please email us at info@bailamos-waldcafe.de or call us on +49 173 8609300."}),[horizonDays,setHorizonDays]=useState(180),[slotsLoading,setSlotsLoading]=useState(true),[blockedInfo,setBlockedInfo]=useState<{reason:string;phone:string;email:string}|null>(null);
+  const [times,setTimes]=useState<string[]>([]),[maxGuests,setMaxGuests]=useState(4),[guestLimit,setGuestLimit]=useState(6),[groupNote,setGroupNote]=useState<{de:string;en:string}>({de:"Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 86 09 300.",en:"For groups of more than 6 people, please email us at info@bailamos-waldcafe.de or call us on +49 173 86 09 300."}),[horizonDays,setHorizonDays]=useState(180),[slotsLoading,setSlotsLoading]=useState(true),[blockedInfo,setBlockedInfo]=useState<{reason:string;phone:string;email:string}|null>(null);
   const [details, setDetails] = useState(emptyDetails);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");

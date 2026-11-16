@@ -10,9 +10,11 @@ import type { Locale } from "./i18n";
 
 type Restaurant = OperationsConfig["restaurant"];
 
-// "+491738609300" → "+49 173 8609300" for reading; links keep the raw number.
+// "+491738609300" → "+49 173 86 09 300" for reading (the same format as the footer and Impressum); links keep the raw number.
 export function displayPhone(phone: string) {
   const compact = phone.replace(/\s+/g, "");
+  const mobile = compact.match(/^\+49(1\d{2})(\d{7})$/);
+  if (mobile) return `+49 ${mobile[1]} ${mobile[2].slice(0, 2)} ${mobile[2].slice(2, 4)} ${mobile[2].slice(4)}`;
   const match = compact.match(/^\+49(1\d{2})(\d{4,})$/);
   return match ? `+49 ${match[1]} ${match[2]}` : phone;
 }
