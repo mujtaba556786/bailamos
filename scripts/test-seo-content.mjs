@@ -35,8 +35,8 @@ test("opening hours are grouped from the data file", () => {
 
 test("FAQ and group rule use only the configured facts", () => {
   const r = defaultOperations.restaurant;
-  assert.equal(displayPhone("+491738609300"), "+49 173 8609300");
-  assert.equal(groupRule(r, "de"), "Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 8609300.");
+  assert.equal(displayPhone("+491738609300"), "+49 173 86 09 300");
+  assert.equal(groupRule(r, "de"), "Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 86 09 300.");
   // After the opening day, so the hours carry no "From 25 November:" prefix.
   const faq = homeFaq(r, "en", "2026-12-03"), de = homeFaq(r, "de", "2026-12-03");
   assert.equal(faq.length, 3);
@@ -44,13 +44,13 @@ test("FAQ and group rule use only the configured facts", () => {
   assert.equal(faq[0].answer, "Book online in under a minute: pick date, time and party size, then add your contact details. We'll confirm your request.");
   assert.deepEqual(faq[0].actions, [
     { kind: "primary", href: "/en/reservieren", label: "Reserve a table" },
-    { kind: "secondary", href: "tel:+491738609300", label: "Call +49 173 8609300" },
+    { kind: "secondary", href: "tel:+491738609300", label: "Call +49 173 86 09 300" },
   ]);
   assert.equal(de[0].actions[0].href, "/reservieren");
-  assert.equal(de[0].actions[1].label, "Anrufen: +49 173 8609300");
+  assert.equal(de[0].actions[1].label, "Anrufen: +49 173 86 09 300");
   // Group answer: plain text for the structured data, tappable email and phone in the visible answer.
-  assert.equal(faq[1].answer, "Yes — for groups of more than 6, contact us directly so we can prepare the right table: info@bailamos-waldcafe.de or +49 173 8609300.");
-  assert.deepEqual(faq[1].parts.filter((part) => typeof part !== "string"), [{ href: "mailto:info@bailamos-waldcafe.de", label: "info@bailamos-waldcafe.de" }, { href: "tel:+491738609300", label: "+49 173 8609300" }]);
+  assert.equal(faq[1].answer, "Yes — for groups of more than 6, contact us directly so we can prepare the right table: info@bailamos-waldcafe.de or +49 173 86 09 300.");
+  assert.deepEqual(faq[1].parts.filter((part) => typeof part !== "string"), [{ href: "mailto:info@bailamos-waldcafe.de", label: "info@bailamos-waldcafe.de" }, { href: "tel:+491738609300", label: "+49 173 86 09 300" }]);
   assert.match(de[1].answer, /^Ja – für Gruppen über 6 Personen kontaktieren Sie uns bitte direkt/);
   assert.equal(faq[2].answer, openingHoursSentence(r.openingHours, "en"));
   // Before the opening day the hours get the prefix.
