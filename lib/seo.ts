@@ -7,6 +7,12 @@ import { OPENING_DATE } from "./opening-state.ts";
 
 // Stable schema.org @id values. They are the same on every page that describes the same entity,
 // so search engines and AI systems can merge the facts into one restaurant / one dish.
+// Map position and map link. The coordinates come from the Google Maps listing; the owner should confirm them.
+// TODO(owner): confirm coordinates. priceRange is not set on purpose until the owner gives a price range.
+export const RESTAURANT_GEO = { latitude: 52.4283563, longitude: 12.496978 } as const;
+export const RESTAURANT_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Anton-Saefkow-Allee+2A,+14772+Brandenburg+an+der+Havel";
+// Payment as stated in the terms (AGB): cash and card payment at the restaurant.
+export const RESTAURANT_PAYMENT = ["Cash", "EC card", "Credit card"];
 export const restaurantId = () => `${getSiteUrl("/").toString()}#restaurant`;
 export const menuId = (locale: Locale = "de") => `${getSiteUrl(locale === "en" ? "/en/menu" : "/menu").toString()}#menu`;
 export const dishId = (id: string) => `${getSiteUrl(`/menu/${id}`).toString()}#dish`;
@@ -150,6 +156,9 @@ export function restaurantJsonLd(restaurant: { name: string; legalName: string; 
     },
     ...(areaServed.length ? { areaServed } : {}),
     servesCuisine: ["Mexican"],
+    geo: { "@type": "GeoCoordinates", latitude: RESTAURANT_GEO.latitude, longitude: RESTAURANT_GEO.longitude },
+    hasMap: RESTAURANT_MAP_URL,
+    paymentAccepted: RESTAURANT_PAYMENT.join(", "),
     inLanguage: ["de", "en"],
     acceptsReservations: true,
     hasMenu: { "@id": menuId("de") },
