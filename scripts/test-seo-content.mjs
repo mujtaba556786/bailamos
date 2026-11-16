@@ -24,13 +24,9 @@ test("default SEO titles stay within 60 characters and the home text has no open
 });
 
 test("opening hours are grouped from the data file", () => {
-  assert.deepEqual(groupedOpeningHours(restaurantData.openingHours, "de"), [
-    { days: "Mo", hours: "geschlossen" },
-    { days: "Di–Do", hours: "17:00–23:00 Uhr" },
-    { days: "Fr–Sa", hours: "17:00–01:00 Uhr" },
-    { days: "So", hours: "17:00–22:00 Uhr" },
-  ]);
-  assert.equal(openingHoursSentence(restaurantData.openingHours, "en"), "Mon closed, Tue–Thu 17:00–23:00, Fri–Sat 17:00–01:00, Sun 17:00–22:00.");
+  // The data file holds the saved hours: open every day 12:00–22:00.
+  assert.deepEqual(groupedOpeningHours(restaurantData.openingHours, "de"), [{ days: "Mo–So", hours: "12:00–22:00 Uhr" }]);
+  assert.equal(openingHoursSentence(restaurantData.openingHours, "en"), "Every day, 12:00–22:00.");
   const daily = Object.fromEntries(["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((d) => [d, "12:00-22:00"]));
   assert.equal(openingHoursSentence(daily, "de"), "Täglich 12:00–22:00 Uhr.");
   assert.equal(openingHoursSentence(daily, "en"), "Every day, 12:00–22:00.");
