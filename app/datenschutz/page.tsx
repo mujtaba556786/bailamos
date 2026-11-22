@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { localeAlternates } from '../../lib/seo';
 import { Footer } from '../../components/footer';
+import { env } from 'cloudflare:workers';
+import { getOperations } from '../../lib/operations-config.ts';
+import { displayPhone } from '../../lib/guest-info';
+
 
 export const metadata: Metadata = {
   title: 'Datenschutz',
@@ -8,7 +12,8 @@ export const metadata: Metadata = {
   description: 'Datenschutzerklärung von Bailamos Waldcafé',
 };
 
-export default function Datenschutz() {
+export default async function Datenschutz() {
+  const phone = displayPhone((await getOperations(env.DB)).config.restaurant.contact.phone);
   return (
     <>
     <main className="min-h-screen bg-white px-5 py-12 sm:px-10">
@@ -23,7 +28,7 @@ export default function Datenschutz() {
             Anton-Saefkow-Allee 2A<br />
             14772 Brandenburg an der Havel<br />
             E-Mail: info@bailamos-waldcafe.de<br />
-            Telefon: +49 173 86 09 300
+            Telefon: {phone}
           </p>
         </section>
 

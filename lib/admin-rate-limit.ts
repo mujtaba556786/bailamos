@@ -4,7 +4,8 @@ import { BookingError } from "./booking-policy.ts";
 import { digest } from "./booking-service.ts";
 
 // booking: each new online booking sends emails and a Telegram alert, so a script must not be able to flood them.
-export const ADMIN_LIMITS = { upload: 60, publish: 120, booking: 8 } as const;
+// lookup: checks of a personal booking link (id + token) per visitor; cancel: cancellations, which send an email.
+export const ADMIN_LIMITS = { upload: 60, publish: 120, booking: 8, lookup: 30, cancel: 20 } as const;
 export type AdminAction = keyof typeof ADMIN_LIMITS;
 const HOUR = 3600;
 
@@ -28,6 +29,8 @@ export async function adminRateLimit(db: D1Database | undefined, request: Reques
       upload: "Zu viele Uploads in kurzer Zeit. Bitte in einer Stunde erneut versuchen.",
       publish: "Zu viele Veröffentlichungen in kurzer Zeit. Bitte später erneut versuchen.",
       booking: "Zu viele Reservierungen in kurzer Zeit. Bitte rufen Sie uns an. / Too many reservations in a short time. Please call us.",
+      lookup: "Zu viele Abfragen in kurzer Zeit. Bitte in einer Stunde erneut versuchen. / Too many lookups in a short time. Please try again in an hour.",
+      cancel: "Zu viele Stornierungen in kurzer Zeit. Bitte rufen Sie uns an. / Too many cancellations in a short time. Please call us.",
     };
     throw new BookingError(429, "TOO_MANY_REQUESTS", messages[action]);
   }

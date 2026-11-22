@@ -104,3 +104,15 @@ test("adminRateLimit fails open without a database or table", async () => {
   const broken = { prepare() { return { bind() { return { run: async () => { throw new Error("no such table"); }, first: async () => { throw new Error("no such table"); } }; } }; } };
   await adminRateLimit(broken, req("3.3.3.3"), "upload");
 });
+
+test("personal booking link checks and cancellations are limited per visitor per hour", async () => {
+  const db = await migratedDb();
+  const now = Date.UTC(2026, 10, 20, 9);
+  for (let i = 0; i < ADMIN_LIMITS.lookup; i++) await adminRateLimit(db, req("6.6.6.6"), "lookup", now);
+  await assert.rejects(adminRateLimit(db, req("6.6.6.6"), "lookup", now), (error) => error.status === 429 && /Abfragen/.test(error.message) && /lookups/.test(error.message));
+  // Cancellations have their own, smaller counter for the same visitor.
+  for (let i = 0; i < ADMIN_LIMITS.cancel; i++) await adminRateLimit(db, req("6.6.6.6"), "cancel", now);
+  await assert.rejects(adminRateLimit(db, req("6.6.6.6"), "cancel", now), (error) => error.status === 429 && /Stornierungen/.test(error.message));
+  await adminRateLimit(db, req("7.7.7.7"), "lookup", now);
+  await adminRateLimit(db, req("7.7.7.7"), "cancel", now);
+});

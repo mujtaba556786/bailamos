@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { localeAlternates } from '../../lib/seo';
 import { Footer } from '../../components/footer';
+import { env } from 'cloudflare:workers';
+import { getOperations } from '../../lib/operations-config.ts';
+import { displayPhone } from '../../lib/guest-info';
+
 
 export const metadata: Metadata = {
   title: 'Impressum',
@@ -8,7 +12,8 @@ export const metadata: Metadata = {
   description: 'Rechtliche Informationen und Kontaktdaten von Bailamos Waldcafé',
 };
 
-export default function Impressum() {
+export default async function Impressum() {
+  const phone = displayPhone((await getOperations(env.DB)).config.restaurant.contact.phone);
   return (
     <>
     <main className="min-h-screen bg-white px-5 py-12 sm:px-10">
@@ -30,7 +35,7 @@ export default function Impressum() {
           <div>
             <h2 className="mb-3 text-lg font-semibold">Kontakt</h2>
             <p>
-              Telefon: +49 173 86 09 300<br />
+              Telefon: {phone}<br />
               E-Mail: info@bailamos-waldcafe.de
             </p>
           </div>

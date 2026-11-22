@@ -4,8 +4,10 @@
 export const MAX_PLACEHOLDER = "{max}";
 
 // "{max}" in the large-group note becomes the largest group guests can book online.
-export function groupNoteText(note: string, max: number) {
-  return note.split(MAX_PLACEHOLDER).join(String(max));
+export const PHONE_PLACEHOLDER = "{phone}";
+
+export function groupNoteText(note: string, max: number, phone = "") {
+  return note.split(MAX_PLACEHOLDER).join(String(max)).split(PHONE_PLACEHOLDER).join(phone);
 }
 
 // Old notes had the number written in ("über 6 Personen", "more than 6 people").

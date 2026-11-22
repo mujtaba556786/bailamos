@@ -145,3 +145,8 @@ test("saving refuses a form limit above the maximum and keeps reasons", async ()
   assert.deepEqual(loaded.config.restaurant.reservation.blockedReasons, { "2026-12-31": "Silvester" });
   assert.match(loaded.config.restaurant.reservation.largeGroupNote.de, /\{max\}/);
 });
+
+test("{phone} in the group note is filled from the settings phone, so the number is never typed into the text", () => {
+  assert.equal(groupNoteText("Ruf {phone} an, Gruppen ab {max}", 6, "+49 179 68 81 793"), "Ruf +49 179 68 81 793 an, Gruppen ab 6");
+  assert.equal(groupNoteText("Ohne Nummer {phone}", 6), "Ohne Nummer ");
+});

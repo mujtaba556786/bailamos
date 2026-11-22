@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { localeAlternates } from '../../lib/seo';
 import { Footer } from '../../components/footer';
+import { env } from 'cloudflare:workers';
+import { getOperations } from '../../lib/operations-config.ts';
+import { displayPhone } from '../../lib/guest-info';
+
 
 export const metadata: Metadata = {
   title: 'AGB',
@@ -8,7 +12,8 @@ export const metadata: Metadata = {
   description: 'Allgemeine Geschäftsbedingungen von Bailamos Waldcafé',
 };
 
-export default function AGB() {
+export default async function AGB() {
+  const phone = displayPhone((await getOperations(env.DB)).config.restaurant.contact.phone);
   return (
     <>
     <main className="min-h-screen bg-white px-5 py-12 sm:px-10">
@@ -26,7 +31,7 @@ export default function AGB() {
         <section className="space-y-4 text-gray-700">
           <h2 className="text-xl font-semibold">2. Reservierungen</h2>
           <p>
-            Reservierungen können online, per Telefon unter +49 173 86 09 300 oder per E-Mail
+            Reservierungen können online, per Telefon unter {phone} oder per E-Mail
             an info@bailamos-waldcafe.de vorgenommen werden. Eine Reservierung wird erst mit
             unserer Bestätigung verbindlich.
           </p>

@@ -4,26 +4,26 @@ import assert from "node:assert/strict";
 import { OPENING_DATE, isBeforeOpening, firstBookableDay, openingDayLabel, openingHoursPrefix } from "../lib/opening-state.ts";
 import { formatPrice } from "../lib/price.ts";
 
-test("the opening date is 25 November 2026", () => {
-  assert.equal(OPENING_DATE, "2026-11-25");
+test("the opening date is 27 November 2026", () => {
+  assert.equal(OPENING_DATE, "2026-11-27");
 });
 
 test("before opening, the booking form starts on the opening day", () => {
   assert.equal(isBeforeOpening("2026-11-16"), true);
-  assert.equal(firstBookableDay("2026-11-16"), "2026-11-25");
+  assert.equal(firstBookableDay("2026-11-16"), "2026-11-27");
 });
 
 test("from the opening day on, the first bookable day is today", () => {
-  assert.equal(isBeforeOpening("2026-11-25"), false);
-  assert.equal(firstBookableDay("2026-11-25"), "2026-11-25");
+  assert.equal(isBeforeOpening("2026-11-27"), false);
+  assert.equal(firstBookableDay("2026-11-27"), "2026-11-27");
   assert.equal(firstBookableDay("2026-12-03"), "2026-12-03");
 });
 
 test("labels and hours prefixes", () => {
-  assert.equal(openingDayLabel("en"), "25 November");
-  assert.equal(openingDayLabel("de"), "25. November");
-  assert.equal(openingHoursPrefix("2026-11-16", "en"), "From 25 November: ");
-  assert.equal(openingHoursPrefix("2026-11-16", "de"), "Ab 25. November: ");
+  assert.equal(openingDayLabel("en"), "27 November");
+  assert.equal(openingDayLabel("de"), "27. November");
+  assert.equal(openingHoursPrefix("2026-11-16", "en"), "From 27 November: ");
+  assert.equal(openingHoursPrefix("2026-11-16", "de"), "Ab 27. November: ");
   assert.equal(openingHoursPrefix("2026-12-03", "en"), "");
 });
 
@@ -47,11 +47,11 @@ test("placeholder wording in events is caught before saving", async () => {
 
 test("opening day bookings start at 17:00, other days keep their hours", async () => {
   const { serviceWindow, serviceTimes } = await import("../lib/booking-policy.ts");
-  const openingDay = serviceWindow("2026-11-25");
+  const openingDay = serviceWindow("2026-11-27");
   assert.equal(openingDay[0], 17 * 60);
   const lateDay = serviceWindow("2026-12-01");
   assert.equal(lateDay[0], 12 * 60);
-  const times = serviceTimes("2026-11-25", new Date("2026-11-16T10:00:00Z"));
+  const times = serviceTimes("2026-11-27", new Date("2026-11-16T10:00:00Z"));
   assert.equal(times[0], "17:00");
   assert.ok(!times.includes("16:30"));
 });
