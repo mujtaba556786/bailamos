@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import { localeAlternates } from '../../../lib/seo';
 import { Footer } from '../../../components/footer';
+import { env } from 'cloudflare:workers';
+import { getOperations } from '../../../lib/operations-config.ts';
+import { displayPhone } from '../../../lib/guest-info';
+
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
@@ -8,7 +12,8 @@ export const metadata: Metadata = {
   description: 'Terms and conditions of Bailamos Waldcafé',
 };
 
-export default function TermsAndConditions() {
+export default async function TermsAndConditions() {
+  const phone = displayPhone((await getOperations(env.DB)).config.restaurant.contact.phone);
   return (
     <>
     <main className="min-h-screen bg-white px-5 py-12 sm:px-10">
@@ -26,7 +31,7 @@ export default function TermsAndConditions() {
         <section className="space-y-4 text-gray-700">
           <h2 className="text-xl font-semibold">2. Reservations</h2>
           <p>
-            Reservations can be made online, by phone at +49 173 86 09 300, or by email at
+            Reservations can be made online, by phone at {phone}, or by email at
             info@bailamos-waldcafe.de. A reservation becomes binding only upon our confirmation.
           </p>
         </section>

@@ -1,7 +1,7 @@
 // One source of truth for the opening date, plus the date and price rules that depend on it.
 // Pure functions only, so they can be tested without React or the database.
 
-export const OPENING_DATE = "2026-11-25"; // Berlin date, YYYY-MM-DD
+export const OPENING_DATE = "2026-11-27"; // Berlin date, YYYY-MM-DD
 
 // True while the restaurant has not opened yet (today is before the opening day).
 export function isBeforeOpening(today: string, openingDate = OPENING_DATE) {

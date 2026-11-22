@@ -7,9 +7,9 @@
   ],
   "contact": {
     "address": "Anton-Saefkow-Allee 2A, 14772 Brandenburg an der Havel",
-    "phone": "+491738609300",
+    "phone": "+491796881793",
     "email": "info@bailamos-waldcafe.de",
-    "whatsapp": "+491738609300"
+    "whatsapp": "+491796881793"
   },
   "openingHours": {
     "monday": "12:00-22:00",
@@ -26,8 +26,8 @@
     "maximumGuests": 10,
     "guestSelectLimit": 6,
     "largeGroupNote": {
-      "de": "Für Gruppen über {max} Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 86 09 300.",
-      "en": "For groups of more than {max} people, please email us at info@bailamos-waldcafe.de or call us on +49 173 86 09 300."
+      "de": "Für Gruppen über {max} Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter {phone}.",
+      "en": "For groups of more than {max} people, please email us at info@bailamos-waldcafe.de or call us on {phone}."
     },
     "blockedDates": [
       "2026-12-31"

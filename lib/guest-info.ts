@@ -21,7 +21,7 @@ export function displayPhone(phone: string) {
 
 export function groupRule(restaurant: Restaurant, locale: Locale) {
   const { largeGroupNote, guestSelectLimit } = restaurant.reservation;
-  return groupNoteText(locale === "en" ? largeGroupNote.en : largeGroupNote.de, guestSelectLimit);
+  return groupNoteText(locale === "en" ? largeGroupNote.en : largeGroupNote.de, guestSelectLimit, displayPhone(restaurant.contact.phone));
 }
 
 export function bookingSteps(locale: Locale) {

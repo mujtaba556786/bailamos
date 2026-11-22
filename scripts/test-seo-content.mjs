@@ -36,25 +36,33 @@ test("opening hours are grouped from the data file", () => {
 test("FAQ and group rule use only the configured facts", () => {
   const r = defaultOperations.restaurant;
   assert.equal(displayPhone("+491738609300"), "+49 173 86 09 300");
-  assert.equal(groupRule(r, "de"), "Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 173 86 09 300.");
-  // After the opening day, so the hours carry no "From 25 November:" prefix.
+  // The phone in every answer comes from the settings value (data/restaurant.json by default), so a new number changes the FAQ too.
+  assert.equal(displayPhone(r.contact.phone), "+49 179 68 81 793");
+  const moved = { ...r, contact: { ...r.contact, phone: "+491701234567" } };
+  assert.match(homeFaq(moved, "en", "2026-12-03")[1].answer, /\+49 170 12 34 567\.$/);
+  assert.ok(!JSON.stringify(homeFaq(moved, "de", "2026-12-03")).includes("179 68 81 793"));
+  assert.equal(groupRule(r, "de"), "Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de oder rufen Sie uns an unter +49 179 68 81 793.");
+  // After the opening day, so the hours carry no "From 27 November:" prefix.
   const faq = homeFaq(r, "en", "2026-12-03"), de = homeFaq(r, "de", "2026-12-03");
   assert.equal(faq.length, 3);
   assert.equal(de.length, 3);
   assert.equal(faq[0].answer, "Book online in under a minute: pick date, time and party size, then add your contact details. We'll confirm your request.");
   assert.deepEqual(faq[0].actions, [
     { kind: "primary", href: "/en/reservieren", label: "Reserve a table" },
-    { kind: "secondary", href: "tel:+491738609300", label: "Call +49 173 86 09 300" },
+    { kind: "secondary", href: "tel:+491796881793", label: "Call +49 179 68 81 793" },
   ]);
   assert.equal(de[0].actions[0].href, "/reservieren");
-  assert.equal(de[0].actions[1].label, "Anrufen: +49 173 86 09 300");
+  assert.equal(de[0].actions[1].label, "Anrufen: +49 179 68 81 793");
   // Group answer: plain text for the structured data, tappable email and phone in the visible answer.
-  assert.equal(faq[1].answer, "Yes — for groups of more than 6, contact us directly so we can prepare the right table: info@bailamos-waldcafe.de or +49 173 86 09 300.");
-  assert.deepEqual(faq[1].parts.filter((part) => typeof part !== "string"), [{ href: "mailto:info@bailamos-waldcafe.de", label: "info@bailamos-waldcafe.de" }, { href: "tel:+491738609300", label: "+49 173 86 09 300" }]);
+  assert.equal(faq[1].answer, "Yes — for groups of more than 6, contact us directly so we can prepare the right table: info@bailamos-waldcafe.de or +49 179 68 81 793.");
+  assert.deepEqual(faq[1].parts.filter((part) => typeof part !== "string"), [{ href: "mailto:info@bailamos-waldcafe.de", label: "info@bailamos-waldcafe.de" }, { href: "tel:+491796881793", label: "+49 179 68 81 793" }]);
   assert.match(de[1].answer, /^Ja – für Gruppen über 6 Personen kontaktieren Sie uns bitte direkt/);
   assert.equal(faq[2].answer, openingHoursSentence(r.openingHours, "en"));
   // Before the opening day the hours get the prefix.
-  assert.equal(homeFaq(r, "en", "2026-11-16")[2].answer, "From 25 November: " + openingHoursSentence(r.openingHours, "en"));
+  assert.equal(homeFaq(r, "en", "2026-11-16")[2].answer, "From 27 November: " + openingHoursSentence(r.openingHours, "en"));
+  // The opening-hours question as guests read it before the opening day.
+  assert.equal(homeFaq(r, "de", "2026-11-16")[2].answer, "Ab 27. November: Täglich 12:00–22:00 Uhr.");
+  assert.equal(homeFaq(r, "en", "2026-11-16")[2].answer, "From 27 November: Every day, 12:00–22:00.");
   assert.equal(de[2].answer, openingHoursSentence(r.openingHours, "de"));
   for (const item of [...faq, ...de]) assert.doesNotMatch(item.answer, /€|EUR|Bewertung|review|\d\.\d Sterne|stars/i);
   assert.equal(bookingSteps("de").length, 3);
