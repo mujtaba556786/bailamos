@@ -16,6 +16,7 @@
     "test:content-admin": "node --test --experimental-test-coverage --test-coverage-include=lib/content-admin.ts scripts/test-content-admin.mjs",
     "test:admin-security": "node --test --experimental-test-coverage --test-coverage-include=lib/media-upload.ts --test-coverage-include=lib/admin-rate-limit.ts scripts/test-admin-security.mjs",
     "test:booking-rules": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-rules.ts --test-coverage-include=lib/admin-tabs.ts --test-coverage-include=lib/operations-config.ts scripts/test-booking-rules.mjs",
+    "test:table-guard": "node --test --experimental-test-coverage --test-coverage-include=lib/operations-config.ts scripts/test-table-guard.mjs",
     "test:cancel-tokens": "node --test --experimental-test-coverage --test-coverage-include=lib/booking-service.ts scripts/test-cancel-tokens.mjs",
     "test:admin-reservations-ui": "node --test --experimental-test-coverage --test-coverage-include=lib/admin-reservation-ui.ts scripts/test-admin-reservation-ui.mjs",
     "test:hero": "node --test --experimental-test-coverage --test-coverage-include=lib/hero-slides.ts --test-coverage-include=lib/media-upload.ts scripts/test-hero-slides.mjs",
