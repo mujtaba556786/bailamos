@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:workers';
 import { createBooking, digest } from '../../../lib/booking-service.ts';
-import { bookingResponse, readBody } from '../../../lib/booking-http.ts';
+import { bookingResponse, honeypotFilled, readBody, requireJson } from '../../../lib/booking-http.ts';
 import { groupNoteText } from '../../../lib/booking-rules.ts';
 import { displayPhone } from '../../../lib/guest-info';
 import { slot, validateGuests, bookableTablesFor, serviceTimes, onlineMaxGuests, parseBooking, seatsFit } from '../../../lib/booking-policy.ts';
@@ -29,9 +29,11 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   return bookingResponse(async () => {
     if (!env.DB) throw new Error('Missing DB');
+    requireJson(request);
     if(openingActive((await getMarketingContent(env.DB)).content.opening))throw new BookingError(403,'OPENING_SOON','Online-Reservierungen sind noch nicht freigegeben. / Online reservations are not open yet.');
     const {config}=await getOperations(env.DB);
     const body = await readBody(request);
+    if (honeypotFilled(body)) throw new BookingError(400,'INVALID_REQUEST','Die Anfrage konnte nicht verarbeitet werden. Bitte laden Sie die Seite neu.');
     const key = request.headers.get('Idempotency-Key') || '';
     const seen = await env.DB.prepare('SELECT 1 FROM reservations WHERE booking_key_hash = ?').bind(`${await digest(key)}`).first();
     if (!seen) await adminRateLimit(env.DB, request, 'booking');

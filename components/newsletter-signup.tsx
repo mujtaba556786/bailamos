@@ -7,6 +7,7 @@ import { useState } from "react";
 export function NewsletterSignup({ lang = "de" }: { lang?: "de" | "en" }) {
   const L = (de: string, en: string) => (lang === "en" ? en : de);
   const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot, hidden from people
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [error, setError] = useState("");
@@ -20,7 +21,7 @@ export function NewsletterSignup({ lang = "de" }: { lang?: "de" | "en" }) {
       const response = await fetch("/api/newsletter/signup", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, website }),
       });
       const result = await response.json() as { ok?: boolean; error?: string };
       if (!response.ok || !result.ok) throw new Error(result.error || L("Die Anmeldung konnte nicht gesendet werden.", "Sign-up could not be sent."));
@@ -36,6 +37,7 @@ export function NewsletterSignup({ lang = "de" }: { lang?: "de" | "en" }) {
   }
 
   return <form onSubmit={submit} className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+    <div aria-hidden="true" style={{position:"absolute",left:"-10000px",width:1,height:1,overflow:"hidden"}}><label>Website<input tabIndex={-1} autoComplete="off" value={website} onChange={e => setWebsite(e.target.value)} /></label></div>
     <label className="grid gap-1 text-sm text-white/75">E-Mail<input required type="email" value={email} onChange={e => setEmail(e.target.value)} autoComplete="email" placeholder="ihre@email.de" className="min-h-11 rounded-xl border border-white/15 bg-white/5 px-4 text-white" /></label>
     <label className="flex gap-3 text-sm text-white/70 sm:col-span-2"><input required type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-1 h-5 w-5" /><span>{L("Ich möchte Events und Angebote von Bailamos Waldcafé per E-Mail erhalten. Abmelden kann ich mich jederzeit über den Link in jeder E-Mail. Mehr dazu in der Datenschutzerklärung.", "I would like to receive events and offers from Bailamos Waldcafé by email. I can unsubscribe at any time using the link in every email. See the privacy policy for details.")}</span></label>
     {error && <p role="alert" className="text-sm text-[#f0a09c] sm:col-span-2">{error}</p>}

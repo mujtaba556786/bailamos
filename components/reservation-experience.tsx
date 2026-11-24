@@ -30,6 +30,7 @@ export function ReservationExperience({locale,children}:{locale:Locale;children?
   const [nextFreeDate,setNextFreeDate]=useState("");
   const [times,setTimes]=useState<string[]>([]),[maxGuests,setMaxGuests]=useState(4),[guestLimit,setGuestLimit]=useState(6),[groupNote,setGroupNote]=useState<{de:string;en:string}>({de:"Für Gruppen über 6 Personen schreiben Sie uns bitte per E-Mail an info@bailamos-waldcafe.de .",en:"For groups of more than 6 people, please email us at info@bailamos-waldcafe.de."}),[horizonDays,setHorizonDays]=useState(180),[slotsLoading,setSlotsLoading]=useState(true),[blockedInfo,setBlockedInfo]=useState<{reason:string;phone:string;email:string}|null>(null);
   const [details, setDetails] = useState(emptyDetails);
+  const [trap, setTrap] = useState(""); // honeypot: hidden from people, bots fill it
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [id, setId] = useState("");
@@ -73,7 +74,7 @@ export function ReservationExperience({locale,children}:{locale:Locale;children?
     event.preventDefault();
     if (saving) return;
     setSaving(true); setError("");
-    const payload = JSON.stringify({ date, time: selectedTime, guestCount: guests, tableId: "restaurant-choice", customer: { name: details.name, phone: details.phone, email: details.email }, occasion: details.occasion, dietary: details.dietary, notes: details.notes, marketingConsent: false });
+    const payload = JSON.stringify({ date, time: selectedTime, guestCount: guests, tableId: "restaurant-choice", customer: { name: details.name, phone: details.phone, email: details.email }, occasion: details.occasion, dietary: details.dietary, notes: details.notes, marketingConsent: false, website: trap });
     let key = attempts.current.get(payload);
     if (!key) { key = crypto.randomUUID(); attempts.current.set(payload, key); }
     try {
@@ -136,6 +137,7 @@ export function ReservationExperience({locale,children}:{locale:Locale;children?
               <label className="grid gap-2 text-base sm:col-span-2">E-Mail<input required type="email" autoComplete="email" value={details.email} onChange={e => setDetails({...details,email:e.target.value})} className="min-h-13 rounded-xl border bg-white px-4" /></label>
               <label className="grid gap-2 text-base">{L("Anlass","Occasion")}<select value={details.occasion} onChange={e => setDetails({...details,occasion:e.target.value})} className="min-h-13 rounded-xl border bg-white px-4"><option value="">{L("Kein Anlass","No occasion")}</option><option value="birthday">{L("Geburtstag","Birthday")}</option><option value="anniversary">{L("Jahrestag","Anniversary")}</option></select></label>
               <label className="grid gap-2 text-base">{L("Ernährung","Dietary preference")}<select value={details.dietary} onChange={e => setDetails({...details,dietary:e.target.value})} className="min-h-13 rounded-xl border bg-white px-4"><option value="">{L("Keine Angabe","None")}</option><option value="vegetarian">{L("Vegetarisch","Vegetarian")}</option><option value="vegan">Vegan</option></select></label>
+              <div aria-hidden="true" style={{position:"absolute",left:"-10000px",width:1,height:1,overflow:"hidden"}}><label>Website<input tabIndex={-1} autoComplete="off" value={trap} onChange={e => setTrap(e.target.value)} /></label></div>
               <label className="grid gap-2 text-base sm:col-span-2">{L("Allergien oder Wünsche","Allergies or requests")}<textarea rows={3} value={details.notes} onChange={e => setDetails({...details,notes:e.target.value})} className="rounded-xl border bg-white px-4 py-3" /></label>
             </div>
             <label className="mt-6 flex gap-3 text-base"><input required type="checkbox" className="mt-1 h-5 w-5" /><span>{L("Ich akzeptiere die ","I accept the ")}<a href={withLocale("/agb",locale)} className="underline underline-offset-4">{L("Reservierungsbedingungen","reservation terms")}</a>.</span></label>
