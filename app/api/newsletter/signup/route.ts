@@ -6,7 +6,11 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Always gives the same answer, so the form cannot be used to find out who is subscribed.
 export async function POST(request: Request) {
-  const body = await request.json().catch(() => null) as { name?: unknown; email?: unknown } | null;
+  const type = (request.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
+  if (type !== 'application/json') return Response.json({ ok: false, error: 'Ungültige Anfrage. / Invalid request.' }, { status: 415 });
+  const body = await request.json().catch(() => null) as { name?: unknown; email?: unknown; website?: unknown } | null;
+  // Honeypot: hidden field, only bots fill it. They get the normal success answer and nothing is sent.
+  if (typeof body?.website === 'string' && body.website.trim() !== '') return Response.json({ ok: true });
   const name = typeof body?.name === 'string' ? body.name.trim().slice(0, 80) : '';
   const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase().slice(0, 200) : '';
   if (!EMAIL_PATTERN.test(email)) {
