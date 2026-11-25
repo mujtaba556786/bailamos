@@ -25,6 +25,29 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
   if (existing) return existing;
   const interval = slot(b.date,b.time,now,config),duration=config?.restaurant.reservation.durationMinutes??120;
   const fingerprint = await digest(JSON.stringify([b.customer.email,b.customer.phone,b.date,b.time,b.guestCount]));
+  // No table is switched on: anyone can book any time, without a fixed table and without a table-conflict check.
+  if (!bookableTablesFor(config).length && b.tableId === 'restaurant-choice') {
+    const id = `R-${crypto.randomUUID()}`, code = shortCode(), stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
+    // Each booking gets its own pseudo-table, so the database overlap trigger never blocks it.
+    const openTableId = `open-${id}`;
+    try {
+      await db.prepare(`INSERT INTO reservations (id,short_code,status,date,time,guest_count,duration_minutes,table_id,customer_name,customer_phone,customer_email,occasion,dietary,notes,cancel_token,booking_key_hash,booking_payload_hash,duplicate_fingerprint,starts_at,ends_at,updated_by,newsletter_opt_in,newsletter_consent_at,created_at,updated_at)
+        VALUES (?,?,'pending',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'customer',?,?,?,?)`).bind(id,code,b.date,b.time,b.guestCount,duration,openTableId,b.customer.name,b.customer.phone,b.customer.email,b.occasion,b.dietary,b.notes,`sha256:${await digest(token)}`,keyHash,payloadHash,fingerprint,interval.startsAt,interval.endsAt,b.marketingConsent?1:0,b.marketingConsent?stamp:null,stamp,stamp).run();
+      await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,NULL,'pending','customer','',0,?)`).bind(`${id}:0`,id,stamp).run();
+    } catch (error) {
+      const repeated = await replay();
+      if (repeated) return repeated;
+      if (String(error).includes('duplicate_fingerprint')) throw new BookingError(409,'DUPLICATE_BOOKING','Für diese Kontaktdaten besteht bereits eine Anfrage zu diesem Termin.');
+      throw error;
+    }
+    if (b.marketingConsent) {
+      try { await db.batch([
+        db.prepare(`INSERT INTO newsletter_subscribers (email,name,status,consent_source,consent_at,created_at,updated_at) VALUES (?,?,'pending','reservation',?,?,?) ON CONFLICT(email) DO NOTHING`).bind(b.customer.email,b.customer.name,stamp,stamp,stamp),
+        db.prepare('UPDATE reservations SET newsletter_synced_at = ? WHERE id = ?').bind(stamp,id),
+      ]); } catch { console.error('Reservation newsletter sync pending'); }
+    }
+    return response({id,short_code:code,status:'pending',date:b.date,time:b.time,table_id:openTableId,guest_count:b.guestCount,newsletter_opt_in:b.marketingConsent?1:0},false);
+  }
   for (const table of bookableTablesFor(config).filter(t => seatsFit(t, b.guestCount, config) && (b.tableId === 'restaurant-choice' || t.id === b.tableId))) {
     const id = `R-${crypto.randomUUID()}`, code = shortCode(), stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
     try {
