@@ -25,8 +25,8 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
   if (existing) return existing;
   const interval = slot(b.date,b.time,now,config),duration=config?.restaurant.reservation.durationMinutes??120;
   const fingerprint = await digest(JSON.stringify([b.customer.email,b.customer.phone,b.date,b.time,b.guestCount]));
-  // No table is switched on: anyone can book any time, without a fixed table and without a table-conflict check.
-  if (!bookableTablesFor(config).length && b.tableId === 'restaurant-choice') {
+  // Fallback when no table is free (or none is switched on): the booking is saved without a fixed table and without a conflict check.
+  const bookWithoutTable = async () => {
     const id = `R-${crypto.randomUUID()}`, code = shortCode(), stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
     // Each booking gets its own pseudo-table, so the database overlap trigger never blocks it.
     const openTableId = `open-${id}`;
@@ -47,7 +47,7 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
       ]); } catch { console.error('Reservation newsletter sync pending'); }
     }
     return response({id,short_code:code,status:'pending',date:b.date,time:b.time,table_id:openTableId,guest_count:b.guestCount,newsletter_opt_in:b.marketingConsent?1:0},false);
-  }
+  };
   for (const table of bookableTablesFor(config).filter(t => seatsFit(t, b.guestCount, config) && (b.tableId === 'restaurant-choice' || t.id === b.tableId))) {
     const id = `R-${crypto.randomUUID()}`, code = shortCode(), stamp = now.toISOString(), token = await digest(`cancel:${key}:${id}`);
     try {
@@ -79,6 +79,8 @@ export async function createBooking(db: D1Database, body: unknown, key: string, 
     }
     return response({id,short_code:code,status:'pending',date:b.date,time:b.time,table_id:table.id,guest_count:b.guestCount,newsletter_opt_in:b.marketingConsent?1:0},false);
   }
+  // Customers choosing the restaurant (no specific table) are never turned away: the booking goes in without a table.
+  if (b.tableId === 'restaurant-choice') return bookWithoutTable();
   throw new BookingError(409,'NO_AVAILABILITY','Für diese Auswahl ist kein Tisch mehr frei. Bitte wählen Sie einen anderen Termin oder Tisch.');
 }
 export const transitions: Record<string,string[]> = {pending:['confirmed','declined','cancelled'],confirmed:['arrived','cancelled','no_show'],arrived:['seated','cancelled','no_show'],seated:['completed'],declined:[],cancelled:[],completed:[],no_show:[]};

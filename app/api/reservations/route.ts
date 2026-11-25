@@ -22,9 +22,9 @@ export async function GET(request: Request) {
     const interval = slot(date,time,new Date(),config);
     const rows = await env.DB.prepare(`SELECT DISTINCT table_id FROM reservations WHERE status IN ('pending','confirmed','arrived','seated') AND ((starts_at IS NOT NULL AND starts_at < ? AND ends_at > ?) OR (starts_at IS NULL AND julianday(date || ' ' || time) < julianday(? || ' ' || ?) + ? / 1440.0 AND julianday(? || ' ' || ?) < julianday(date || ' ' || time) + duration_minutes / 1440.0))`).bind(interval.endsAt,interval.startsAt,date,time,(interval.endsAt-interval.startsAt)/60,date,time).all<{table_id:string}>();
     const busy = new Set(rows.results.map(r=>r.table_id));
-    // No table is switched on: bookings go to the restaurant without a fixed table (see createBooking).
-    if(!bookableTablesFor(config).length)return {tables:[{id:'restaurant-choice'}],tableIds:['restaurant-choice']};
     const tables=bookableTablesFor(config).filter(t=>seatsFit(t,guests,config) && !busy.has(t.id));
+    // No fixed table is free: the restaurant still takes the booking (see createBooking), so the times stay bookable.
+    if(!tables.length)return {tables:[{id:'restaurant-choice'}],tableIds:['restaurant-choice']};
     return {tables,tableIds:tables.map(t=>t.id)};
   });
 }
