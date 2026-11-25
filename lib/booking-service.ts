@@ -88,18 +88,19 @@ export async function changeStatus(db: D1Database,id: string,status: string,vers
   const row = await db.prepare('SELECT status,version FROM reservations WHERE id = ?').bind(id).first<Row>();
   if (!row) throw new BookingError(404,'NOT_FOUND','Reservierung nicht gefunden.');
   if (row.version !== version) throw new BookingError(409,'STALE_VERSION','Die Reservierung wurde inzwischen geändert. Bitte aktualisieren.');
-  if (row.status === status) return {ok:true,status,version};
+  if (row.status === status) return {ok:true,status,version,changed:false};
   if (!transitions[String(row.status)]?.includes(status)) throw new BookingError(409,'INVALID_TRANSITION','Dieser Statuswechsel ist nicht möglich.');
   let result;
   try {
-    result = await db.prepare('UPDATE reservations SET status = ?,version = version + 1,updated_by = ?,change_reason = ?,updated_at = ? WHERE id = ? AND version = ?').bind(status,actor,reason,new Date().toISOString(),id,version).run();
+    result = await db.prepare('UPDATE reservations SET status = ?,version = version + 1,updated_by = ?,change_reason = ?,updated_at = ? WHERE id = ? AND version = ? AND status <> ?').bind(status,actor,reason,new Date().toISOString(),id,version,status).run();
   } catch (error) {
     if (String(error).includes('BOOKING_OVERLAP')) throw new BookingError(409,'TABLE_CONFLICT','Dieser Tisch wurde inzwischen für den Zeitraum vergeben. Bitte prüfen Sie die Reservierung.');
     throw error;
   }
   if (!result.meta.changes) throw new BookingError(409,'STALE_VERSION','Die Reservierung wurde inzwischen geändert. Bitte aktualisieren.');
   await db.prepare(`INSERT INTO reservation_events (id,reservation_id,previous_status,status,actor,reason,version,created_at) VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING`).bind(`${id}:${version+1}`,id,String(row.status),status,actor,reason,version+1,new Date().toISOString()).run();
-  return {ok:true,status,version:version+1};
+  // changed is true only for the one request that really switched the status; mails are sent only then.
+  return {ok:true,status,version:version+1,changed:true};
 }
 // Checks the personal link (id + token). New tokens are stored only as a SHA-256 hash.
 // Reservations imported from the old system may still hold the plain token: those links keep working only for

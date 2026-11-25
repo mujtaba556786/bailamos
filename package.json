@@ -23,7 +23,8 @@
     "test:opening-state": "node --test --experimental-test-coverage --test-coverage-include=lib/opening-state.ts scripts/test-opening-state.mjs",
     "test:hero-routes": "node --test scripts/test-hero-routes.mjs",
     "test:seo": "node --test --experimental-test-coverage --test-coverage-include=lib/service-areas.ts --test-coverage-include=lib/json-ld.ts --test-coverage-include=lib/seo-content.ts --test-coverage-include=lib/page-title.ts --test-coverage-include=lib/opening-hours.ts --test-coverage-include=lib/guest-info.ts scripts/test-seo.mjs scripts/test-seo-content.mjs",
-    "test:admin-auth": "node --test --experimental-test-coverage --test-coverage-include=lib/admin-rate-limit.ts scripts/test-admin-auth.mjs"
+    "test:admin-auth": "node --test --experimental-test-coverage --test-coverage-include=lib/admin-rate-limit.ts scripts/test-admin-auth.mjs",
+    "test:guest-mails": "node --import ./scripts/test-hooks/register.mjs --test --experimental-test-coverage --test-coverage-include=lib/reservation-mail.ts --test-coverage-include=lib/booking-service.ts --test-coverage-include=app/api/admin/reservations/route.ts --test-coverage-include=app/api/reservations/cancel/route.ts scripts/test-guest-mails.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
